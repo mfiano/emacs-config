@@ -766,6 +766,20 @@ Command group to launch various utilities and applications. Open it with either
   (global-set-key (kbd "s-e") 'my/hydra-exec/body)
 #+END_SRC
 
+Command group to toggle various settings.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-toggle (:exit t :hint nil)
+  "
+_l_: toggle line numbers
+_f_: toggle fill column indicator
+"
+  ("l" linum-mode)
+  ("f" fci-mode))
+(global-set-key (kbd "C-c z") 'my/hydra-toggle/body)
+(global-set-key (kbd "s-z") 'my/hydra-toggle/body)
+#+END_SRC
+
 Command group for managing windows. Open it with either =C-c w= or =Super w=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1142,13 +1156,9 @@ Draw vertical lines in the buffer to indicate where the fill column is.
 #+BEGIN_SRC emacs-lisp
   (use-package fill-column-indicator
     :config
-    (progn
-      (dolist (hook '(prog-mode-hook
-                      text-mode-hook))
-        (add-hook hook 'fci-mode))
-      (setq fci-rule-color my/color-dull
-            fci-rule-use-dashes t
-            fci-dash-pattern 0.5)))
+    (setq fci-rule-color my/color-dull
+          fci-rule-use-dashes t
+          fci-dash-pattern 0.5))
 #+END_SRC
 
 Highlight the current line.
@@ -1169,10 +1179,7 @@ Show line numbers.
 
 #+BEGIN_SRC emacs-lisp
   (use-package linum
-    :config
-    (progn
-      (global-linum-mode 1)
-      (set-face-attribute 'linum nil :weight 'normal :italic nil)))
+    :config (set-face-attribute 'linum nil :weight 'normal :italic nil))
 #+END_SRC
 
 Highlight the expression of matched parentheses at point.
