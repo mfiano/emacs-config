@@ -1214,6 +1214,25 @@ Draw line break characters as visual lines.
 
 *** Window management
 
+Manage pop-up windows.
+
+#+BEGIN_SRC emacs-lisp
+(use-package popwin
+  :commands popwin-mode
+  :init (popwin-mode 1)
+  :config
+  (progn
+    (setq popwin:special-display-config nil)
+    (push '("*Help*" :width 0.5 :position right)
+          popwin:special-display-config)
+    (push '(" *undo-tree*" :width 0.5 :position right)
+          popwin:special-display-config)
+    (push '("*ag-search*" :width 0.5 :position right)
+          popwin:special-display-config)
+    (push '(magit-status-mode :width 0.5 :position right :stick t)
+          popwin:special-display-config)))
+#+END_SRC
+
 Move focus to an adjacent window.
 
 #+BEGIN_SRC emacs-lisp
