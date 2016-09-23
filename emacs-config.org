@@ -1685,15 +1685,9 @@ An Elisp REPL.
   :ensure nil
   :defer t
   :config
-  (add-hook 'ielm-mode-hook
-            (lambda ()
-              (setq ac-sources '(ac-source-functions
-                                 ac-source-variables
-                                 ac-source-features
-                                 ac-source-symbols
-                                 ac-source-words-in-same-mode-buffers))
-              (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
-              (auto-complete-mode 1))))
+  (progn
+    (add-hook 'ielm-mode-hook 'ac-emacs-lisp-mode-setup)
+    (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)))
 #+END_SRC
 
 Manipulation of s-expressions.
