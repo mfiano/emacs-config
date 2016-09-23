@@ -1449,6 +1449,7 @@ Completion/navgiation system for many things.
 
 Completion of key bindings.
 
+#+BEGIN_SRC emacs-lisp
 (use-package helm-descbinds
   :defer 10)
 #+END_SRC
@@ -1456,29 +1457,20 @@ Completion of key bindings.
 Text completion.
 
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :bind
-  (:map company-active-map
-        ("<tab>" . company-complete-common-or-cycle))
-  :init (global-company-mode 1)
+(use-package auto-complete
   :config
-  (setq company-idle-delay 0.25
-        company-minimum-prefix-length 3
-        company-selection-wrap-around t
-        company-require-match 'never
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case t
-        company-auto-complete nil)
-  :diminish company-mode)
-#+END_SRC
-
-Rank completion choices by frequency of use.
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-statistics
-  :after company
-  :config
-  (company-statistics-mode 1))
+  (progn
+    (ac-config-default)
+    (ac-flyspell-workaround)
+    (ac-linum-workaround)
+    (define-key ac-completing-map "\r" 'ac-complete)
+    (setq ac-comphist-file (concat my/dir-etc "ac-history.dat")
+          ac-use-quick-help nil
+          ac-ignore-case t
+          ac-use-fuzzy t
+          ac-trigger-key "TAB"
+          ac-auto-start nil))
+  :diminish auto-complete-mode)
 #+END_SRC
 
 *** Project management
@@ -1766,13 +1758,13 @@ Expand Common Lisp macros in the buffer.
 Code completion for Common Lisp.
 
 #+BEGIN_SRC emacs-lisp
-(use-package sly-company
+(use-package ac-sly
   :after sly
   :defer t
   :config
   (progn
-    (add-hook 'sly-mode-hook 'sly-company-mode)
-    (add-to-list 'company-backends 'sly-company)))
+    (add-hook 'sly-mode-hook (lambda () (set-up-sly-ac t)))
+    (add-to-list 'ac-modes 'sly-mrepl-mode)))
 #+END_SRC
 
 *** Shell scripting
@@ -1789,13 +1781,4 @@ Enable support for shell scripts.
   :config
   (setq-default sh-indentation 2
                 sh-basic-offset 2))
-#+END_SRC
-
-Shell code completion.
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-shell
-  :defer t
-  :after company
-  :init (add-to-list 'company-backends 'company-shell))
 #+END_SRC
