@@ -1201,6 +1201,17 @@ Make buffer names unique.
   :config (setq uniquify-buffer-bane-style 'forward))
 #+END_SRC
 
+Draw line break characters as visual lines.
+
+#+BEGIN_SRC emacs-lisp
+(use-package form-feed
+  :init (setq form-feed-line-width fill-column)
+  :config
+  (progn
+    (dolist (hook (append my/modes-text prog-mode-hook))
+      (add-hook hook 'form-feed-mode))))
+#+END_SRC
+
 *** Window management
 
 Move focus to an adjacent window.
