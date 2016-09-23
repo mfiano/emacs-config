@@ -364,7 +364,6 @@ Use a separate =custom.el= file for Emacs =customize= to write to.
 (load custom-file 'noerror)
 #+END_SRC
 
-
 ** Basics
 
 *** Improve startup speed
@@ -612,8 +611,9 @@ repository which boasts itself as the largest and most up-to-date repository of
 Emacs packages.
 
 #+BEGIN_SRC emacs-lisp
+(setq package-user-dir (concat user-emacs-directory "src")
+      package-enable-at-startup nil)
 (package-initialize)
-(setq package-enable-at-startup nil)
 (unless (assoc-default "melpa" package-archives)
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/")))
 #+END_SRC
@@ -679,7 +679,6 @@ Start the Emacs server.
 
 #+BEGIN_SRC emacs-lisp
 (use-package server
-  :defer t
   :config
   (unless (server-running-p)
     (server-start)))
@@ -1208,8 +1207,10 @@ Draw line break characters as visual lines.
   :init (setq form-feed-line-width fill-column)
   :config
   (progn
-    (dolist (hook (append my/modes-text prog-mode-hook))
-      (add-hook hook 'form-feed-mode))))
+    (dolist (hook my/modes-text)
+      (add-hook hook 'form-feed-mode))
+    (add-hook 'prog-mode-hook 'form-feed-mode))
+  :diminish form-feed-mode)
 #+END_SRC
 
 *** Window management
