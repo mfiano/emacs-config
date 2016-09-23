@@ -90,7 +90,6 @@ Note: You more than likely want to override some configuration options -
 particularly the options in the [[*Personal Information]] section. You can just
 redefine those variables after the above bootstrap line in your =init.el= file.
 
-
 * Configuration
 
 #+BEGIN_SRC emacs-lisp :exports none :padline no
@@ -1471,12 +1470,6 @@ Text completion.
           ac-trigger-key "TAB"
           ac-auto-start nil))
   :diminish auto-complete-mode)
-
-(use-package ac-helm
-  :bind
-  (("<tab>" . ac-complete-with-helm)
-   :map ac-complete-mode-map
-   ("<tab>" . ac-complete-with-helm)))
 #+END_SRC
 
 *** Project management
@@ -1589,6 +1582,8 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-agenda-files (list my/dir-org)
           org-default-notes-file my/file-notes
           org-export-backends '(ascii html md)
+          org-blank-before-new-entry '((heading . nil)
+                                       (plain-list-item . nil))
           org-catch-invisible-edits 'error
           org-startup-indented t
           org-cycle-include-plain-lists 'integrate
@@ -1688,7 +1683,17 @@ An Elisp REPL.
 #+BEGIN_SRC emacs-lisp
 (use-package ielm
   :ensure nil
-  :defer t)
+  :defer t
+  :config
+  (add-hook 'ielm-mode-hook
+            (lambda ()
+              (setq ac-sources '(ac-source-functions
+                                 ac-source-variables
+                                 ac-source-features
+                                 ac-source-symbols
+                                 ac-source-words-in-same-mode-buffers))
+              (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
+              (auto-complete-mode 1))))
 #+END_SRC
 
 Manipulation of s-expressions.
