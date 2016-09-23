@@ -100,7 +100,7 @@ redefine those variables after the above bootstrap line in your =init.el= file.
   ;;;; Instead, modify 'emacs-config.org' which this file is generated from.
 #+END_SRC
 
-** Customizations
+** Customization
 
 *** Personal information
 
@@ -284,7 +284,7 @@ configuration.
         (comment-or-uncomment-region beg end)))
   #+END_SRC
 
-- =my/smart-move-beginning-of-line= :: Move to the first non-whitespace character
+- =my/smarter-move-beginning-of-line= :: Move to the first non-whitespace character
      of a line, or if already there, to the beginning of the line.
 
      Credit: [[http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/][Bozhidar]]
@@ -1028,6 +1028,7 @@ A calendar.
 
 #+BEGIN_SRC emacs-lisp
   (use-package calendar
+    :defer t
     :config (setq calendar-week-start-day 1))
 #+END_SRC
 
@@ -1081,6 +1082,7 @@ Support for the /silver searcher/ search tool.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ag
+    :defer t
     :config
     (setq ag-highlight-search t
           ag-reuse-window nil
@@ -1433,8 +1435,8 @@ Completion/navgiation system for many things.
 
 Completion of key bindings.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-descbinds)
+(use-package helm-descbinds
+  :defer 10)
 #+END_SRC
 
 Text completion.
@@ -1455,12 +1457,19 @@ Text completion.
     :diminish company-mode)
 #+END_SRC
 
+Rank completion choices according to frequency.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-statistics)
+#+END_SRC
+
 *** Project management
 
 Tracking of projects under version control.
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
+    :defer 3
     :init
     (let ((cfg-dir (file-name-as-directory (concat my/dir-etc "projectile"))))
       (make-directory cfg-dir t)
@@ -1490,13 +1499,15 @@ Integrate project tracking into the Helm completion system.
 Integrate Git into the Helm completion system.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-ls-git)
+(use-package helm-ls-git
+  :defer t)
 #+END_SRC
 
 Integrate /ag/ into the Helm completion system.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-ag
+    :defer t
     :config (setq helm-ag-fuzzy-match t))
 #+END_SRC
 
@@ -1506,6 +1517,7 @@ Highlight uncommited changes on the left side of a buffer's window.
 
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
+    :defer 5
     :config
     (progn
       (global-diff-hl-mode 1)
@@ -1519,6 +1531,7 @@ Interface to the Git version control utility.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
+    :defer t
     :config
     (progn
       (setq magit-log-arguments '("--graph"
@@ -1540,6 +1553,7 @@ Allow creating GitHub gists from regions/buffers.
 
 #+BEGIN_SRC emacs-lisp
   (use-package gist
+    :defer t
     :config (setq gist-view-gist t)
     :diminish gist-mode)
 #+END_SRC
@@ -1550,6 +1564,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :defer t
     :config
     (progn
       (setq org-modules '(org-habit
@@ -1647,20 +1662,22 @@ An Elisp REPL.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ielm
-    :ensure nil)
+    :ensure nil
+    :defer t)
 #+END_SRC
 
 Manipulation of s-expressions.
 
 #+BEGIN_SRC emacs-lisp
   (use-package paredit
+    :defer t
     :init
-    (progn
-      (dolist (hook my/modes-lisp)
-        (add-hook hook 'enable-paredit-mode)
-        (eldoc-add-command
-         'paredit-backward-delete
-         'paredit-close-round)))
+    (dolist (hook my/modes-lisp)
+      (add-hook hook 'enable-paredit-mode))
+    :config
+    (eldoc-add-command
+     'paredit-backward-delete
+     'paredit-close-round)
     :diminish paredit-mode)
 #+END_SRC
 
@@ -1687,14 +1704,13 @@ A Common Lisp IDE.
 
 #+BEGIN_SRC emacs-lisp
   (use-package sly
+    :defer t
     :bind
     (:map sly-mrepl-mode-map
           ("<up>" . sly-mrepl-previous-input-or-button)
           ("<down>" . sly-mrepl-next-input-or-button)
           ("C-c M-o" . sly-mrepl-clear-repl)
           ("C-c q" . sly-restart-inferior-lisp))
-    :init
-    (sly-setup '(sly-fancy))
     :config
     (progn
       (setq sly-lisp-implementations
@@ -1710,20 +1726,22 @@ A Common Lisp IDE.
       (sly-setup '(sly-fancy))
       (add-hook 'sly-mode-hook (lambda ()
                                  (unless (sly-connected-p)
-                                   (save-excursion (sly)))))
-      (add-hook 'sly-mrepl-mode-hook (lambda () (linum-mode -1)))))
+                                   (save-excursion (sly)))))))
 #+END_SRC
 
 Expand Common Lisp macros in the buffer.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package sly-macrostep)
+  (use-package sly-macrostep
+    :defer t)
 #+END_SRC
 
 Code completion for Common Lisp.
 
 #+BEGIN_SRC emacs-lisp
   (use-package sly-company
+    :defer t
+    :after sly
     :config
     (progn
       (add-hook 'sly-mode-hook 'sly-company-mode)
