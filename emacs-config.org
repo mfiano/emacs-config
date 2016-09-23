@@ -1493,7 +1493,7 @@ Text completion.
     (ac-flyspell-workaround)
     (ac-linum-workaround)
     (define-key ac-completing-map "\r" 'ac-complete)
-    (setq ac-comphist-file (concat my/dir-etc "ac-history.dat")
+    (setq ac-comphist-file (concat my/dir-etc "completion-history")
           ac-use-quick-help nil
           ac-ignore-case t
           ac-use-fuzzy t
@@ -1510,10 +1510,8 @@ Tracking of projects under version control.
 (use-package projectile
   :defer 3
   :init
-  (let ((cfg-dir (file-name-as-directory (concat my/dir-etc "projectile"))))
-    (make-directory cfg-dir t)
-    (setq projectile-cache-file (concat cfg-dir "cache")
-          projectile-known-projects-file (concat cfg-dir "bookmarks")))
+  (setq projectile-cache-file (concat my/dir-etc "project-cache")
+        projectile-known-projects-file (concat my/dir-etc "project-bookmarks"))
   :config
   (progn
     (projectile-global-mode)
