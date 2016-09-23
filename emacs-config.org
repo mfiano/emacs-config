@@ -1236,7 +1236,18 @@ Manage pop-up windows.
 Move focus to an adjacent window.
 
 #+BEGIN_SRC emacs-lisp
-(use-package windmove)
+(use-package windmove
+  :bind
+  (("<S-up>" . windmove-up)
+   ("<S-down>" . windmove-down)
+   ("<S-left>" . windmove-left)
+   ("<S-right>" . windmove-right))
+  :config
+  (progn
+    (add-hook 'org-shiftup-final-hook 'windmove-up)
+    (add-hook 'org-shiftdown-final-hook 'windmove-down)
+    (add-hook 'org-shiftleft-final-hook 'windmove-left)
+    (add-hook 'org-shiftright-final-hook 'windmove-right)))
 #+END_SRC
 
 Jump to any window by number.
