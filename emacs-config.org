@@ -1471,6 +1471,12 @@ Text completion.
           ac-trigger-key "TAB"
           ac-auto-start nil))
   :diminish auto-complete-mode)
+
+(use-package ac-helm
+  :bind
+  (("<tab>" . ac-complete-with-helm)
+   :map ac-complete-mode-map
+   ("<tab>" . ac-complete-with-helm)))
 #+END_SRC
 
 *** Project management
