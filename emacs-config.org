@@ -1611,12 +1611,13 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-export-backends '(ascii html md)
           org-blank-before-new-entry '((heading . nil)
                                        (plain-list-item . nil))
-          org-catch-invisible-edits 'error
+          org-catch-invisible-edits 'show
           org-startup-indented t
           org-cycle-include-plain-lists 'integrate
           org-ellipsis " […]"
           org-return-follows-link t
           org-src-fontify-natively t
+          org-src-tab-acts-natively t
           org-hide-emphasis-markers t
           org-src-preserve-indentation t
           org-enforce-todo-dependencies t
@@ -1642,6 +1643,13 @@ Use fancy UTF-8 bullet characters in Org mode.
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
   :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+
+Completion for Org mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ac
+  :config (org-ac/config-default))
 #+END_SRC
 
 *** Web development
