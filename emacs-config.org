@@ -1225,13 +1225,7 @@ Move focus to an adjacent window.
   (("<S-up>" . windmove-up)
    ("<S-down>" . windmove-down)
    ("<S-left>" . windmove-left)
-   ("<S-right>" . windmove-right))
-  :config
-  (progn
-    (add-hook 'org-shiftup-final-hook 'windmove-up)
-    (add-hook 'org-shiftdown-final-hook 'windmove-down)
-    (add-hook 'org-shiftleft-final-hook 'windmove-left)
-    (add-hook 'org-shiftright-final-hook 'windmove-right)))
+   ("<S-right>" . windmove-right)))
 #+END_SRC
 
 Jump to any window by number.
@@ -1606,6 +1600,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :defer t
+  :after windmove
   :config
   (progn
     (setq org-modules '(org-habit
@@ -1625,7 +1620,11 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-hide-emphasis-markers t
           org-src-preserve-indentation t
           org-enforce-todo-dependencies t
-          org-enforce-todo-checkbox-dependencies t)))
+          org-enforce-todo-checkbox-dependencies t)
+    (add-hook 'org-shiftup-final-hook 'windmove-up)
+    (add-hook 'org-shiftdown-final-hook 'windmove-down)
+    (add-hook 'org-shiftleft-final-hook 'windmove-left)
+    (add-hook 'org-shiftright-final-hook 'windmove-right)))
 #+END_SRC
 
 Automatically indent Org mode Text.
