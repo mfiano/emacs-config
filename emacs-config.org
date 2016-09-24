@@ -267,22 +267,6 @@ configuration.
     (kill-buffer (current-buffer)))
   #+END_SRC
 
-- =my/comment-line-or-region= :: Comment (or uncomment) a line or region,
-     depending on context; it will affect a region if one is active, otherwise
-     the line at point.
-
-     Credit: [[http://emacs.stackexchange.com/questions/17810/adding-comment-out-for-matlab-mode][Kaushal Modi]]
-
-  #+BEGIN_SRC emacs-lisp
-  (defun my/comment-line-or-region ()
-    (interactive)
-    (let (beg end)
-      (if (region-active-p)
-          (setq beg (region-beginning) end (region-end))
-        (setq beg (line-beginning-position) end (line-end-position)))
-      (comment-or-uncomment-region beg end)))
-  #+END_SRC
-
 - =my/smarter-move-beginning-of-line= :: Move to the first non-whitespace character
      of a line, or if already there, to the beginning of the line.
 
@@ -856,7 +840,7 @@ Command group for manipulating text. Open it with either =C-c t= or =Super t=.
   "
     ("+" er/expand-region)
     ("-" er/contract-region)
-    ("c" my/comment-line-or-region)
+    ("c" comment-dwim-2)
     ("f" my/hydra-fold/body :exit t)
     ("jc" avy-goto-char :exit t)
     ("jw" avy-goto-word-1 :exit t)
@@ -1293,7 +1277,7 @@ Track recent files that have been opened.
   :init
   (setq recentf-save-file my/file-recent
         recentf-max-saved-items 1000
-        recentf-exclude '(".emacs.d"
+        recentf-exclude '(".emacs.d/src"
                           "^/tmp/"
                           "COMMIT_EDITMSG$"
                           ".gz$")
@@ -1412,6 +1396,14 @@ Expand/contract region selections.
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :defer t)
+#+END_SRC
+
+Comment/uncomment lines/regions intelligently.
+
+#+BEGIN_SRC emacs-lisp
+(use-package comment-dwim-2
+  :defer t
+  :commands (comment-dwim-2))
 #+END_SRC
 
 Quickly jump to occurences within a buffer.
