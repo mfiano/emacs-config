@@ -1293,10 +1293,10 @@ Track recent files that have been opened.
   :init
   (setq recentf-save-file my/file-recent
         recentf-max-saved-items 1000
-        recentf-exclude '("/elpa/"
-                          "/tmp/"
-                          "COMMIT_EDITMSG"
-                          ".gz")
+        recentf-exclude '(".emacs.d"
+                          "^/tmp/"
+                          "COMMIT_EDITMSG$"
+                          ".gz$")
         recentf-auto-cleanup 300)
   :config (recentf-mode 1))
 #+END_SRC
@@ -1344,8 +1344,20 @@ structure mirroring the filesystem.
     (make-directory my/dir-backups t)
     (add-hook 'after-save-hook 'backup-each-save))
   :config
-  (setq backup-each-save-mirror-location my/dir-backups
-        backup-each-save-time-format "%Y-%m-%d_%H:%M:%S"))
+  (progn
+    (defun backup-each-save-filter (filename)
+      (let ((ignored-filenames
+             `("^/tmp" "\\.emacs.d/src/" "\\.emacs.d/etc/" "custom.el"))
+            (matched-ignored-filename nil))
+        (mapc
+         (lambda (x)
+           (when (string-match x filename)
+             (setq matched-ignored-filename t)))
+         ignored-filenames)
+        (not matched-ignored-filename)))
+    (setq backup-each-save-mirror-location my/dir-backups
+          backup-each-save-time-format "%Y-%m-%d_%H:%M:%S"
+          backup-each-save-filter-function 'backup-each-save-filter)))
 #+END_SRC
 
 Allow text to be auto-filled (wrapped to a new line if it would be past the fill
