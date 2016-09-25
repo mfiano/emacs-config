@@ -1123,20 +1123,11 @@ Define the color theme.
 (use-package moe-theme
   :config
   (progn
-    (setq moe-theme-highlight-buffer-id nil)
+    (setq moe-theme-highlight-buffer-id nil
+          moe-theme-mode-line-color 'blue)
     (moe-dark)
+    (powerline-moe-theme)
     (setq my/color-background (face-background 'default))))
-#+END_SRC
-
-Make the modeline look better.
-
-#+BEGIN_SRC emacs-lisp
-(use-package powerline
-  :defer t
-  :config
-  (progn
-    (setq powerline-default-separator 'arrow-fade)
-    (powerline-default-theme)))
 #+END_SRC
 
 Draw vertical lines in the buffer to guide indentation levels.
