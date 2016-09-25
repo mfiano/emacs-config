@@ -949,6 +949,20 @@ Command group for git functions. Open it with either =C-c g= or =Super g=.
   (global-set-key (kbd "s-g") 'my/hydra-git/body)
 #+END_SRC
 
+Command group for OrgMode. Open it with either =C-c o= or =Super o=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-org (:exit t :hint nil)
+  "
+^Tags^
+^^----
+_t_: add
+"
+  ("t" org-set-tags-command))
+(global-set-key (kbd "C-c o") 'my/hydra-org/body)
+(global-set-key (kbd "s-o") 'my/hydra-org/body)
+#+END_SRC
+
 *** Package management
 
 While =use-package= let's us define the packages we want to use and their
@@ -1611,6 +1625,22 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-export-backends '(ascii html md)
           org-blank-before-new-entry '((heading . nil)
                                        (plain-list-item . nil))
+          org-tag-alist '((:startgroup . nil)
+                          ("work" . ?w)
+                          ("home" . ?h)
+                          (:endgroup . nil)
+                          ("computer" . ?c)
+                          ("dev" . ?d)
+                          ("research" . ?r)
+                          ("buy" . ?b)
+                          ("idea" . ?i))
+          org-tag-faces '(("work" :foreground "green")
+                          ("home" :foreground "blue")
+                          ("computer" :foreground "red")
+                          ("dev" :foreground "yellow green")
+                          ("research" :foreground "orange")
+                          ("buy" :foreground "dodger blue")
+                          ("idea" :foreground "yellow"))
           org-catch-invisible-edits 'show
           org-startup-indented t
           org-cycle-include-plain-lists 'integrate
