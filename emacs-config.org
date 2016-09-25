@@ -954,11 +954,13 @@ Command group for OrgMode. Open it with either =C-c o= or =Super o=.
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-org (:exit t :hint nil)
   "
-^Tags^
-^^----
-_t_: add
+^OrgMode^
+^^-----------
+_t_: add tags
+_c_: capture
 "
-  ("t" org-set-tags-command))
+  ("t" org-set-tags-command)
+  ("c" helm-org-capture-templates))
 (global-set-key (kbd "C-c o") 'my/hydra-org/body)
 (global-set-key (kbd "s-o") 'my/hydra-org/body)
 #+END_SRC
@@ -1627,6 +1629,9 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-export-backends '(ascii html md)
           org-blank-before-new-entry '((heading . nil)
                                        (plain-list-item . nil))
+          org-capture-templates '(("t" "Task" entry
+                                   (file+headline org-default-notes-file "Tasks")
+                                   "* TODO %? %i\n%a\n\n"))
           org-tag-alist '((:startgroup . nil)
                           ("work" . ?w)
                           ("home" . ?h)
