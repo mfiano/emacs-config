@@ -1117,16 +1117,27 @@ Emacs sessions.
 
 *** Appearance
 
+Nicer mode line.
+
+#+BEGIN_SRC emacs-lisp
+(use-package powerline
+  :config
+  (progn
+    (setq powerline-default-separator 'arrow-fade
+          powerline-height 12)
+    (powerline-default-theme)))
+#+END_SRC
+
 Define the color theme.
 
 #+BEGIN_SRC emacs-lisp
 (use-package moe-theme
+  :after powerline
   :config
   (progn
     (setq moe-theme-highlight-buffer-id nil
           moe-theme-mode-line-color 'blue)
     (moe-dark)
-    (powerline-moe-theme)
     (setq my/color-background (face-background 'default))))
 #+END_SRC
 
