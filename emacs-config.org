@@ -86,9 +86,9 @@ does not exist.
 (load-file "/path/to/emacs-config/bootstrap.el")
 #+END_SRC
 
-Note: You more than likely want to override some configuration options -
-particularly the options in the [[*Personal Information]] section. You can just
-redefine those variables after the above bootstrap line in your =init.el= file.
+Note: You can place sensitive information in the file =~/.emacs.d/secret.el=. It
+will be loaded if it exists. It is recommended to set variables here for your
+name, email address, passwords for various services, etc.
 
 * Configuration
 
