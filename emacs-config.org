@@ -956,11 +956,17 @@ Command group for OrgMode. Open it with either =C-c o= or =Super o=.
   "
 ^OrgMode^
 ^^-----------
-_t_: add tags
+_a_: open agenda
 _c_: capture
+_l_: copy link
+_L_: paste link
+_t_: add tags
 "
-  ("t" org-set-tags-command)
-  ("c" helm-org-capture-templates))
+  ("a" org-agenda)
+  ("c" helm-org-capture-templates)
+  ("l" org-store-link)
+  ("L" org-insert-link)
+  ("t" org-set-tags-command))
 (global-set-key (kbd "C-c o") 'my/hydra-org/body)
 (global-set-key (kbd "s-o") 'my/hydra-org/body)
 #+END_SRC
@@ -1627,6 +1633,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-agenda-files (list my/dir-org)
           org-default-notes-file my/file-notes
           org-export-backends '(ascii html md)
+          org-log-done t
           org-blank-before-new-entry '((heading . nil)
                                        (plain-list-item . nil))
           org-capture-templates '(("t" "Task" entry
