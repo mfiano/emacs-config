@@ -101,17 +101,6 @@ redefine those variables after the above bootstrap line in your =init.el= file.
 
 ** Customization
 
-*** Personal information
-
-Set some personal information, to let Emacs know who we are. You will probably
-want to override these variables in your =init.el= file after the line that
-bootstraps the configuration. See [[*Installation]] for details.
-
-#+BEGIN_SRC emacs-lisp
-(setq user-full-name "Michael Fiano"
-      user-mail-address "michael.fiano@gmail.com")
-#+END_SRC
-
 *** Custom variables
 
 These custom variables are defined early, to be used throughout the
@@ -145,6 +134,12 @@ configuration.
 
   #+BEGIN_SRC emacs-lisp
   (defvar my/dir-sbcl "/usr/lib/sbcl")
+  #+END_SRC
+
+- =my/file-secret= :: The file to read private Emacs configuration options from.
+
+  #+BEGIN_SRC emacs-lisp
+  (defvar my/file-secret (concat user-emacs-directory "secret.el"))
   #+END_SRC
 
 - =my/file-recent= :: The file to write recently visited files to.
@@ -346,6 +341,15 @@ Use a separate =custom.el= file for Emacs =customize= to write to.
 (setq custom-file my/file-custom)
 (load custom-file 'noerror)
 #+END_SRC
+
+Some configuration options should be private, such as your email address,
+passwords, etc. We will load an external file, =secret.el= if it exists.
+
+#+BEGIN_SRC emacs-lisp
+(when (file-exists-p my/file-secret)
+  (load-file my/file-secret))
+#+END_SRC
+
 
 ** Basics
 
