@@ -836,6 +836,8 @@ Command group for manipulating text. Open it with either =C-c t= or =Super t=.
   _jl_    : jump to line
   _<up>_  : move line or region up
   _<down>_: move line or region down
+  _s_     : enable spell-checking
+  _S_     : disable spell-checking
   _z_     : undo last change
   _Z_     : redo last change
   _u_     : show undo tree
@@ -851,6 +853,8 @@ Command group for manipulating text. Open it with either =C-c t= or =Super t=.
     ("jl" avy-goto-line :exit t)
     ("<up>" move-text-up)
     ("<down>" move-text-down)
+    ("s" (flyspell-mode 1) :exit t)
+    ("S" (flyspell-mode 0) :exit t)
     ("z" undo-tree-undo)
     ("Z" undo-tree-redo)
     ("u" undo-tree-visualize :exit t)
@@ -1076,12 +1080,6 @@ On-the-fly spell checking for text and comments.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-  :init
-  (progn
-    (dolist (hook '(text-mode-hook
-                    message-mode-hook))
-      (add-hook hook 'turn-on-flyspell))
-    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
   :config
   (setq flyspell-use-meta-tab nil
         flyspell-issue-welcome-flag nil
