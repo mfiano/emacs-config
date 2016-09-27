@@ -905,7 +905,7 @@ Command group for working with projects. Open it with either =C-c p= or =Super p
   (global-set-key (kbd "s-p") 'my/hydra-projects/body)
 #+END_SRC
 
-Command group for ?. Open it with either =C-c x= or =Super x=.
+Command group for browsing various menus. Open it with either =C-c x= or =Super x=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-menu (:exit t :hint nil)
