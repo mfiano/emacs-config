@@ -968,6 +968,7 @@ _a_: open agenda
 _A_: archive item
 _c_: capture
 _f_: refile item
+_F_: find org file
 _l_: copy link
 _L_: paste link
 _t_: add tags
@@ -976,6 +977,7 @@ _t_: add tags
   ("A" archive)
   ("c" helm-org-capture-templates)
   ("f" org-refile)
+  ("F" org-iswitchb)
   ("l" org-store-link)
   ("L" org-insert-link)
   ("t" org-set-tags-command))
