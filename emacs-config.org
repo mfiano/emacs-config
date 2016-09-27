@@ -1470,6 +1470,7 @@ Completion/navgiation system for many things.
 #+BEGIN_SRC emacs-lisp
 (use-package helm
   :ensure t
+  :demand t
   :bind
   (("M-x" . helm-M-x)
    ("M-y" . helm-show-kill-ring)
