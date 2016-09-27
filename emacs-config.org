@@ -1284,12 +1284,12 @@ Manage window layouts.
 
 #+BEGIN_SRC emacs-lisp
 (use-package eyebrowse
-  :config
-  (progn
-    (eyebrowse-mode t)
-    (setq eyebrowse-wrap-around t
-          eyebrowse-switch-back-and-forth t
-          eyebrowse-new-workspace t)))
+  :init
+  (setq eyebrowse-wrap-around t
+        eyebrowse-switch-back-and-forth t
+        eyebrowse-new-workspace t
+        eyebrowse-keymap-prefix (kbd "C-c M-e"))
+  :config (eyebrowse-mode t))
 #+END_SRC
 
 *** Files and buffers
