@@ -960,6 +960,22 @@ Command group for git functions. Open it with either =C-c g= or =Super g=.
 Command group for OrgMode. Open it with either =C-c o= or =Super o=.
 
 #+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-org-clock (:exit t :hint nil)
+  "
+^OrgMode: Clocking^
+^^------------------------------------------------------
+_i_: clock in
+_o_: clock out
+_t_: go to currently clocked in task
+_v_: view time summary of current buffer (C-c to remove)
+_C_: cancel clock
+"
+  ("i" org-clock-in)
+  ("o" org-clock-out)
+  ("t" org-clock-goto)
+  ("v" org-clock-display)
+  ("C" org-clock-cancel))
+
 (defhydra my/hydra-org (:exit t :hint nil)
   "
 ^OrgMode^
@@ -967,6 +983,7 @@ Command group for OrgMode. Open it with either =C-c o= or =Super o=.
 _a_: open agenda
 _A_: archive item
 _c_: capture
+_C_: clock
 _f_: refile item
 _F_: find org file
 _l_: copy link
@@ -976,6 +993,7 @@ _t_: add tags
   ("a" org-agenda)
   ("A" archive)
   ("c" helm-org-capture-templates)
+  ("C" my/hydra-org-clock/body)
   ("f" org-refile)
   ("F" org-iswitchb)
   ("l" org-store-link)
@@ -1643,14 +1661,20 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-default-notes-file my/file-notes
           org-export-backends '(ascii html md)
           org-log-done t
-          org-blank-before-new-entry '((heading . nil)
+          org-blank-before-new-entry '((heading . t)
                                        (plain-list-item . nil))
-          org-todo-keywords '()
-          org-capture-templates '(("t" "Task" entry
-                                   (file+headline org-default-notes-file "Tasks")
-                                   "* TODO %? %i\n%a\n\n")
-                                  ("j" "Journal" entry (file+datetree "~/dev/org/journal.org")
-                                   "* %?\nEntered on %U\n  %i\n  %a"))
+          org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+                              (sequence "ISSUE(i@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
+          org-todo-keyword-faces '(("TODO" :foreground "dodger blue" :weight bold)
+                                   ("NEXT" :foreground "dodger blue" :weight bold)
+                                   ("DONE" :foreground "green" :weight bold)
+                                   ("WAITING" :foreground "yellow" :weight bold)
+                                   ("HOLD" :foreground "orange" :weight bold)
+                                   ("CANCELLED" :foreground "red" :weight bold)
+                                   ("ISSUE" :foreground "yellow" :weight bold)
+                                   ("BUG" :foreground "red" :weight bold)
+                                   ("FIXED" :foreground "green" :weight bold))
           org-tag-alist '((:startgroup . nil)
                           ("work" . ?w)
                           ("home" . ?h)
@@ -1667,8 +1691,23 @@ Org mode is for taking notes, planning projects, and authoring documents.
                           ("research" :foreground "orange")
                           ("buy" :foreground "dodger blue")
                           ("idea" :foreground "yellow"))
+          org-todo-state-tags-triggers '(("CANCELLED" ("CANCELLED" . t))
+                                         ("WAITING" ("WAITING" . t))
+                                         ("HOLD" ("WAITING") ("HOLD" . t))
+                                         (done ("WAITING") ("HOLD"))
+                                         ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                                         ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                                         ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
+          org-capture-templates '(("t" "Task" entry
+                                   (file+headline org-default-notes-file "Tasks")
+                                   "* TODO %? %i\n%a\n\n")
+                                  ("j" "Journal" entry (file+datetree "~/dev/org/journal.org")
+                                   "* %?\nEntered on %U\n  %i\n  %a"))
           org-refile-targets '((nil :maxlevel . 2)
                                (org-agenda-files :maxlevel . 2))
+          org-treat-S-cursor-todo-selection-as-state-change nil
+          org-use-fast-todo-selection
+          org-use-fast-tag-selection
           org-outline-path-complete-in-steps nil
           org-refile-use-outline-path t
           org-startup-indented t
