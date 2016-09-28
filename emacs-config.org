@@ -175,7 +175,7 @@ configuration.
 - =my/file-notes= :: The file to write our notes in, that is loaded on startup.
 
   #+BEGIN_SRC emacs-lisp
-  (defvar my/file-notes (concat my/dir-org "notes.org"))
+  (defvar my/file-notes (concat my/dir-org "refile.org"))
   #+END_SRC
 
 - =my/file-sbcl-core= :: The compiled SBCL core image to use.
@@ -333,6 +333,20 @@ configuration.
     (setq gc-cons-threshold most-positive-fixnum))
   #+END_SRC
 
+- =my/org-remove-empty-logbook= :: Remove an empty logbook drawer after clocking
+     out a task. This is needed because we remove tasks that took 0 minutes,
+     sometimes leaving behind an empty drawer.
+
+  Credit: [[http://doc.norang.ca/org-mode.html][norang]]
+
+  #+BEGIN_SRC emacs-lisp
+(defun my/org-remove-empty-logbook ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line 0)
+    (org-remove-empty-drawer-at "LOGBOOK" (point))))
+  #+END_SRC
+
 *** User customization
 
 Use a separate =custom.el= file for Emacs =customize= to write to.
@@ -419,6 +433,12 @@ configuration is done loading.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook (lambda () (setq file-name-handler-alist my/file-name-handler-alist)))
+#+END_SRC
+
+Remove any empty OrgMode logbook drawers after clocking out a task.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-clock-out-hook 'my/org-remove-empty-logbook 'append)
 #+END_SRC
 
 *** Create directories
@@ -1309,7 +1329,6 @@ Manage window layouts.
         eyebrowse-keymap-prefix (kbd "C-c M-e"))
   :config (eyebrowse-mode t))
 #+END_SRC
-
 *** Files and buffers
 
 Track recent files that have been opened.
@@ -1654,15 +1673,30 @@ Org mode is for taking notes, planning projects, and authoring documents.
   :after windmove
   :config
   (progn
+    (org-clock-persistence-insinuate)
     (setq org-modules '(org-habit
                         org-mouse)
           org-directory my/dir-org
-          org-agenda-files (list my/dir-org)
+          org-agenda-files (list (concat my/dir-org "personal")
+                                 (concat my/dir-org "code"))
           org-default-notes-file my/file-notes
           org-export-backends '(ascii html md)
+          org-catch-invisible-edits 'show-and-error
           org-log-done t
+          org-log-into-drawer t
+          org-clock-into-drawer t
+          org-clock-out-remove-zero-time-clocks t
+          org-clock-out-when-done t
+          org-clock-persist t
+          org-clock-persist-query-resume nil
+          org-tags-column 82
+          org-agenda-tags-column 100
+          org-agenda-text-search-extra-files 'agenda-files
+          org-agenda-start-on-weekday 1
+          org-cycle-separator-lines 0
+          org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
           org-blank-before-new-entry '((heading . t)
-                                       (plain-list-item . nil))
+                                       (plain-list-item . auto))
           org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
                               (sequence "ISSUE(i@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
@@ -1683,14 +1717,16 @@ Org mode is for taking notes, planning projects, and authoring documents.
                           ("dev" . ?d)
                           ("research" . ?r)
                           ("buy" . ?b)
-                          ("idea" . ?i))
+                          ("idea" . ?i)
+                          ("note" . ?n))
           org-tag-faces '(("work" :foreground "green")
-                          ("home" :foreground "blue")
-                          ("computer" :foreground "red")
-                          ("dev" :foreground "yellow green")
-                          ("research" :foreground "orange")
+                          ("home" :foreground "dodger blue")
+                          ("computer" :foreground "dodger blue")
+                          ("dev" :foreground "tomato")
+                          ("research" :foreground "dodger blue")
                           ("buy" :foreground "dodger blue")
-                          ("idea" :foreground "yellow"))
+                          ("idea" :foreground "dodger blue")
+                          ("note" :foreground "dodger blue"))
           org-todo-state-tags-triggers '(("CANCELLED" ("CANCELLED" . t))
                                          ("WAITING" ("WAITING" . t))
                                          ("HOLD" ("WAITING") ("HOLD" . t))
@@ -1698,20 +1734,31 @@ Org mode is for taking notes, planning projects, and authoring documents.
                                          ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
                                          ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
                                          ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
-          org-capture-templates '(("t" "Task" entry
-                                   (file+headline org-default-notes-file "Tasks")
-                                   "* TODO %? %i\n%a\n\n")
-                                  ("j" "Journal" entry (file+datetree "~/dev/org/journal.org")
-                                   "* %?\nEntered on %U\n  %i\n  %a"))
-          org-refile-targets '((nil :maxlevel . 2)
-                               (org-agenda-files :maxlevel . 2))
+          org-capture-templates '(("ta" "Task" entry (file org-default-notes-file)
+                                   "* TODO %?\n%U\n%a\n")
+                                  ("jo" "Journal" entry (file+datetree "~/dev/org/journal.org")
+                                   "* %?\n%U\n")
+                                  ("nd" "Dev Note" entry (file org-default-notes-file)
+                                   "* %? :note:dev:\n%U\n")
+                                  ("ndl" "Dev Note (with link)" entry (file org-default-notes-file)
+                                   "* %? :note:dev:\n%U\n%a\n"))
+          org-refile-targets '((nil :maxlevel . 5)
+                               (org-agenda-files :maxlevel . 5))
+          org-agenda-dim-blocked-tasks nil
+          org-agenda-compact-blocks t
+          org-agenda-custom-commands '(("N" "Notes" tags "NOTE"
+                                        ((org-agenda-overriding-header "Notes")
+                                         (org-tags-match-list-sublevels t)))
+                                       ("R" "Refile" tags "REFILE"
+                                        ((org-agenda-overriding-header "To be refiled")
+                                         (org-tags-match-list-sublevels nil))))
           org-treat-S-cursor-todo-selection-as-state-change nil
-          org-use-fast-todo-selection
-          org-use-fast-tag-selection
+          org-use-fast-todo-selection t
+          org-use-fast-tag-selection t
           org-outline-path-complete-in-steps nil
           org-refile-use-outline-path t
           org-startup-indented t
-          org-cycle-include-plain-lists 'integrate
+          org-cycle-include-plain-lists t
           org-ellipsis " […]"
           org-return-follows-link t
           org-src-fontify-natively t
@@ -1719,6 +1766,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-hide-emphasis-markers t
           org-src-preserve-indentation t
           org-enforce-todo-dependencies t
+          org-startup-folded t
           org-enforce-todo-checkbox-dependencies t)
     (add-hook 'org-shiftup-final-hook 'windmove-up)
     (add-hook 'org-shiftdown-final-hook 'windmove-down)
