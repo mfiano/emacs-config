@@ -1688,6 +1688,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-clock-out-remove-zero-time-clocks t
           org-clock-out-when-done t
           org-clock-persist t
+          org-clock-persist-file (concat my/dir-etc "org-clock-save.el")
           org-clock-persist-query-resume nil
           org-tags-column 82
           org-agenda-tags-column 100
@@ -1789,13 +1790,6 @@ Use fancy UTF-8 bullet characters in Org mode.
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
   :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
-
-Completion for Org mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-ac
-  :config (org-ac/config-default))
 #+END_SRC
 
 *** Web development
