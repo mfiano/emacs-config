@@ -1162,6 +1162,7 @@ Emacs sessions.
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
+  :demand t
   :bind  (("C-z" . undo-tree-undo)
           ("C-S-z" . undo-tree-redo))
   :init
@@ -1170,10 +1171,10 @@ Emacs sessions.
     (setq undo-tree-auto-save-history t
           undo-tree-history-directory-alist `(("." . ,undo-dir))
           undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-diff t)
-    (global-undo-tree-mode))
+          undo-tree-visualizer-diff t))
   :config
   (progn
+    (global-undo-tree-mode)
     (defadvice undo-tree-make-history-save-file-name (after undo-tree activate)
       (setq ad-return-value (concat ad-return-value ".gz")))
     (add-hook 'write-file-functions 'undo-tree-save-history-hook)
