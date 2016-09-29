@@ -347,6 +347,18 @@ configuration.
     (org-remove-empty-drawer-at "LOGBOOK" (point))))
   #+END_SRC
 
+- =my/get-url-title= :: Get the title of the given URL, or if none given, the URL
+     stored in the X clipboard.
+
+  #+BEGIN_SRC emacs-lisp
+(defun my/get-url-title (&optional url)
+  (let ((url (or url (gui-get-selection 'CLIPBOARD))))
+    (with-current-buffer (url-retrieve-synchronously url)
+      (goto-char 0)
+      (re-search-forward "<title>\\(.*\\)<[/]title>" nil t 1)
+      (match-string 1))))
+  #+END_SRC
+
 *** User customization
 
 Use a separate =custom.el= file for Emacs =customize= to write to.
@@ -1696,7 +1708,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-agenda-start-on-weekday 1
           org-cycle-separator-lines 0
           org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-          org-blank-before-new-entry '((heading . t)
+          org-blank-before-new-entry '((heading . nil)
                                        (plain-list-item . auto))
           org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
@@ -1716,6 +1728,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
                           (:endgroup . nil)
                           ("computer" . ?c)
                           ("dev" . ?d)
+                          ("gamedev" . ?g)
                           ("research" . ?r)
                           ("buy" . ?b)
                           ("idea" . ?i)
@@ -1724,6 +1737,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
                           ("home" :foreground "dodger blue")
                           ("computer" :foreground "dodger blue")
                           ("dev" :foreground "tomato")
+                          ("gamedev" :foreground "tomato")
                           ("research" :foreground "dodger blue")
                           ("buy" :foreground "dodger blue")
                           ("idea" :foreground "dodger blue")
@@ -1735,14 +1749,16 @@ Org mode is for taking notes, planning projects, and authoring documents.
                                          ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
                                          ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
                                          ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
-          org-capture-templates '(("ta" "Task" entry (file org-default-notes-file)
-                                   "* TODO %?\n%U\n%a\n")
-                                  ("jo" "Journal" entry (file+datetree "~/dev/org/journal.org")
+          org-capture-templates '(("t" "Task" entry (file org-default-notes-file)
+                                   "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")
+                                  ("b" "Bookmark" entry (file+headline "~/dev/org/personal/computer.org" "Bookmarks")
+                                   "* [[%x][%(my/get-url-title)]] %^g\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                                  ("j" "Journal" entry (file+datetree "~/dev/org/personal/journal.org")
                                    "* %?\n%U\n")
-                                  ("nd" "Dev Note" entry (file org-default-notes-file)
-                                   "* %? :note:dev:\n%U\n")
-                                  ("ndl" "Dev Note (with link)" entry (file org-default-notes-file)
-                                   "* %? :note:dev:\n%U\n%a\n"))
+                                  ("n" "Note" entry (file org-default-notes-file)
+                                   "* %? :note:\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                                  ("d" "Dev Note" entry (file org-default-notes-file)
+                                   "* %? :note:dev:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%a\n"))
           org-refile-targets '((nil :maxlevel . 5)
                                (org-agenda-files :maxlevel . 5))
           org-agenda-dim-blocked-tasks nil
