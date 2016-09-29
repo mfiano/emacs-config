@@ -1936,6 +1936,7 @@ A Common Lisp IDE.
     (setq sly-lisp-implementations
           `((sbcl ("sbcl" "--core" ,my/file-sbcl-core)
                   :env (,(concat "SBCL_HOME=" my/dir-sbcl))))
+          sly-mrepl-history-file-name (concat my/dir-etc "sly-repl-history")
           sly-autodoc-use-multiline t
           sly-complete-symbol*-fancy t
           sly-complete-symbol-function 'sly-flex-complete-symbol
