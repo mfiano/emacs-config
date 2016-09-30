@@ -1097,6 +1097,14 @@ A calendar.
   :config (setq calendar-week-start-day 1))
 #+END_SRC
 
+URLs
+
+#+BEGIN_SRC emacs-lisp
+(use-package url
+  :ensure nil
+  :config (setq url-cookie-file (concat my/dir-etc "url-cookies")))
+#+END_SRC
+
 Turn URLs into highlighted and clickable links.
 
 #+BEGIN_SRC emacs-lisp
