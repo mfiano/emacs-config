@@ -286,21 +286,6 @@ configuration.
         (insert-for-yank primary))))
   #+END_SRC
 
-- =my/make-dirs-on-save= :: When saving a buffer, create the file's parent
-     directories if they do not exist.
-
-     Credit: [[https://github.com/hrs/sensible-defaults.el][sensible-defaults]]
-  #+BEGIN_SRC emacs-lisp
-  (defun my/make-dirs-on-save ()
-    (add-hook 'before-save-hook
-              (lambda ()
-                (when buffer-file-name
-                  (let ((dir (file-name-directory buffer-file-name)))
-                    (when (and (not (file-exists-p dir))
-                               (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
-                      (make-directory dir t)))))))
-  #+END_SRC
-
 - =my/set-default-font= :: If the specified font exists, set it as the default
      font for all frames.
   #+BEGIN_SRC emacs-lisp
@@ -325,20 +310,6 @@ configuration.
   #+BEGIN_SRC emacs-lisp
   (defun my/set-gc-max ()
     (setq gc-cons-threshold most-positive-fixnum))
-  #+END_SRC
-
-- =my/org-remove-empty-logbook= :: Remove an empty logbook drawer after clocking
-     out a task. This is needed because we remove tasks that took 0 minutes,
-     sometimes leaving behind an empty drawer.
-
-  Credit: [[http://doc.norang.ca/org-mode.html][norang]]
-
-  #+BEGIN_SRC emacs-lisp
-(defun my/org-remove-empty-logbook ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line 0)
-    (org-remove-empty-drawer-at "LOGBOOK" (point))))
   #+END_SRC
 
 - =my/get-url-title= :: Get the title of the given URL, or if none given, the URL
@@ -439,12 +410,6 @@ configuration is done loading.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook (lambda () (setq file-name-handler-alist my/file-name-handler-alist)))
-#+END_SRC
-
-Remove any empty OrgMode logbook drawers after clocking out a task.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-clock-out-hook 'my/org-remove-empty-logbook 'append)
 #+END_SRC
 
 *** Create directories
