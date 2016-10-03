@@ -1933,10 +1933,7 @@ A Common Lisp IDE.
           sly-repl-history-remove-duplicates t
           sly-repl-history-trim-whitespaces t
           sly-net-coding-system 'utf-8-unix)
-    (sly-setup '(sly-fancy))
-    (add-hook 'sly-mode-hook (lambda ()
-                               (unless (sly-connected-p)
-                                 (save-excursion (sly)))))))
+    (sly-setup '(sly-fancy))))
 #+END_SRC
 
 Expand Common Lisp macros in the buffer.
