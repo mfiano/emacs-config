@@ -1674,7 +1674,9 @@ Org mode is for taking notes, planning projects, and authoring documents.
   (mapcan
    (lambda (dir)
      (remove-if
-      'file-symlink-p
+      (lambda (path)
+        (or (string-match-p "\\.emacs.d/src/" path)
+            (file-symlink-p path)))
       (directory-files-recursively dir "\.org$")))
    my/org-directories))
 
@@ -1766,7 +1768,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
                                   ("d" "Dev Note" entry (file org-default-notes-file)
                                    "* %? :note:dev:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%a\n"))
           org-refile-targets '((nil :maxlevel . 5)
-                               (org-agenda-files :maxlevel . 5))
+                               (my/org-all-files-and-buffers :maxlevel . 5))
           org-agenda-dim-blocked-tasks nil
           org-agenda-compact-blocks t
           org-agenda-custom-commands '(("N" "Notes" tags "NOTE"
