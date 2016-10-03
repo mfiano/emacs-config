@@ -992,22 +992,6 @@ Command group for git functions. Open it with either =C-c g= or =Super g=.
 Command group for OrgMode. Open it with either =C-c o= or =Super o=.
 
 #+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-org-clock (:exit t :hint nil)
-  "
-^OrgMode: Clocking^
-^^------------------------------------------------------
-_i_: clock in
-_o_: clock out
-_t_: go to currently clocked in task
-_v_: view time summary of current buffer (C-c to remove)
-_C_: cancel clock
-"
-  ("i" org-clock-in)
-  ("o" org-clock-out)
-  ("t" org-clock-goto)
-  ("v" org-clock-display)
-  ("C" org-clock-cancel))
-
 (defhydra my/hydra-org (:exit t :hint nil)
   "
 ^OrgMode^
@@ -1015,7 +999,6 @@ _C_: cancel clock
 _a_: open agenda
 _A_: archive item
 _c_: capture
-_C_: clock
 _f_: refile item
 _F_: find org file
 _l_: copy link
@@ -1025,9 +1008,8 @@ _t_: add tags
   ("a" org-agenda)
   ("A" archive)
   ("c" helm-org-capture-templates)
-  ("C" my/hydra-org-clock/body)
   ("f" org-refile)
-  ("F" org-iswitchb)
+  ("F" my/helm-org-all-files-and-buffers)
   ("l" org-store-link)
   ("L" org-insert-link)
   ("t" org-set-tags-command))
