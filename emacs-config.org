@@ -124,12 +124,6 @@ configuration.
   (defvar my/dir-backups (concat my/dir-etc "backups"))
   #+END_SRC
 
-- =my/dir-org= :: The directory to store Org documents.
-
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/dir-org (file-name-as-directory "~/dev/org"))
-  #+END_SRC
-
 - =my/dir-sbcl= :: The path to the SBCL installation.
 
   #+BEGIN_SRC emacs-lisp
@@ -175,7 +169,7 @@ configuration.
 - =my/file-notes= :: The file to write our notes in, that is loaded on startup.
 
   #+BEGIN_SRC emacs-lisp
-  (defvar my/file-notes (concat my/dir-org "refile.org"))
+(defvar my/file-notes "~/dev/org/refile.org")
   #+END_SRC
 
 - =my/file-sbcl-core= :: The compiled SBCL core image to use.
@@ -1671,11 +1665,25 @@ Allow creating GitHub gists from regions/buffers.
 Org mode is for taking notes, planning projects, and authoring documents.
 
 #+BEGIN_SRC emacs-lisp
+(defvar my/org-directories
+  (list user-emacs-directory
+        (concat my/dir-home "dev")
+        (concat my/dir-home "docs")))
+
+(defun my/org-all-files ()
+  (mapcan
+   (lambda (dir)
+     (remove-if
+      'file-symlink-p
+      (directory-files-recursively dir "\.org$")))
+   my/org-directories))
+
+(defun my/org-all-buffers ()
+  (mapcar 'buffer-file-name (org-buffer-list 'files)))
+
 (defun my/org-all-files-and-buffers ()
-  (let ((files (remove-if
-                'file-symlink-p
-                (directory-files-recursively my/dir-org "\.org$")))
-        (buffers (mapcar 'buffer-file-name (org-buffer-list 'files)))
+  (let ((files (my/org-all-files))
+        (buffers (my/org-all-buffers))
         (results))
     (dolist (item (append buffers files))
       (add-to-list 'results item))
@@ -1694,10 +1702,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
   :after windmove
   :config
   (progn
-    (setq org-modules '(org-habit
-                        org-mouse)
-          org-directory my/dir-org
-          org-agenda-files (my/org-all-files-and-buffers)
+    (setq org-agenda-files (my/org-all-files-and-buffers)
           org-default-notes-file my/file-notes
           org-export-backends '(ascii html md)
           org-catch-invisible-edits 'show-and-error
