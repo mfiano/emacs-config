@@ -247,15 +247,6 @@ configuration.
              (line-beginning-position 2)))))
   #+END_SRC
 
-- =my/kill-buffer= :: Delete the chosen buffer from a list, defaulting to the
-                    current buffer.
-
-  #+BEGIN_SRC emacs-lisp
-  (defun my/kill-buffer ()
-    (interactive)
-    (kill-buffer (current-buffer)))
-  #+END_SRC
-
 - =my/smarter-move-beginning-of-line= :: Move to the first non-whitespace character
      of a line, or if already there, to the beginning of the line.
 
