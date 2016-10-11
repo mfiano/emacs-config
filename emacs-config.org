@@ -459,10 +459,7 @@ Sensible options for buffers.
 Open our OrgMode notes file at startup.
 
 #+BEGIN_SRC emacs-lisp
-(setq remember-data-file my/file-notes
-      remember-notes-buffer-name (file-name-nondirectory my/file-notes)
-      remember-notes-initial-major-mode 'org-mode
-      initial-buffer-choice 'remember-notes)
+(setq initial-buffer-choice my/file-notes)
 #+END_SRC
 
 Sensible options for files.
