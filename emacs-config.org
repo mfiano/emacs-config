@@ -621,7 +621,7 @@ backing up the currently installed packages.
 To backup the packages, we can do so manually in the shell:
 
 #+BEGIN_SRC sh :tangle no
-mv ~/.emacs.d/elpa ~/.emacs.d/elpa.bak
+mv ~/.emacs.d/src ~/.emacs.d/src.bak
 #+END_SRC
 
 *** Basic
