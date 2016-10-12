@@ -1,4 +1,4 @@
-(defvar my/emacs-config-org-file "emacs-config.org")
+(defvar my/emacs-config-org-file "config.org")
 (defvar my/emacs-config-minimum-version "25.1")
 
 (defun my/emacs-config-load ()

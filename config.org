@@ -1,9 +1,13 @@
 #+TITLE: Emacs Configuration
-#+OPTIONS: ':t email:t num:nil p:nil pri:nil stat:nil tags:nil tasks:nil
+#+AUTHOR: Michael Fiano
 #+PROPERTY: header-args :tangle yes
-#+MACRO: min-version 25.1
 
 * Introduction
+
+This is my Emacs configuration written in OrgMode. It attempts to keep my Emacs
+directory clean, and document the choices I made. It can safely be re-used by
+others as a starting point if they choose to, by following the installation
+instructions below.
 
 ** Personal Background
 
@@ -20,75 +24,59 @@ far from being a master of the editor, probably due to the fact of giving it a
 chance so late, and also because as some would say, it is not an editor - it
 just has one included.
 
-** Purpose
+** What To Expect
 
 As mentioned, I am somewhat of an Emacs beginner, and as such, this
 configuration serves a few purposes:
 
-1) It attempts to document the features that fit my workflow, so that I can
-   remember why I made the choices that I did.
-2) It attempts to format my configuration in a human-readable form, with
-   explanations for all the choices I make to perhaps benefit other
-   newcomers to the editor.
-3) It presents my configuration to the excellent community, with a
-   possibility that I may get some feedback on how to improve it, and thus
-   learning even more.
+1) Attempt to document the features that fit my workflow, so that I can remember
+   why, and others can learn the reasoning behind the choices that I have made.
+2) Present my configuration to the excellent community, with a possibility that
+   I may get some feedback on how to improve it, and thus learning even more.
+3) Portability - do not hard-code any potentially non-existent filesystem paths,
+   operating system-specific settings, or personal details that would prevent it
+   from operating correctly for another user.
 
-** What To Expect
+Additionally you can expect the following from this configuration:
 
-You can expect the following from this Emacs configuration:
-
-- Human-readable :: Presented in an org-mode format, with every option explained
-                    why it was chosen. _This is my primary goal; If something is
-                    unclear, please file an issue._ Note, that this is an ongoing
-                    attempt and probably far from ideal. Though, I don't indend
-                    to reinvent =C-h= either.
-- Clean code :: Most configuration is organized into separate top-level
-                blocks, utilizing the [[https://github.com/jwiegley/use-package][=use-package=]] macro. Similar
-                functionality is not littered throughout the entire
-                configuration, but organized into logical groups.
-- Language support :: Emphasis on Common Lisp development, as that is where
-     I spend most of my time. There is minimal support for other languages
-     and major modes.
-- Designed for GUI :: This configuration is designed to work well using Emacs
-     started with a graphical frame. This is mostly due to the choice of key
-     bindings, particularly using the Super/Hyper keys which do not work
-     correctly in a terminal.
-
-** Requirements
-
-This configuration requires:
-
-- Emacs *{{{min-version}}}* or above.
-- [recommended] Emacs started with a graphical frame.
-- [recommended] The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
+- Human-readable :: Presented in a plain-text OrgMode format, allowing for a
+                    clean design with clear documentation.
+- Clean :: Separation of concerns into dedicated document sections, with
+           packages having a single top-level form.
+- Languages :: Emphasis on support for Common Lisp and OrgMode.
+- Graphical :: Designed to look and function nice in a graphical frame.
+- Keys :: Each custom command is prefixed with either =Super= or =C-c= for maximum
+          portability.
 
 ** Installation
 
-To use this configuration, first backup your existing configuration:
+Note: These installation instructions assume a UNIX-style operating system, but
+should work anywhere Emacs is supported if you adapt them.
+
+To use this configuration, first make sure you meet the requirements:
+
+- Emacs *25.1* or above.
+- (recommended) Ability to start in a graphical frame.
+- (recommended) The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
+
+First, backup your existing configuration if one exists:
 
 #+BEGIN_SRC sh :tangle no
+mv ~/.emacs ~/.emacs.bak
 mv ~/.emacs.d ~/.emacs.d.bak
 #+END_SRC
 
 Then, clone this repository to your configuration directory:
 
 #+BEGIN_SRC sh :tangle no
-mkdir -p ~/.emacs.d
-cd ~/.emacs.d
-git clone https://github.com/mfiano/emacs-config.git
+mkdir -pv ~/.emacs.d
+git clone https://github.com/mfiano/emacs-config.git ~/.emacs.d
 #+END_SRC
 
-Finally, add the following line to =~/.emacs.d/init.el=, creating the file if it
-does not exist.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(load-file "/path/to/emacs-config/bootstrap.el")
-#+END_SRC
-
-Note: You can place sensitive information in the file =~/.emacs.d/private.el=. It
-will be loaded if it exists. It is recommended to set variables here for your
-name, email address, passwords for various services, etc.
+Note: You can place sensitive information in the file =~/.emacs.d/private.el=.
+This file will be loaded if it exists. It is recommended to set variables here
+for your name, email address, passwords for various services, and anything else
+you wish to remain private.
 
 * Configuration
 
@@ -242,7 +230,6 @@ passwords, etc. We will load an external file, =private.el= if it exists.
   (when (file-exists-p private-file)
     (load-file private-file)))
 #+END_SRC
-
 
 ** Basics
 
@@ -1478,6 +1465,89 @@ Allow creating GitHub gists from regions/buffers.
 #+END_SRC
 
 *** Applications
+Email client.
+
+#+BEGIN_SRC emacs-lisp
+(defun my/notmuch-select-address (prompt collection initial-input)
+  (completing-read
+   prompt
+   (cons initial-input collection)
+   nil
+   t
+   nil
+   'notmuch-address-history))
+
+(defun my/notmuch-show-mode-delete ()
+  (interactive)
+  (notmuch-show-tag (list "+deleted" "-inbox")))
+
+(defun my/notmuch-search-mode-delete ()
+  (interactive)
+  (notmuch-search-tag (list "+deleted" "-inbox"))
+  (next-line))
+
+(defun my/notmuch-show-subject-tabs-to-spaces ()
+  (goto-char (point-min))
+  (when (re-search-forward "^Subject:" nil t)
+    (while (re-search-forward "\t" (line-end-position) t)
+      (replace-match " " nil nil))))
+
+(defun my/notmuch-show-header-tabs-to-spaces ()
+  (setq header-line-format
+        (notmuch-show-strip-re
+         (replace-regexp-in-string "\t" " " (notmuch-show-get-subject)))))
+
+(use-package notmuch
+  :bind
+  (:map notmuch-show-mode-map
+   ("r" . notmuch-show-reply)
+   ("R" . notmuch-show-reply-sender)
+   ("D" . my/notmuch-show-mode-delete)
+   :map notmuch-search-mode-map
+   ("r" . notmuch-search-reply-to-thread)
+   ("R" . notmuch-search-reply-to-thread-sender)
+   ("D" . my/notmuch-search-mode-delete))
+  :config
+  (progn
+    (setq mail-user-agent 'message-user-agent
+          mail-specify-envelope-from t
+          smtpmail-smtp-server "smtp.gmail.com"
+          message-send-mail-function 'message-send-mail-with-sendmail
+          message-kill-buffer-on-exit t
+          message-kill-buffer-query nil
+          message-signature "Thank you,\nMichael Fiano\nAxTek Services\n518-444-2166\n"
+          sendmail-program "/usr/bin/msmtp"
+          notmuch-fcc-dirs nil
+          notmuch-archive-tags '("-inbox" "-unread" "+archive")
+          notmuch-search-oldest-first nil
+          notmuch-address-command "notmuch-addrlookup"
+          notmuch-address-selection-function 'my/notmuch-select-address
+          notmuch-saved-searches '((:name "all" :key "a" :query "*" :sort-order newest-first)
+                                   (:name "inbox" :key "h" :query "tag:inbox or tag:unread")
+                                   (:name "sent" :key "s" :query "tag:sent")
+                                   (:name "buy" :key "b" :query "tag:buy")
+                                   (:name "work" :key "w" :query "tag:work")
+                                   (:name "lists" :key "l" :query "tag:lists")))
+    (defadvice notmuch-mua-reply (around notmuch-fix-sender)
+      (let ((sender "Michael Fiano <michael.fiano@gmail.com>"))
+        ad-do-it))
+    (ad-activate 'notmuch-mua-reply)
+    (add-hook 'notmuch-hello-refresh-hook
+              (lambda ()
+                (if (and (eq (point) (point-min))
+                         (search-forward "Saved searches:" nil t))
+                    (progn
+                      (forward-line)
+                      (widget-forward 1))
+                  (if (eq (widget-type (widget-at)) 'editable-field)
+                      (beginning-of-line)))))
+    (add-hook 'message-header-setup-hook (lambda () (insert (format "Bcc: %s <%s>\n"
+                                                                    (notmuch-user-name)
+                                                                    (notmuch-user-primary-email)))))
+    (add-hook 'notmuch-show-markup-headers-hook 'my/notmuch-show-subject-tabs-to-spaces)
+    (add-hook 'notmuch-show-hook 'my/notmuch-show-header-tabs-to-spaces)))
+#+END_SRC
+
 *** Org mode
 
 Org mode is for taking notes, planning projects, and authoring documents.
