@@ -61,7 +61,7 @@ This configuration requires:
 
 - Emacs *{{{min-version}}}* or above.
 - [recommended] Emacs started with a graphical frame.
-- [optional] The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
+- [recommended] The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
 
 ** Installation
 
