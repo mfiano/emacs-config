@@ -103,7 +103,7 @@ configuration.
 The user's home directory.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/dir-home (file-name-as-directory (getenv "HOME")))
+(defvar my/dir-home (file-name-as-directory (expand-file-name "~")))
 #+END_SRC
 
 **** my/dir-etc
