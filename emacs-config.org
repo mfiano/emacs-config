@@ -106,208 +106,225 @@ name, email address, passwords for various services, etc.
 These custom variables are defined early, to be used throughout the
 configuration.
 
-- =my/dir-home= :: The user's home directory.
+**** =my/dir-home=
+The user's home directory.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/dir-home (file-name-as-directory (getenv "HOME")))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/dir-home (file-name-as-directory (getenv "HOME")))
+#+END_SRC
 
-- =my/dir-etc= :: The directory to store miscellaneous configuration files.
+**** =my/dir-etc=
+The directory to store miscellaneous configuration files.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/dir-etc (concat user-emacs-directory (file-name-as-directory "etc")))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/dir-etc (concat user-emacs-directory (file-name-as-directory "etc")))
+#+END_SRC
 
-- =my/dir-backups= :: The directory to store backup files.
+**** =my/dir-backups=
+The directory to store backup files.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/dir-backups (concat my/dir-etc "backups"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/dir-backups (concat my/dir-etc "backups"))
+#+END_SRC
 
-- =my/file-private= :: The file to read private Emacs configuration options from.
+**** =my/file-private=
+The file to read private Emacs configuration options from.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-private (concat user-emacs-directory "private.el"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-private (concat user-emacs-directory "private.el"))
+#+END_SRC
 
-- =my/file-recent= :: The file to write recently visited files to.
+**** =my/file-recent=
+The file to write recently visited files to.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-recent (concat my/dir-etc "recent"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-recent (concat my/dir-etc "recent"))
+#+END_SRC
 
-- =my/file-bookmarks= :: The file to write bookmarks to.
+**** =my/file-bookmarks=
+The file to write bookmarks to.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-bookmarks (concat my/dir-etc "bookmarks"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-bookmarks (concat my/dir-etc "bookmarks"))
+#+END_SRC
 
-- =my/file-savehist= :: The file to write saved history to.
+**** =my/file-savehist=
+The file to write saved history to.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-history (concat my/dir-etc "history"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-history (concat my/dir-etc "history"))
+#+END_SRC
 
-- =my/file-save-place= :: The file to write remembered buffer places to.
+**** =my/file-save-place=
+The file to write remembered buffer places to.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-save-place (concat my/dir-etc "places"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-save-place (concat my/dir-etc "places"))
+#+END_SRC
 
-- =my/file-custom= :: The file to write Emacs =customize= options to.
+**** =my/file-custom=
+The file to write Emacs =customize= options to.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-custom (concat user-emacs-directory "custom.el"))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-custom (concat user-emacs-directory "custom.el"))
+#+END_SRC
 
-- =my/file-notes= :: The file to write our notes in, that is loaded on startup.
+**** =my/file-notes=
+The file to write our notes in, that is loaded on startup.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defvar my/file-notes "~/dev/org/refile.org")
-  #+END_SRC
+#+END_SRC
 
-- =my/file-sbcl-core= :: If non-nil, the path to the SBCL core image to use.
+**** =my/file-sbcl-core=
+If non-nil, the path to the SBCL core image to use.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-sbcl-core nil)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-sbcl-core nil)
+#+END_SRC
 
-- =my/gc-mb= :: The number of megabytes allocated before garbage collection
-              occurs.
+**** =my/gc-mb=
+The number of megabytes allocated before garbage collection occurs.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/gc-mb 10)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/gc-mb 10)
+#+END_SRC
 
-- =my/file-name-handler-alist= :: Backup the default value of
-     =file-name-handler-alist=, so we can temporarily clear it during the loading
-     of this Emacs configuration for an improved startup speed.
+**** =my/file-name-handler-alist=
+Backup the default value of =file-name-handler-alist=, so we can temporarily clear
+it during the loading of this Emacs configuration for an improved startup speed.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-name-handler-alist file-name-handler-alist)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/file-name-handler-alist file-name-handler-alist)
+#+END_SRC
 
-- =my/color-background= :: A background color that suits the theme we are
-     currently using.
+**** =my/color-background=
+A background color that suits the theme we are currently using.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/color-background "#000")
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/color-background "#000")
+#+END_SRC
 
-- =my/color-foreground= :: A foreground color that suits the theme we are
-     currently using.
+**** =my/color-foreground=
+A foreground color that suits the theme we are currently using.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/color-foreground "#fff")
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/color-foreground "#fff")
+#+END_SRC
 
-- =my/color-dull= :: A dull color to use for drawing buffer details.
+**** =my/color-dull=
+A dull color to use for drawing buffer details.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/color-dull "#444")
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/color-dull "#444")
+#+END_SRC
 
-- =my/modes-text= :: A list of mode hooks for editing text.
+**** =my/modes-text=
+A list of mode hooks for editing text.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/modes-text '(text-mode-hook org-mode-hook))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/modes-text '(text-mode-hook org-mode-hook))
+#+END_SRC
 
-- =my/modes-lisp= :: A list of mode hooks for lisp code.
+**** =my/modes-lisp=
+A list of mode hooks for lisp code.
 
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/modes-lisp '(ielm-mode-hook
-                          lisp-mode-hook
-                          lisp-interaction-mode-hook
-                          sly-mrepl-mode-hook
-                          emacs-lisp-mode-hook
-                          eval-expression-minibuffer-setup-hook))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defvar my/modes-lisp '(ielm-mode-hook
+                        lisp-mode-hook
+                        lisp-interaction-mode-hook
+                        sly-mrepl-mode-hook
+                        emacs-lisp-mode-hook
+                        eval-expression-minibuffer-setup-hook))
+#+END_SRC
 
 *** Custom functions
 
 These custom functions are defined early, to be used throughout the
 configuration.
 
-- =kill-region= :: Advise =kill-region= to kill the line at point if no region
-                 is active.
+**** =kill-region=
+Advise =kill-region= to kill the line at point if no region is active.
 
-                 Credit: [[http://emacs-fu.blogspot.de/2009/11/copying-lines-without-selecting-them.html][djcb]]
-  #+BEGIN_SRC emacs-lisp
-  (defadvice kill-region (before slick-cut activate compile)
-    (interactive
-     (if mark-active (list (region-beginning) (region-end))
-       (list (line-beginning-position)
-             (line-beginning-position 2)))))
-  #+END_SRC
+Credit: [[http://emacs-fu.blogspot.de/2009/11/copying-lines-without-selecting-them.html][djcb]]
+#+BEGIN_SRC emacs-lisp
+(defadvice kill-region (before slick-cut activate compile)
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+#+END_SRC
 
-- =my/smarter-move-beginning-of-line= :: Move to the first non-whitespace character
-     of a line, or if already there, to the beginning of the line.
+**** =my/smarter-move-beginning-of-line=
+Move to the first non-whitespace character of a line, or if already there, to
+the beginning of the line.
 
-     Credit: [[http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/][Bozhidar]]
+Credit: [[http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/][Bozhidar]]
 
-  #+BEGIN_SRC emacs-lisp
-  (defun my/smarter-move-beginning-of-line (arg)
-    (interactive "^p")
-    (setq arg (or arg 1))
-    (when (/= arg 1)
-      (let ((line-move-visual nil))
-        (forward-line (1- arg))))
-    (let ((orig-point (point)))
-      (back-to-indentation)
-      (when (= orig-point (point))
-        (move-beginning-of-line 1))))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defun my/smarter-move-beginning-of-line (arg)
+  (interactive "^p")
+  (setq arg (or arg 1))
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+  (let ((orig-point (point)))
+    (back-to-indentation)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
+#+END_SRC
 
-- =my/yank-primary-selection= :: Paste the contents of the primary selection.
+**** =my/yank-primary-selection=
+Paste the contents of the primary selection.
 
-  #+BEGIN_SRC emacs-lisp
-  (defun my/yank-primary-selection ()
-    (interactive)
-    (let ((primary (or (x-get-selection-value)
-                       (x-get-selection))))
-      (when primary
-        (push-mark (point))
-        (insert-for-yank primary))))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defun my/yank-primary-selection ()
+  (interactive)
+  (let ((primary (or (x-get-selection-value)
+                     (x-get-selection))))
+    (when primary
+      (push-mark (point))
+      (insert-for-yank primary))))
+#+END_SRC
 
-- =my/set-default-font= :: If the specified font exists, set it as the default
-     font for all frames.
-  #+BEGIN_SRC emacs-lisp
-  (defun my/set-default-font (font-name size)
-    (when (member font-name (font-family-list))
-      (let ((font (format "%s %s" font-name size)))
-        (add-to-list 'default-frame-alist (cons 'font font)))))
-  #+END_SRC
+**** =my/set-default-font=
+If the specified font exists, set it as the default font for all frames.
+#+BEGIN_SRC emacs-lisp
+(defun my/set-default-font (font-name size)
+  (when (member font-name (font-family-list))
+    (let ((font (format "%s %s" font-name size)))
+      (add-to-list 'default-frame-alist (cons 'font font)))))
+#+END_SRC
 
-- =my/set-gc= :: Set the garbage collection threshold to the value in megabytes of
-               =my/gc-mb=.
+**** =my/set-gc=
+Set the garbage collection threshold to the value in megabytes of =my/gc-mb=.
 
-  #+BEGIN_SRC emacs-lisp
-  (defun my/set-gc ()
-    (setq gc-cons-threshold (* 1000 1000 my/gc-mb)))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defun my/set-gc ()
+  (setq gc-cons-threshold (* 1000 1000 my/gc-mb)))
+#+END_SRC
 
-- =my/set-gc-max= :: Set the garbage collection threshold to the maximum value.
-                   This is useful to temporarily decrease the rate of garbage
-                   collection.
+**** =my/set-gc-max=
+Set the garbage collection threshold to the maximum value. This is useful to
+temporarily decrease the rate of garbage collection.
 
-  #+BEGIN_SRC emacs-lisp
-  (defun my/set-gc-max ()
-    (setq gc-cons-threshold most-positive-fixnum))
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(defun my/set-gc-max ()
+  (setq gc-cons-threshold most-positive-fixnum))
+#+END_SRC
 
-- =my/get-url-title= :: Get the title of the given URL, or if none given, the URL
-     stored in the X clipboard.
+**** =my/get-url-title=
+Get the title of the given URL, or if none given, the URL stored in the X
+clipboard.
 
-  #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defun my/get-url-title (&optional url)
   (let ((url (or url (gui-get-selection 'CLIPBOARD))))
     (with-current-buffer (url-retrieve-synchronously url)
       (goto-char 0)
       (re-search-forward "<title>\\(.*\\)<[/]title>" nil t 1)
       (match-string 1))))
-  #+END_SRC
+#+END_SRC
 
 *** User customization
 
