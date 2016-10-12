@@ -106,127 +106,49 @@ name, email address, passwords for various services, etc.
 These custom variables are defined early, to be used throughout the
 configuration.
 
-**** =my/dir-home=
+**** my/dir-home
 The user's home directory.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/dir-home (file-name-as-directory (getenv "HOME")))
 #+END_SRC
 
-**** =my/dir-etc=
+**** my/dir-etc
 The directory to store miscellaneous configuration files.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/dir-etc (concat user-emacs-directory (file-name-as-directory "etc")))
 #+END_SRC
 
-**** =my/dir-backups=
+**** my/dir-backups
 The directory to store backup files.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/dir-backups (concat my/dir-etc "backups"))
 #+END_SRC
 
-**** =my/file-private=
-The file to read private Emacs configuration options from.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-private (concat user-emacs-directory "private.el"))
-#+END_SRC
-
-**** =my/file-recent=
-The file to write recently visited files to.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-recent (concat my/dir-etc "recent"))
-#+END_SRC
-
-**** =my/file-bookmarks=
-The file to write bookmarks to.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-bookmarks (concat my/dir-etc "bookmarks"))
-#+END_SRC
-
-**** =my/file-savehist=
-The file to write saved history to.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-history (concat my/dir-etc "history"))
-#+END_SRC
-
-**** =my/file-save-place=
-The file to write remembered buffer places to.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-save-place (concat my/dir-etc "places"))
-#+END_SRC
-
-**** =my/file-custom=
-The file to write Emacs =customize= options to.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-custom (concat user-emacs-directory "custom.el"))
-#+END_SRC
-
-**** =my/file-notes=
+**** my/file-notes
 The file to write our notes in, that is loaded on startup.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/file-notes "~/dev/org/refile.org")
 #+END_SRC
 
-**** =my/file-sbcl-core=
+**** my/file-sbcl-core
 If non-nil, the path to the SBCL core image to use.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/file-sbcl-core nil)
 #+END_SRC
 
-**** =my/gc-mb=
-The number of megabytes allocated before garbage collection occurs.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/gc-mb 10)
-#+END_SRC
-
-**** =my/file-name-handler-alist=
-Backup the default value of =file-name-handler-alist=, so we can temporarily clear
-it during the loading of this Emacs configuration for an improved startup speed.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/file-name-handler-alist file-name-handler-alist)
-#+END_SRC
-
-**** =my/color-background=
-A background color that suits the theme we are currently using.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/color-background "#000")
-#+END_SRC
-
-**** =my/color-foreground=
-A foreground color that suits the theme we are currently using.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/color-foreground "#fff")
-#+END_SRC
-
-**** =my/color-dull=
-A dull color to use for drawing buffer details.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my/color-dull "#444")
-#+END_SRC
-
-**** =my/modes-text=
+**** my/modes-text
 A list of mode hooks for editing text.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/modes-text '(text-mode-hook org-mode-hook))
 #+END_SRC
 
-**** =my/modes-lisp=
+**** my/modes-lisp
 A list of mode hooks for lisp code.
 
 #+BEGIN_SRC emacs-lisp
@@ -243,7 +165,7 @@ A list of mode hooks for lisp code.
 These custom functions are defined early, to be used throughout the
 configuration.
 
-**** =kill-region=
+**** kill-region
 Advise =kill-region= to kill the line at point if no region is active.
 
 Credit: [[http://emacs-fu.blogspot.de/2009/11/copying-lines-without-selecting-them.html][djcb]]
@@ -255,7 +177,7 @@ Credit: [[http://emacs-fu.blogspot.de/2009/11/copying-lines-without-selecting-th
            (line-beginning-position 2)))))
 #+END_SRC
 
-**** =my/smarter-move-beginning-of-line=
+**** my/smarter-move-beginning-of-line
 Move to the first non-whitespace character of a line, or if already there, to
 the beginning of the line.
 
@@ -274,7 +196,7 @@ Credit: [[http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginn
       (move-beginning-of-line 1))))
 #+END_SRC
 
-**** =my/yank-primary-selection=
+**** my/yank-primary-selection
 Paste the contents of the primary selection.
 
 #+BEGIN_SRC emacs-lisp
@@ -287,7 +209,7 @@ Paste the contents of the primary selection.
       (insert-for-yank primary))))
 #+END_SRC
 
-**** =my/set-default-font=
+**** my/set-default-font
 If the specified font exists, set it as the default font for all frames.
 #+BEGIN_SRC emacs-lisp
 (defun my/set-default-font (font-name size)
@@ -296,42 +218,12 @@ If the specified font exists, set it as the default font for all frames.
       (add-to-list 'default-frame-alist (cons 'font font)))))
 #+END_SRC
 
-**** =my/set-gc=
-Set the garbage collection threshold to the value in megabytes of =my/gc-mb=.
-
-#+BEGIN_SRC emacs-lisp
-(defun my/set-gc ()
-  (setq gc-cons-threshold (* 1000 1000 my/gc-mb)))
-#+END_SRC
-
-**** =my/set-gc-max=
-Set the garbage collection threshold to the maximum value. This is useful to
-temporarily decrease the rate of garbage collection.
-
-#+BEGIN_SRC emacs-lisp
-(defun my/set-gc-max ()
-  (setq gc-cons-threshold most-positive-fixnum))
-#+END_SRC
-
-**** =my/get-url-title=
-Get the title of the given URL, or if none given, the URL stored in the X
-clipboard.
-
-#+BEGIN_SRC emacs-lisp
-(defun my/get-url-title (&optional url)
-  (let ((url (or url (gui-get-selection 'CLIPBOARD))))
-    (with-current-buffer (url-retrieve-synchronously url)
-      (goto-char 0)
-      (re-search-forward "<title>\\(.*\\)<[/]title>" nil t 1)
-      (match-string 1))))
-#+END_SRC
-
 *** User customization
 
 Use a separate =custom.el= file for Emacs =customize= to write to.
 
 #+BEGIN_SRC emacs-lisp
-(setq custom-file my/file-custom)
+(setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file 'noerror)
 #+END_SRC
 
@@ -339,42 +231,13 @@ Some configuration options should be private, such as your email address,
 passwords, etc. We will load an external file, =private.el= if it exists.
 
 #+BEGIN_SRC emacs-lisp
-(when (file-exists-p my/file-private)
-  (load-file my/file-private))
+(let ((private-file (concat user-emacs-directory "private.el")))
+  (when (file-exists-p private-file)
+    (load-file private-file)))
 #+END_SRC
 
 
 ** Basics
-
-*** Improve startup speed
-
-Setting the value of =gc-cons-threshold= to be very high before loading the Emacs
-configuration prevents garbage collection often, and thus speeds the startup
-time. However, we do not want it to always be high because when it eventually
-does have to collect garbage, it will have a lot of work to do and we will
-experience noticable pauses. We will set this value to its maximum value, and
-then later in the [[*Hooks]] section, we will set it to a much lower value in a
-hook that is executed when the configuration is completely loaded.
-
-#+BEGIN_SRC emacs-lisp
-(my/set-gc-max)
-#+END_SRC
-
-The variable =file-name-handler-alist= is an association list mapping regular
-expressions to different file types. This means every time we load a file, we
-have to run regular expressions against the filename. We will backup this
-variable and clear it, then later in the [[*Hooks]] section, we will restore it to
-its default value from the backup.
-
-#+BEGIN_SRC emacs-lisp
-(setq file-name-handler-alist nil)
-#+END_SRC
-
-Speed up the window frame initialization.
-
-#+BEGIN_SRC emacs-lisp
-(modify-frame-parameters nil '((wait-for-wm . nil)))
-#+END_SRC
 
 *** Hooks
 
@@ -391,27 +254,15 @@ line when you attempt to save the buffer.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
-Prevent garbage collection when the minibuffer is open:
+Prevent garbage collection while the minibuffer is open. Also set a better
+garbage collection threshold.
 
 Credit: [[http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold][Bailey Ling]]
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'minibuffer-setup-hook 'my/set-gc-max)
-(add-hook 'minibuffer-exit-hook 'my/set-gc)
-#+END_SRC
-
-Set garbage collection threshold to be lower after this Emacs configuration is
-done loading.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook 'my/set-gc)
-#+END_SRC
-
-Restore the temporary changes to =file-name-handler-alist= after this Emacs
-configuration is done loading.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook (lambda () (setq file-name-handler-alist my/file-name-handler-alist)))
+(add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
+(dolist (hook '(after-init-hook minibuffer-exit-hook))
+  (add-hook hook (lambda () (setq gc-cons-threshold (* 1000 1000 10)))))
 #+END_SRC
 
 *** Create directories
@@ -642,7 +493,7 @@ Save different types of history to disk.
 (use-package savehist
   :init (savehist-mode 1)
   :config
-  (setq savehist-file my/file-history
+  (setq savehist-file (concat my/dir-etc "history")
         history-length 100
         history-delete-duplicates t
         savehist-save-minibuffer-history t
@@ -1152,8 +1003,7 @@ Define the color theme.
   (progn
     (setq moe-theme-highlight-buffer-id nil
           moe-theme-mode-line-color 'blue)
-    (moe-dark)
-    (setq my/color-background (face-background 'default))))
+    (moe-dark)))
 #+END_SRC
 
 Draw vertical lines in the buffer to guide indentation levels.
@@ -1169,7 +1019,7 @@ Draw vertical lines in the buffer to indicate where the fill column is.
 #+BEGIN_SRC emacs-lisp
 (use-package fill-column-indicator
   :config
-  (setq fci-rule-color my/color-dull
+  (setq fci-rule-color "#444"
         fci-rule-use-dashes t
         fci-dash-pattern 0.5))
 #+END_SRC
@@ -1299,7 +1149,7 @@ Track recent files that have been opened.
   :defer t
   :commands recentf-mode
   :init
-  (setq recentf-save-file my/file-recent
+  (setq recentf-save-file (concat my/dir-etc "recent")
         recentf-max-saved-items 1000
         recentf-exclude '(".emacs.d/src"
                           "^/tmp/"
@@ -1314,7 +1164,7 @@ Allow bookmarking the position in a file.
 #+BEGIN_SRC emacs-lisp
 (use-package bookmark
   :init
-  (setq bookmark-default-file my/file-bookmarks
+  (setq bookmark-default-file (concat my/dir-etc "bookmarks")
         bookmark-save-flag 1))
 #+END_SRC
 
@@ -1336,7 +1186,7 @@ Remember the position of a buffer the next time we visit it.
   :defer t
   :init (save-place-mode 1)
   :config
-  (setq save-place-file my/file-save-place
+  (setq save-place-file (concat my/dir-etc "places")
         save-place-forget-unreadable-files nil))
 #+END_SRC
 
@@ -1723,8 +1573,6 @@ Org mode is for taking notes, planning projects, and authoring documents.
                                          ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
           org-capture-templates '(("t" "Task" entry (file org-default-notes-file)
                                    "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")
-                                  ("b" "Bookmark" entry (file+headline "~/dev/org/personal/computer.org" "Bookmarks")
-                                   "* [[%x][%(my/get-url-title)]] %^g\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
                                   ("j" "Journal" entry (file+datetree "~/dev/org/personal/journal.org")
                                    "* %?\n%U\n")
                                   ("n" "Note" entry (file org-default-notes-file)

@@ -15,4 +15,6 @@
       (org-babel-tangle-file org-file))
     (load-file el-file)))
 
-(my/emacs-config-load)
+(let ((gc-cons-threshold most-positive-fixnum)
+      (file-name-handler-alist nil))
+  (my/emacs-config-load))
