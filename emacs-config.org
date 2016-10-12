@@ -128,14 +128,15 @@ The directory to store backup files.
 #+END_SRC
 
 **** my/file-notes
-The file to write our notes in, that is loaded on startup.
+The file to write our notes in. This file is loaded at startup, and also used to
+refile notes to in OrgMode.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/file-notes "~/dev/org/refile.org")
 #+END_SRC
 
 **** my/file-sbcl-core
-If non-nil, the path to the SBCL core image to use.
+The path to a custom SBCL core image to use, or NIL to use the default.
 
 #+BEGIN_SRC emacs-lisp
 (defvar my/file-sbcl-core nil)
@@ -158,6 +159,12 @@ A list of mode hooks for lisp code.
                         sly-mrepl-mode-hook
                         emacs-lisp-mode-hook
                         eval-expression-minibuffer-setup-hook))
+#+END_SRC
+**** my/modes-web
+A list of mode hooks for web development.
+
+#+BEGIN_SRC emacs-lisp
+(defvar my/modes-web '(web-mode-hook css-mode-hook))
 #+END_SRC
 
 *** Custom functions
@@ -875,8 +882,7 @@ Show arguments of functions as they are typed.
   (progn
     (setq-default eldoc-documentation-function 'describe-char-eldoc)
     (setq eldoc-idle-delay 0.1)
-    (dolist (hook my/modes-lisp)
-      (add-hook hook 'turn-on-eldoc-mode)))
+    (add-hook 'my/modes-lisp 'turn-on-eldoc-mode))
   :diminish eldoc-mode)
 #+END_SRC
 
@@ -1071,8 +1077,7 @@ Draw line break characters as visual lines.
   :init (setq form-feed-line-width fill-column)
   :config
   (progn
-    (dolist (hook my/modes-text)
-      (add-hook hook 'form-feed-mode))
+    (add-hook 'my/modes-text 'form-feed-mode)
     (add-hook 'prog-mode-hook 'form-feed-mode))
   :diminish form-feed-mode)
 #+END_SRC
@@ -1227,8 +1232,7 @@ column). For code buffers, only auto-fill comments.
   :commands (turn-on-auto-fill auto-fill-mode)
   :init
   (progn
-    (dolist (hook my/modes-text)
-      (add-hook hook 'turn-on-auto-fill))
+    (add-hook 'my/modes-text 'turn-on-auto-fill)
     (add-hook 'prog-mode-hook
               (lambda ()
                 (setq-local comment-auto-fill-only-comments t)
@@ -1634,10 +1638,7 @@ Highlight color identifiers with a background of the same color.
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
-  :config
-  (progn
-    (dolist (hook '(web-mode-hook css-mode-hook))
-      (add-hook hook 'rainbow-mode)))
+  :config (add-hook 'my/modes-web 'rainbow-mode)
   :diminish rainbow-mode)
 #+END_SRC
 
@@ -1645,30 +1646,29 @@ Export the contents of a buffer as HTML.
 
 #+BEGIN_SRC emacs-lisp
 (use-package htmlize
+  :after (fill-column-indicator flyspell)
   :config
   (progn
-    (with-eval-after-load 'fill-column-indicator
-      (defvar my/htmlize-initial-fci-state nil)
-      (defun my/htmlize-before-hook-fci-disable ()
-        (setq my/htmlize-initial-fci-state fci-mode)
-        (when fci-mode
-          (fci-mode -1)))
-      (defun my/htmlize-after-hook-fci-enable-maybe ()
-        (when my/htmlize-initial-fci-state
-          (fci-mode 1)))
-      (add-hook 'htmlize-before-hook 'my/htmlize-before-hook-fci-disable)
-      (add-hook 'htmlize-after-hook 'my/htmlize-after-hook-fci-enable-maybe))
-    (with-eval-after-load 'flyspell
-      (defvar my/htmlize-initial-flyspell-state nil)
-      (defun my/htmlize-before-hook-flyspell-disable ()
-        (setq my/htmlize-initial-flyspell-state flyspell-mode)
-        (when flyspell-mode
-          (flyspell-mode -1)))
-      (defun my/htmlize-after-hook-flyspell-enable-maybe ()
-        (when my/htmlize-initial-flyspell-state
-          (flyspell-mode 1)))
-      (add-hook 'htmlize-before-hook 'my/htmlize-before-hook-flyspell-disable)
-      (add-hook 'htmlize-after-hook 'my/htmlize-after-hook-flyspell-enable-maybe))))
+    (defvar my/htmlize-initial-fci-state nil)
+    (defun my/htmlize-before-hook-fci-disable ()
+      (setq my/htmlize-initial-fci-state fci-mode)
+      (when fci-mode
+        (fci-mode -1)))
+    (defun my/htmlize-after-hook-fci-enable-maybe ()
+      (when my/htmlize-initial-fci-state
+        (fci-mode 1)))
+    (add-hook 'htmlize-before-hook 'my/htmlize-before-hook-fci-disable)
+    (add-hook 'htmlize-after-hook 'my/htmlize-after-hook-fci-enable-maybe)
+    (defvar my/htmlize-initial-flyspell-state nil)
+    (defun my/htmlize-before-hook-flyspell-disable ()
+      (setq my/htmlize-initial-flyspell-state flyspell-mode)
+      (when flyspell-mode
+        (flyspell-mode -1)))
+    (defun my/htmlize-after-hook-flyspell-enable-maybe ()
+      (when my/htmlize-initial-flyspell-state
+        (flyspell-mode 1)))
+    (add-hook 'htmlize-before-hook 'my/htmlize-before-hook-flyspell-disable)
+    (add-hook 'htmlize-after-hook 'my/htmlize-after-hook-flyspell-enable-maybe)))
 #+END_SRC
 
 Editing HTML.
@@ -1710,9 +1710,7 @@ Manipulation of s-expressions.
 #+BEGIN_SRC emacs-lisp
 (use-package paredit
   :defer t
-  :init
-  (dolist (hook my/modes-lisp)
-    (add-hook hook 'enable-paredit-mode))
+  :init (add-hook 'my/modes-lisp 'enable-paredit-mode)
   :config
   (eldoc-add-command
    'paredit-backward-delete
@@ -1727,8 +1725,7 @@ Color parentheses based on their depth.
   :ensure t
   :config
   (progn
-    (dolist (hook my/modes-lisp)
-      (add-hook hook 'rainbow-delimiters-mode))
+    (add-hook 'my/modes-lisp 'rainbow-delimiters-mode)
     (cl-loop with colors = '("#ff4b4b" "#5fafd7")
              for index from 1 to rainbow-delimiters-max-face-count
              do (set-face-foreground
