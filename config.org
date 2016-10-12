@@ -177,6 +177,12 @@ Credit: [[http://emacs-fu.blogspot.de/2009/11/copying-lines-without-selecting-th
            (line-beginning-position 2)))))
 #+END_SRC
 
+**** add-hooks
+#+BEGIN_SRC emacs-lisp
+(defun add-hooks (hooks fn)
+  (dolist (hook hooks)
+    (add-hook hook fn)))
+#+END_SRC
 **** my/smarter-move-beginning-of-line
 Move to the first non-whitespace character of a line, or if already there, to
 the beginning of the line.
@@ -260,8 +266,8 @@ Credit: [[http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-th
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
-(dolist (hook '(after-init-hook minibuffer-exit-hook))
-  (add-hook hook (lambda () (setq gc-cons-threshold (* 1000 1000 10)))))
+(add-hooks '(after-init-hook minibuffer-exit-hook)
+           (lambda () (setq gc-cons-threshold (* 1000 1000 10))))
 #+END_SRC
 
 *** Create directories
@@ -874,7 +880,7 @@ Show arguments of functions as they are typed.
   (progn
     (setq-default eldoc-documentation-function 'describe-char-eldoc)
     (setq eldoc-idle-delay 0.1)
-    (add-hook 'my/modes-lisp 'turn-on-eldoc-mode))
+    (add-hooks my/hooks-lisp 'turn-on-eldoc-mode))
   :diminish eldoc-mode)
 #+END_SRC
 
@@ -1069,7 +1075,7 @@ Draw line break characters as visual lines.
   :init (setq form-feed-line-width fill-column)
   :config
   (progn
-    (add-hook 'my/modes-text 'form-feed-mode)
+    (add-hooks my/hooks-text 'form-feed-mode)
     (add-hook 'prog-mode-hook 'form-feed-mode))
   :diminish form-feed-mode)
 #+END_SRC
@@ -1224,7 +1230,7 @@ column). For code buffers, only auto-fill comments.
   :commands (turn-on-auto-fill auto-fill-mode)
   :init
   (progn
-    (add-hook 'my/modes-text 'turn-on-auto-fill)
+    (add-hooks my/hooks-text 'turn-on-auto-fill)
     (add-hook 'prog-mode-hook
               (lambda ()
                 (setq-local comment-auto-fill-only-comments t)
@@ -1713,7 +1719,7 @@ Highlight color identifiers with a background of the same color.
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
-  :config (add-hook 'my/modes-web 'rainbow-mode)
+  :config (add-hooks my/hooks-web 'rainbow-mode)
   :diminish rainbow-mode)
 #+END_SRC
 
@@ -1785,7 +1791,7 @@ Manipulation of s-expressions.
 #+BEGIN_SRC emacs-lisp
 (use-package paredit
   :defer t
-  :init (add-hook 'my/modes-lisp 'enable-paredit-mode)
+  :init (add-hooks my/hooks-lisp 'enable-paredit-mode)
   :config
   (eldoc-add-command
    'paredit-backward-delete
@@ -1800,7 +1806,7 @@ Color parentheses based on their depth.
   :ensure t
   :config
   (progn
-    (add-hook 'my/modes-lisp 'rainbow-delimiters-mode)
+    (add-hooks my/hooks-lisp 'rainbow-delimiters-mode)
     (cl-loop with colors = '("#ff4b4b" "#5fafd7")
              for index from 1 to rainbow-delimiters-max-face-count
              do (set-face-foreground
