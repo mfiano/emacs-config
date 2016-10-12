@@ -453,7 +453,8 @@ Emacs packages.
 
 #+BEGIN_SRC emacs-lisp
 (setq package-user-dir (concat user-emacs-directory "src")
-      package-enable-at-startup nil)
+      package-enable-at-startup nil
+      package--init-file-ensured t)
 (package-initialize)
 (unless (assoc-default "melpa" package-archives)
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/")))
