@@ -4,20 +4,22 @@
 
 * Introduction
 
+** About
 This is my Emacs configuration written in OrgMode. It attempts to keep my Emacs
-directory clean, and document the choices I made. It can safely be re-used by
+directory clean, and document the choices I made. It can safely be used by
 others as a starting point if they choose to, by following the installation
 instructions below.
 
 ** Personal Background
 
-My Emacs configuration is a result of just about a year (as of September 2016)
-of trying to learn Emacs. Prior to Emacs, I had been successfully using Vim to
-code in various languages, Lisp dialects included, for about 10 years. With that
-said, I never tried to initially make Emacs be more Vim-like by means of
-evil-mode or other similar packages/hacks. I strongly felt that Emacs was its
-own thing, with a long history to be understood. Therefor, despite my Vim
-background, you will not find any Vim-like behavior in this configuration.
+My Emacs configuration is a result of approximately one year (as of
+September 2016) of trying to learn Emacs. Prior to Emacs, I had been
+successfully using Vim to code in various languages, Lisp dialects included, for
+close to 20 years. With that said, I never tried to initially make Emacs be more
+Vim-like by means of evil-mode or other similar packages or hacks. I strongly
+feel that Emacs is its own thing, with a long history to be understood.
+Therefor, despite my Vim background, you will not find any Vim-like behavior in
+this configuration.
 
 Notice the first sentence in the above paragraph uses the word "/trying/"; I am
 far from being a master of the editor, probably due to the fact of giving it a
@@ -59,24 +61,27 @@ To use this configuration, first make sure you meet the requirements:
 - (recommended) Ability to start in a graphical frame.
 - (recommended) The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
 
-First, backup your existing configuration if one exists:
+Then, backup your existing configuration if one exists:
 
 #+BEGIN_SRC sh :tangle no
 mv ~/.emacs ~/.emacs.bak
 mv ~/.emacs.d ~/.emacs.d.bak
 #+END_SRC
 
-Then, clone this repository to your configuration directory:
+Now, you can clone this repository to your configuration directory:
 
 #+BEGIN_SRC sh :tangle no
 mkdir -pv ~/.emacs.d
 git clone https://github.com/mfiano/emacs-config.git ~/.emacs.d
 #+END_SRC
 
-Note: You can place sensitive information in the file =~/.emacs.d/private.el=.
-This file will be loaded if it exists. It is recommended to set variables here
-for your name, email address, passwords for various services, and anything else
-you wish to remain private.
+Finally, create and edit =private.el= with any configuration options you want to
+override, or remain private in a dedicated file. Some suggested options to store
+here would be your real name, email address, and passwords.
+
+#+BEGIN_SRC sh :tangle no
+emacs ~/.emacs.d/private.el
+#+END_SRC
 
 * Configuration
 
