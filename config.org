@@ -134,30 +134,38 @@ The path to a custom SBCL core image to use, or NIL to use the default.
 #+BEGIN_SRC emacs-lisp
 (defvar my/file-sbcl-core nil)
 #+END_SRC
+**** my/dir-list-org
+A list of directories where OrgMode documents are recursively searched for.
 
-**** my/modes-text
+It is recommended to use =add-to-list= in =private.el= to add any other directories
+that contain OrgMode documents you want tracked.
+
+#+BEGIN_SRC emacs-lisp
+(defvar my/dir-list-org (list user-emacs-directory))
+#+END_SRC
+**** my/hooks-text
 A list of mode hooks for editing text.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/modes-text '(text-mode-hook org-mode-hook))
+(defvar my/hooks-text '(text-mode-hook org-mode-hook))
 #+END_SRC
 
-**** my/modes-lisp
+**** my/hooks-lisp
 A list of mode hooks for lisp code.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/modes-lisp '(ielm-mode-hook
+(defvar my/hooks-lisp '(ielm-mode-hook
                         lisp-mode-hook
                         lisp-interaction-mode-hook
                         sly-mrepl-mode-hook
                         emacs-lisp-mode-hook
                         eval-expression-minibuffer-setup-hook))
 #+END_SRC
-**** my/modes-web
+**** my/hooks-web
 A list of mode hooks for web development.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/modes-web '(web-mode-hook css-mode-hook))
+(defvar my/hooks-web '(web-mode-hook css-mode-hook))
 #+END_SRC
 
 *** Custom functions
@@ -1564,11 +1572,6 @@ Email client.
 Org mode is for taking notes, planning projects, and authoring documents.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/org-directories
-  (list user-emacs-directory
-        (concat my/dir-home "dev")
-        (concat my/dir-home "docs")))
-
 (defun my/org-all-files ()
   (mapcan
    (lambda (dir)
@@ -1577,7 +1580,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
         (or (string-match-p "\\.emacs.d/src/" path)
             (file-symlink-p path)))
       (directory-files-recursively dir "\.org$")))
-   my/org-directories))
+   my/dir-list-org))
 
 (defun my/org-all-buffers ()
   (mapcar 'buffer-file-name (org-buffer-list 'files)))
