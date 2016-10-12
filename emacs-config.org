@@ -166,10 +166,10 @@ configuration.
 (defvar my/file-notes "~/dev/org/refile.org")
   #+END_SRC
 
-- =my/file-sbcl-core= :: The compiled SBCL core image to use.
+- =my/file-sbcl-core= :: If non-nil, the path to the SBCL core image to use.
 
   #+BEGIN_SRC emacs-lisp
-  (defvar my/file-sbcl-core (expand-file-name "~/.sbcl/basic.core"))
+  (defvar my/file-sbcl-core nil)
   #+END_SRC
 
 - =my/gc-mb= :: The number of megabytes allocated before garbage collection
@@ -1877,6 +1877,11 @@ Color parentheses based on their depth.
 A Common Lisp IDE.
 
 #+BEGIN_SRC emacs-lisp
+(defvar my/sly-sbcl-options
+  (if my/file-sbcl-core
+      `("sbcl" "--core" ,(expand-file-name my/file-sbcl-core))
+    '("sbcl")))
+
 (use-package sly
   :defer t
   :bind
@@ -1887,9 +1892,7 @@ A Common Lisp IDE.
         ("C-c q" . sly-restart-inferior-lisp))
   :config
   (progn
-    (setq sly-lisp-implementations
-          `((sbcl ("sbcl" "--core" ,my/file-sbcl-core)
-                  :env (,(concat "SBCL_HOME=" my/dir-sbcl))))
+    (setq sly-lisp-implementations `((sbcl ,my/sly-sbcl-options))
           sly-mrepl-history-file-name (concat my/dir-etc "sly-repl-history")
           sly-autodoc-use-multiline t
           sly-complete-symbol*-fancy t
