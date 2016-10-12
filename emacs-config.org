@@ -86,7 +86,7 @@ does not exist.
 (load-file "/path/to/emacs-config/bootstrap.el")
 #+END_SRC
 
-Note: You can place sensitive information in the file =~/.emacs.d/secret.el=. It
+Note: You can place sensitive information in the file =~/.emacs.d/private.el=. It
 will be loaded if it exists. It is recommended to set variables here for your
 name, email address, passwords for various services, etc.
 
@@ -124,16 +124,10 @@ configuration.
   (defvar my/dir-backups (concat my/dir-etc "backups"))
   #+END_SRC
 
-- =my/dir-sbcl= :: The path to the SBCL installation.
+- =my/file-private= :: The file to read private Emacs configuration options from.
 
   #+BEGIN_SRC emacs-lisp
-  (defvar my/dir-sbcl "/usr/lib/sbcl")
-  #+END_SRC
-
-- =my/file-secret= :: The file to read private Emacs configuration options from.
-
-  #+BEGIN_SRC emacs-lisp
-  (defvar my/file-secret (concat user-emacs-directory "secret.el"))
+  (defvar my/file-private (concat user-emacs-directory "private.el"))
   #+END_SRC
 
 - =my/file-recent= :: The file to write recently visited files to.
@@ -325,11 +319,11 @@ Use a separate =custom.el= file for Emacs =customize= to write to.
 #+END_SRC
 
 Some configuration options should be private, such as your email address,
-passwords, etc. We will load an external file, =secret.el= if it exists.
+passwords, etc. We will load an external file, =private.el= if it exists.
 
 #+BEGIN_SRC emacs-lisp
-(when (file-exists-p my/file-secret)
-  (load-file my/file-secret))
+(when (file-exists-p my/file-private)
+  (load-file my/file-private))
 #+END_SRC
 
 
