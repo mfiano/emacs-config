@@ -257,7 +257,7 @@ passwords, etc. We will load an external file, =private.el= if it exists.
 Hooks are functions that are called at specific times. Here, we define some
 common functionality that we want to occur at certain times in Emacs.
 
-Delete trailing whitespace before saving a buffer.
+**** Delete trailing whitespace before saving a buffer.
 
 It is easy to add extra whitespace at the end of a line, and can be quite
 annoying when it happens. This will strip all whitespace from the end of each
@@ -267,7 +267,7 @@ line when you attempt to save the buffer.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
-Prevent garbage collection while the minibuffer is open. Also set a better
+**** Prevent garbage collection while the minibuffer is open. Also set a better
 garbage collection threshold.
 
 Credit: [[http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold][Bailey Ling]]
@@ -288,35 +288,10 @@ Create some required directories in our =.emacs.d= directory if they do not exis
 
 *** Key bindings
 
-Disable some annoying key bindings.
-
-#+BEGIN_SRC emacs-lisp
-(global-unset-key (kbd "C-z"))
-(global-unset-key (kbd "<S-down-mouse-1>"))
-(global-unset-key (kbd "<S-down-mouse-3>"))
-(global-unset-key (kbd "<C-down-mouse-1>"))
-(global-unset-key (kbd "<C-down-mouse-3>"))
-(global-unset-key (kbd "<insert>"))
-(global-unset-key (kbd "<C-insert>"))
-#+END_SRC
-
-We want to be able to paste the contents of the primary selection with =Shift +
-Insert= like other applications.
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<S-insert>") 'my/yank-primary-selection)
-#+END_SRC
-
-Toggle between moving to the first non-whitespace character of a line and the
-beginning of a line.
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key [remap move-beginning-of-line] 'my/smarter-move-beginning-of-line)
-#+END_SRC
 
 *** Files and buffers
 
-Sensible options for buffers.
+**** Sensible options for buffers
 
 #+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil
@@ -331,13 +306,13 @@ Sensible options for buffers.
 (column-number-mode 1)
 #+END_SRC
 
-Open our OrgMode notes file at startup.
+**** Open our OrgMode notes file at startup
 
 #+BEGIN_SRC emacs-lisp
 (setq initial-buffer-choice my/file-notes)
 #+END_SRC
 
-Sensible options for files.
+**** Sensible options for files.
 
 #+BEGIN_SRC emacs-lisp
 (setq-default find-file-visit-truename t)
@@ -345,7 +320,7 @@ Sensible options for files.
       read-file-name-completion-ignore-case t)
 #+END_SRC
 
-Prefer UTF-8 encoding for everything.
+**** Prefer UTF-8 encoding for everything.
 
 #+BEGIN_SRC emacs-lisp
 (prefer-coding-system 'utf-8)
@@ -371,6 +346,7 @@ We don't use the mouse often, but we should configure it to work better anyway.
 
 *** Look and feel
 
+**** Disable cruft
 We want a blank slate to start with. Turn off the cruft that only distracts and
 annoys.
 
@@ -391,6 +367,7 @@ annoys.
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+**** Customizations
 Define the look and feel. The color theme will be applied later.
 
 #+BEGIN_SRC emacs-lisp
@@ -447,9 +424,9 @@ This configuration makes use of many Emacs packages available online. We need a
 way to automatically download and install packages that we want to use. Also, we
 would probably like a means to easily specify how each is configured.
 
-The following configures Emacs to use the [[http://melpa.org][MELPA]] package archive, a third-party
-repository which boasts itself as the largest and most up-to-date repository of
-Emacs packages.
+**** Configure packaging
+Configure Emacs to use the [[http://melpa.org][MELPA]] package archive, a third-party repository which
+boasts itself as the largest and most up-to-date repository of Emacs packages.
 
 #+BEGIN_SRC emacs-lisp
 (setq package-user-dir (concat user-emacs-directory "src")
@@ -460,8 +437,9 @@ Emacs packages.
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/")))
 #+END_SRC
 
-Then, we install (if needed) and set up [[https://github.com/jwiegley/use-package][=use-package=]], in order to cleanly
-install and configure different packages throughout our configuration.
+**** Configure =use-package=
+Install (if needed) and set up [[https://github.com/jwiegley/use-package][=use-package=]], in order to cleanly install and
+configure different packages throughout our configuration.
 
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
@@ -472,7 +450,7 @@ install and configure different packages throughout our configuration.
 (setq use-package-always-ensure t)
 #+END_SRC
 
-** Packages
+** Packages and Features
 
 The remainder of this configuration will fetch and install packages as-needed
 during the bootstrapping process. At no time during subsequent Emacs sessions
@@ -488,8 +466,7 @@ To backup the packages, we can do so manually in the shell:
 mv ~/.emacs.d/src ~/.emacs.d/src.bak
 #+END_SRC
 
-*** Basic
-
+*** auto-compile
 When Emacs code is loaded, we want to automatically compile it into fast
 byte-code.
 
@@ -501,6 +478,7 @@ byte-code.
     (auto-compile-on-load-mode)))
 #+END_SRC
 
+*** savehist
 Save different types of history to disk.
 
 #+BEGIN_SRC emacs-lisp
@@ -517,6 +495,7 @@ Save different types of history to disk.
                                         regexp-search-ring)))
 #+END_SRC
 
+*** server
 Start the Emacs server.
 
 #+BEGIN_SRC emacs-lisp
@@ -526,6 +505,7 @@ Start the Emacs server.
     (server-start)))
 #+END_SRC
 
+*** executable
 When a buffer starts with a /shebang/ (the #! character sequence), we expect it to
 be executable. This will mark the executable bit of the file after saving such a
 buffer.
@@ -536,8 +516,8 @@ buffer.
   :config (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p))
 #+END_SRC
 
-*** Command grouping
 
+*** hydra
 The =hydra= package provides the ability to group several commands under a single
 key binding. It has the ability to list a legend above the echo area with the
 various keys available for the particular grouping. In addition, once you enter
@@ -549,289 +529,12 @@ and keys highlighted in blue exit out of the group.
 We will enable this functionality, and define groups of commands for packages to
 later bind keys to.
 
-Enable the Hydra package.
-
 #+BEGIN_SRC emacs-lisp
 (use-package hydra)
 #+END_SRC
 
-Command group for looking up help in Emacs. Open it with =C-c h=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-help (:exit t :hint nil)
-  "
-  ^Describe^
-  ^^--------------
-  _c_: Character
-  _f_: Function
-  _k_: Key (brief)
-  _K_: Key
-  _m_: Modes
-  _v_: Variable
-  "
-  ("c" describe-char)
-  ("f" describe-function)
-  ("k" describe-key-briefly)
-  ("K" describe-key)
-  ("m" describe-mode)
-  ("v" describe-variable))
-  (global-set-key (kbd "C-c h") 'my/hydra-help/body)
-#+END_SRC
-
-Command group to launch various utilities and applications. Open it with =C-c e=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-exec (:exit t :hint nil)
-  "
-  ^Utilities^
-  ^^--------------
-  [_b_]rowse URL
-  [_c_]alendar
-  [_e_]lisp REPL
-  [_f_]ile manager
-  [_p_]ackages
-  "
-  ("b" browse-url-dwim-guess)
-  ("c" calendar)
-  ("e" ielm)
-  ("f" neotree-toggle)
-  ("p" paradox-list-packages))
-  (global-set-key (kbd "C-c e") 'my/hydra-exec/body)
-#+END_SRC
-
-Command group to toggle various settings.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-toggle (:exit t :hint nil)
-  "
-_l_: toggle line numbers
-_f_: toggle fill column indicator
-"
-  ("l" linum-mode)
-  ("f" fci-mode))
-(global-set-key (kbd "C-c z") 'my/hydra-toggle/body)
-(global-set-key (kbd "s-z") 'my/hydra-toggle/body)
-#+END_SRC
-
-Command group for managing windows. Open it with =C-c w=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-windows (:hint nil)
-  "
-  ^Layout^                         ^Move Focus^               ^Workspaces^
-  ^^^^^^---------------------------------------------------------------------------
-  _<C-left>_ : Undo                _<up>_   : Up              _1_: Workspace 1
-  _<C-right>_: Redo                _<down>_ : Down            _2_: Workspace 2
-  _f_        : Flip vertically     _<left>_ : Left            _3_: Workspace 3
-  _F_        : Flip horizontally   _<right>_: Right           _4_: Workspace 4
-  _s_        : Split vertically    _w_      : Jump by number  _5_: Workspace 5
-  _S_        : Split horizontally  ^ ^                        _K_: Delete workspace
-  _d_        : Delete window
-  _D_        : Delete others
-
-  _q_uit
-  "
-  ("<C-left>" winner-undo)
-  ("<C-right>" winner-redo)
-  ("<up>" windmove-up)
-  ("<down>" windmove-down)
-  ("<left>" windmove-left)
-  ("<right>" windmove-right)
-  ("w" ace-window :exit t)
-  ("f" flip-frame)
-  ("F" flop-frame)
-  ("s" (progn (split-window-below) (windmove-down)))
-  ("S" (progn (split-window-right) (windmove-right)))
-  ("d" delete-window :exit t)
-  ("D" delete-other-windows :exit t)
-  ("1" eyebrowse-switch-to-window-config-1 :exit t)
-  ("2" eyebrowse-switch-to-window-config-2 :exit t)
-  ("3" eyebrowse-switch-to-window-config-3 :exit t)
-  ("4" eyebrowse-switch-to-window-config-4 :exit t)
-  ("5" eyebrowse-switch-to-window-config-5 :exit t)
-  ("K" eyebrowse-close-window-config :exit t)
-  ("q" nil))
-  (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
-#+END_SRC
-
-Command group for manipulating text. Open it with =C-c t=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-fold (:hint nil :pre (hs-minor-mode 1))
-  "
-  ^Folding^
-  ^^--------------
-  _f_: toggle fold
-  _h_: hide all
-  _s_: show all
-
-  _q_uit, _c_ancel
-  "
-  ("f" fold-dwim-toggle)
-  ("h" fold-dwim-hide-all)
-  ("s" fold-dwim-show-all)
-  ("q" nil)
-  ("c" my/hydra-text/body :exit t))
-
-  (defhydra my/hydra-text (:hint nil)
-    "
-  ^Text Manipulation^
-  ^^--------------------------------
-  _+_     : expand region
-  _-_     : contract region
-  _c_     : toggle line/region commented
-  _f_     : fold text
-  _jc_    : jump to character
-  _jw_    : jump to word
-  _jl_    : jump to line
-  _<up>_  : move line or region up
-  _<down>_: move line or region down
-  _s_     : enable spell-checking
-  _S_     : disable spell-checking
-  _z_     : undo last change
-  _Z_     : redo last change
-  _u_     : show undo tree
-
-  _q_uit
-  "
-    ("+" er/expand-region)
-    ("-" er/contract-region)
-    ("c" comment-dwim-2)
-    ("f" my/hydra-fold/body :exit t)
-    ("jc" avy-goto-char :exit t)
-    ("jw" avy-goto-word-1 :exit t)
-    ("jl" avy-goto-line :exit t)
-    ("<up>" move-text-up)
-    ("<down>" move-text-down)
-    ("s" (flyspell-mode 1) :exit t)
-    ("S" (flyspell-mode 0) :exit t)
-    ("z" undo-tree-undo)
-    ("Z" undo-tree-redo)
-    ("u" undo-tree-visualize :exit t)
-    ("q" nil))
-  (global-set-key (kbd "C-c t") 'my/hydra-text/body)
-#+END_SRC
-
-Command group for searching for things. Open it with =C-c s=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-search (:exit t :hint nil)
-  "
-  ^Buffer^            ^Project^           ^Web^
-  ^^^^^^---------------------------------------------
-  _b_: this buffer    _p_: this project   _g_: google
-  _B_: all buffers
-
-  _q_uit
-  "
-  ("b" swiper-helm)
-  ("B" helm-ag-buffers)
-  ("g" helm-google-suggest)
-  ("p" helm-ag-project-root)
-  ("q" nil))
-  (global-set-key (kbd "C-c s") 'my/hydra-search/body)
-#+END_SRC
-
-Command group for working with projects. Open it with =C-c p=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-projects (:exit t :hint nil)
-  "
-  ^Project Management^
-  ^^----------------------------
-  _f_: find file in project
-  _k_: kill all project buffers
-  _r_: find recent project files
-  _p_: switch project
-  _s_: save all project files
-
-  _q_uit
-  "
-  ("f" projectile-find-file)
-  ("k" projectile-kill-buffers)
-  ("r" projectile-recentf)
-  ("p" projectile-switch-project)
-  ("s" projectile-save-project-buffers)
-  ("q" nil))
-  (global-set-key (kbd "C-c p") 'my/hydra-projects/body)
-#+END_SRC
-
-Command group for browsing various menus. Open it with =C-c x=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-menu (:exit t :hint nil)
-  "
-  ^Menu^
-  ^^-----------------
-  _b_: buffers
-  _B_: bookmarks
-  _f_: files
-  _k_: kill ring
-  _K_: key bindings
-  _p_: browse project
-  _r_: recent files
-  "
-  ("b" helm-buffers-list)
-  ("B" helm-bookmarks)
-  ("f" helm-find-files)
-  ("k" helm-show-kill-ring)
-  ("K" helm-descbinds)
-  ("p" helm-browse-project)
-  ("r" helm-recentf))
-  (global-set-key (kbd "C-c x") 'my/hydra-menu/body)
-#+END_SRC
-
-Command group for git functions. Open it with =C-c g=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-git (:exit t :hint nil)
-  "
-  ^Gists^                 ^Git^
-  ^^^^-------------------------
-  _l_: list gists         _s_: Git status
-  _g_: post gist
-  _G_: post private gist
-
-  _q_uit
-  "
-  ("l" gist-list)
-  ("g" gist-region-or-buffer)
-  ("G" gist-region-or-buffer-private)
-  ("s" magit-status)
-  ("q" nil))
-  (global-set-key (kbd "C-c g") 'my/hydra-git/body)
-#+END_SRC
-
-Command group for OrgMode. Open it with =C-c o=.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-org (:exit t :hint nil)
-  "
-^OrgMode^
-^^-----------
-_a_: open agenda
-_A_: archive item
-_c_: capture
-_f_: refile item
-_F_: find org file
-_l_: copy link
-_L_: paste link
-_t_: add tags
-"
-  ("a" org-agenda)
-  ("A" archive)
-  ("c" helm-org-capture-templates)
-  ("f" org-refile)
-  ("F" my/helm-org-all-files-and-buffers)
-  ("l" org-store-link)
-  ("L" org-insert-link)
-  ("t" org-set-tags-command))
-(global-set-key (kbd "C-c o") 'my/hydra-org/body)
-#+END_SRC
-
-*** Package management
-
-While =use-package= let's us define the packages we want to use and their
+*** paradox
+While =use-package= lets us define the packages we want to use and their
 configuration, we still need a way to browse, install and otherwise manipulate
 Emacs packages. Emacs can do this out of the box, but =paradox= makes this
 slightly less painful, so we'll install it.
@@ -845,8 +548,7 @@ slightly less painful, so we'll install it.
         paradox-github-token t))
 #+END_SRC
 
-*** Utilities
-
+*** which-key
 Show help for prefix keys.
 
 #+BEGIN_SRC emacs-lisp
@@ -868,6 +570,7 @@ Show help for prefix keys.
   :diminish which-key-mode)
 #+END_SRC
 
+*** eldoc
 Show arguments of functions as they are typed.
 
 #+BEGIN_SRC emacs-lisp
@@ -882,22 +585,21 @@ Show arguments of functions as they are typed.
   :diminish eldoc-mode)
 #+END_SRC
 
-A calendar.
-
+*** calendar
 #+BEGIN_SRC emacs-lisp
 (use-package calendar
   :defer t
   :config (setq calendar-week-start-day 1))
 #+END_SRC
 
-URLs
-
+*** url
 #+BEGIN_SRC emacs-lisp
 (use-package url
   :ensure nil
   :config (setq url-cookie-file (concat my/dir-etc "url-cookies")))
 #+END_SRC
 
+*** goto-addr
 Turn URLs into highlighted and clickable links.
 
 #+BEGIN_SRC emacs-lisp
@@ -908,6 +610,7 @@ Turn URLs into highlighted and clickable links.
     (add-hook 'prog-mode-hook 'goto-address-prog-mode)))
 #+END_SRC
 
+*** browse-url-dwim
 Browse URLs in an external web browser.
 
 #+BEGIN_SRC emacs-lisp
@@ -917,8 +620,7 @@ Browse URLs in an external web browser.
         browse-url-dwim-always-confirm-extraction nil))
 #+END_SRC
 
-Spell-checking
-
+*** ispell
 #+BEGIN_SRC emacs-lisp
 (use-package ispell
   :defer t
@@ -929,6 +631,7 @@ Spell-checking
       (warn "aspell is not installed."))))
 #+END_SRC
 
+*** flyspell
 On-the-fly spell checking for text and comments.
 
 #+BEGIN_SRC emacs-lisp
@@ -940,6 +643,7 @@ On-the-fly spell checking for text and comments.
   :diminish flyspell-mode)
 #+END_SRC
 
+*** ag
 Support for the /silver searcher/ search tool.
 
 #+BEGIN_SRC emacs-lisp
@@ -951,6 +655,7 @@ Support for the /silver searcher/ search tool.
         ag-reuse-buffers t))
 #+END_SRC
 
+*** neotree
 A file manager.
 
 #+BEGIN_SRC emacs-lisp
@@ -958,6 +663,7 @@ A file manager.
   :config (setq neo-smart-open t))
 #+END_SRC
 
+*** undo-tree
 Better undo/redo support, with compressed, undo history that persists between
 Emacs sessions.
 
@@ -983,8 +689,7 @@ Emacs sessions.
   :diminish undo-tree-mode)
 #+END_SRC
 
-*** Appearance
-
+*** powerline
 Nicer mode line.
 
 #+BEGIN_SRC emacs-lisp
@@ -996,6 +701,7 @@ Nicer mode line.
     (powerline-default-theme)))
 #+END_SRC
 
+*** moe-theme
 Define the color theme.
 
 #+BEGIN_SRC emacs-lisp
@@ -1008,6 +714,7 @@ Define the color theme.
     (moe-dark)))
 #+END_SRC
 
+*** indent-guide
 Draw vertical lines in the buffer to guide indentation levels.
 
 #+BEGIN_SRC emacs-lisp
@@ -1016,6 +723,7 @@ Draw vertical lines in the buffer to guide indentation levels.
   :diminish indent-guide-mode)
 #+END_SRC
 
+*** fill-column-indicator
 Draw vertical lines in the buffer to indicate where the fill column is.
 
 #+BEGIN_SRC emacs-lisp
@@ -1026,6 +734,7 @@ Draw vertical lines in the buffer to indicate where the fill column is.
         fci-dash-pattern 0.5))
 #+END_SRC
 
+*** hl-line
 Highlight the current line.
 
 #+BEGIN_SRC emacs-lisp
@@ -1033,6 +742,7 @@ Highlight the current line.
   :config (global-hl-line-mode 1))
 #+END_SRC
 
+*** highlight-numbers
 Highlight numbers.
 
 #+BEGIN_SRC emacs-lisp
@@ -1040,6 +750,7 @@ Highlight numbers.
   :config (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 #+END_SRC
 
+*** linum
 Show line numbers.
 
 #+BEGIN_SRC emacs-lisp
@@ -1047,6 +758,7 @@ Show line numbers.
   :config (set-face-attribute 'linum nil :weight 'normal :italic nil))
 #+END_SRC
 
+*** paren
 Highlight the expression of matched parentheses at point.
 
 #+BEGIN_SRC emacs-lisp
@@ -1058,6 +770,7 @@ Highlight the expression of matched parentheses at point.
           show-paren-style 'expression)))
 #+END_SRC
 
+*** uniquify
 Make buffer names unique.
 
 #+BEGIN_SRC emacs-lisp
@@ -1066,6 +779,7 @@ Make buffer names unique.
   :config (setq uniquify-buffer-bane-style 'forward))
 #+END_SRC
 
+*** form-feed
 Draw line break characters as visual lines.
 
 #+BEGIN_SRC emacs-lisp
@@ -1078,8 +792,7 @@ Draw line break characters as visual lines.
   :diminish form-feed-mode)
 #+END_SRC
 
-*** Window management
-
+*** popwin
 Manage pop-up windows.
 
 #+BEGIN_SRC emacs-lisp
@@ -1099,6 +812,7 @@ Manage pop-up windows.
           popwin:special-display-config)))
 #+END_SRC
 
+*** windmove
 Move focus to an adjacent window.
 
 #+BEGIN_SRC emacs-lisp
@@ -1110,6 +824,7 @@ Move focus to an adjacent window.
    ("<S-right>" . windmove-right)))
 #+END_SRC
 
+*** ace-window
 Jump to any window by number.
 
 #+BEGIN_SRC emacs-lisp
@@ -1117,6 +832,7 @@ Jump to any window by number.
   :defer t)
 #+END_SRC
 
+*** winner
 Undo or redo changes to the window layout.
 
 #+BEGIN_SRC emacs-lisp
@@ -1124,12 +840,14 @@ Undo or redo changes to the window layout.
   :config (winner-mode 1))
 #+END_SRC
 
+*** transpose-frame
 Re-arrange the window layout.
 
 #+BEGIN_SRC emacs-lisp
 (use-package transpose-frame)
 #+END_SRC
 
+*** eyebrowse
 Manage window layouts.
 
 #+BEGIN_SRC emacs-lisp
@@ -1141,8 +859,7 @@ Manage window layouts.
         eyebrowse-keymap-prefix (kbd "C-c M-e"))
   :config (eyebrowse-mode t))
 #+END_SRC
-*** Files and buffers
-
+*** recentf
 Track recent files that have been opened.
 
 #+BEGIN_SRC emacs-lisp
@@ -1160,6 +877,7 @@ Track recent files that have been opened.
   :config (recentf-mode 1))
 #+END_SRC
 
+*** bookmark
 Allow bookmarking the position in a file.
 
 #+BEGIN_SRC emacs-lisp
@@ -1169,6 +887,8 @@ Allow bookmarking the position in a file.
         bookmark-save-flag 1))
 #+END_SRC
 
+
+*** autorevert
 Reload a file buffer when the file changes on disk.
 
 #+BEGIN_SRC emacs-lisp
@@ -1180,6 +900,7 @@ Reload a file buffer when the file changes on disk.
   :diminish auto-revert-mode)
 #+END_SRC
 
+*** saveplace
 Remember the position of a buffer the next time we visit it.
 
 #+BEGIN_SRC emacs-lisp
@@ -1191,6 +912,7 @@ Remember the position of a buffer the next time we visit it.
         save-place-forget-unreadable-files nil))
 #+END_SRC
 
+*** backup-each-save
 By default, Emacs only backs up a file the first time you save it. The following
 package handles making backups of a file each time it is saved, into a tree
 structure mirroring the filesystem.
@@ -1219,6 +941,7 @@ structure mirroring the filesystem.
           backup-each-save-filter-function 'backup-each-save-filter)))
 #+END_SRC
 
+*** fill
 Allow text to be auto-filled (wrapped to a new line if it would be past the fill
 column). For code buffers, only auto-fill comments.
 
@@ -1236,8 +959,7 @@ column). For code buffers, only auto-fill comments.
     (diminish 'auto-fill-function)))
 #+END_SRC
 
-*** Text manipulation
-
+*** delsel
 Allow overwriting a selected region of text.
 
 #+BEGIN_SRC emacs-lisp
@@ -1245,6 +967,7 @@ Allow overwriting a selected region of text.
   :config (delete-selection-mode 1))
 #+END_SRC
 
+*** subword
 CamelCase words are popular in many programming languages. The various Emacs
 commands that operate on words treat a CamelCase word as a single word. Instead,
 we want these commands to treat them as multiple words, but only when editing
@@ -1256,6 +979,7 @@ code.
   :diminish subword-mode)
 #+END_SRC
 
+*** elec-pair
 Enable pairing of parentheses (and some other characters). This will
 automatically insert a character's closing sibling when the opening character is
 inserted.
@@ -1265,6 +989,7 @@ inserted.
   :config (electric-pair-mode 1))
 #+END_SRC
 
+*** expand-region
 Expand/contract region selections.
 
 #+BEGIN_SRC emacs-lisp
@@ -1272,6 +997,7 @@ Expand/contract region selections.
   :defer t)
 #+END_SRC
 
+*** comment-dwim-2
 Comment/uncomment lines/regions intelligently.
 
 #+BEGIN_SRC emacs-lisp
@@ -1280,6 +1006,7 @@ Comment/uncomment lines/regions intelligently.
   :commands (comment-dwim-2))
 #+END_SRC
 
+*** avy
 Quickly jump to occurences within a buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -1292,12 +1019,14 @@ Quickly jump to occurences within a buffer.
                         (number-sequence ?1 ?9))))
 #+END_SRC
 
+*** move-text
 Quickly move lines of text up or down.
 
 #+BEGIN_SRC emacs-lisp
 (use-package move-text)
 #+END_SRC
 
+*** swiper-helm
 Quickly search for text.
 
 #+BEGIN_SRC emacs-lisp
@@ -1305,14 +1034,14 @@ Quickly search for text.
   :bind (("C-s" . swiper-helm)))
 #+END_SRC
 
+*** fold-dwim
 Fold blocks of text.
 
 #+BEGIN_SRC emacs-lisp
 (use-package fold-dwim)
 #+END_SRC
 
-*** Completion
-
+*** helm
 Completion/navgiation system for many things.
 
 #+BEGIN_SRC emacs-lisp
@@ -1380,8 +1109,7 @@ Text completion.
   :diminish auto-complete-mode)
 #+END_SRC
 
-*** Project management
-
+*** projectile
 Tracking of projects under version control.
 
 #+BEGIN_SRC emacs-lisp
@@ -1400,6 +1128,7 @@ Tracking of projects under version control.
   :diminish projectile-mode)
 #+END_SRC
 
+*** helm-projectile
 Integrate project tracking into the Helm completion system.
 
 #+BEGIN_SRC emacs-lisp
@@ -1411,6 +1140,7 @@ Integrate project tracking into the Helm completion system.
     (setq projectile-switch-project-action 'helm-projectile)))
 #+END_SRC
 
+*** helm-ls-git
 Integrate Git into the Helm completion system.
 
 #+BEGIN_SRC emacs-lisp
@@ -1418,6 +1148,7 @@ Integrate Git into the Helm completion system.
   :defer t)
 #+END_SRC
 
+*** helm-ag
 Integrate /ag/ into the Helm completion system.
 
 #+BEGIN_SRC emacs-lisp
@@ -1426,8 +1157,7 @@ Integrate /ag/ into the Helm completion system.
   :config (setq helm-ag-fuzzy-match t))
 #+END_SRC
 
-*** Version control
-
+*** diff-hl
 Highlight uncommited changes on the left side of a buffer's window.
 
 #+BEGIN_SRC emacs-lisp
@@ -1442,6 +1172,7 @@ Highlight uncommited changes on the left side of a buffer's window.
       (diff-hl-margin-mode))))
 #+END_SRC
 
+*** magit
 Interface to the Git version control utility.
 
 #+BEGIN_SRC emacs-lisp
@@ -1457,6 +1188,7 @@ Interface to the Git version control utility.
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 #+END_SRC
 
+*** git-timemachine
 Allow going back in time to a previous commit for a buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -1464,6 +1196,7 @@ Allow going back in time to a previous commit for a buffer.
   :config (setq git-timemachine-abbreviation-length 8))
 #+END_SRC
 
+*** gist
 Allow creating GitHub gists from regions/buffers.
 
 #+BEGIN_SRC emacs-lisp
@@ -1473,7 +1206,7 @@ Allow creating GitHub gists from regions/buffers.
   :diminish gist-mode)
 #+END_SRC
 
-*** Applications
+*** notmuch
 Email client.
 
 #+BEGIN_SRC emacs-lisp
@@ -1557,8 +1290,7 @@ Email client.
     (add-hook 'notmuch-show-hook 'my/notmuch-show-header-tabs-to-spaces)))
 #+END_SRC
 
-*** Org mode
-
+*** org
 Org mode is for taking notes, planning projects, and authoring documents.
 
 #+BEGIN_SRC emacs-lisp
@@ -1706,8 +1438,7 @@ Use fancy UTF-8 bullet characters in Org mode.
   :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
-*** Web development
-
+*** rainbow-mode
 Highlight color identifiers with a background of the same color.
 
 #+BEGIN_SRC emacs-lisp
@@ -1716,6 +1447,7 @@ Highlight color identifiers with a background of the same color.
   :diminish rainbow-mode)
 #+END_SRC
 
+*** htmlize
 Export the contents of a buffer as HTML.
 
 #+BEGIN_SRC emacs-lisp
@@ -1745,6 +1477,7 @@ Export the contents of a buffer as HTML.
     (add-hook 'htmlize-after-hook 'my/htmlize-after-hook-flyspell-enable-maybe)))
 #+END_SRC
 
+*** web-mode
 Editing HTML.
 
 #+BEGIN_SRC emacs-lisp
@@ -1756,6 +1489,7 @@ Editing HTML.
         web-mode-enable-auto-pairing t))
 #+END_SRC
 
+*** css-eldoc
 CSS documentation.
 
 #+BEGIN_SRC emacs-lisp
@@ -1765,8 +1499,7 @@ CSS documentation.
   :init (add-hook 'css-mode-hook 'turn-on-css-eldoc))
 #+END_SRC
 
-*** Lisp development
-
+*** ielm
 An Elisp REPL.
 
 #+BEGIN_SRC emacs-lisp
@@ -1779,6 +1512,7 @@ An Elisp REPL.
     (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)))
 #+END_SRC
 
+*** paredit
 Manipulation of s-expressions.
 
 #+BEGIN_SRC emacs-lisp
@@ -1792,6 +1526,7 @@ Manipulation of s-expressions.
   :diminish paredit-mode)
 #+END_SRC
 
+*** rainbow-delimiters
 Color parentheses based on their depth.
 
 #+BEGIN_SRC emacs-lisp
@@ -1810,6 +1545,7 @@ Color parentheses based on their depth.
                         :inherit 'show-paren-mismatch)))
 #+END_SRC
 
+*** sly
 A Common Lisp IDE.
 
 #+BEGIN_SRC emacs-lisp
@@ -1840,6 +1576,7 @@ A Common Lisp IDE.
     (sly-setup '(sly-fancy))))
 #+END_SRC
 
+*** sly-macrostep
 Expand Common Lisp macros in the buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -1847,6 +1584,7 @@ Expand Common Lisp macros in the buffer.
   :defer t)
 #+END_SRC
 
+*** ac-sly
 Code completion for Common Lisp.
 
 #+BEGIN_SRC emacs-lisp
@@ -1859,8 +1597,7 @@ Code completion for Common Lisp.
     (add-to-list 'ac-modes 'sly-mrepl-mode)))
 #+END_SRC
 
-*** Shell scripting
-
+*** sh-script
 Enable support for shell scripts.
 
 #+BEGIN_SRC emacs-lisp
@@ -1873,4 +1610,317 @@ Enable support for shell scripts.
   :config
   (setq-default sh-indentation 2
                 sh-basic-offset 2))
+#+END_SRC
+
+** Key Bindings
+*** Disable annoying keys
+Disable some annoying key bindings.
+
+#+BEGIN_SRC emacs-lisp
+(global-unset-key (kbd "C-z"))
+(global-unset-key (kbd "<S-down-mouse-1>"))
+(global-unset-key (kbd "<S-down-mouse-3>"))
+(global-unset-key (kbd "<C-down-mouse-1>"))
+(global-unset-key (kbd "<C-down-mouse-3>"))
+(global-unset-key (kbd "<insert>"))
+(global-unset-key (kbd "<C-insert>"))
+#+END_SRC
+
+*** Primary selection pasting
+We want to be able to paste the contents of the primary selection with =Shift +
+Insert= like other applications.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<S-insert>") 'my/yank-primary-selection)
+#+END_SRC
+
+*** Smarter moving to beginning of line
+Toggle between moving to the first non-whitespace character of a line and the
+beginning of a line.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [remap move-beginning-of-line] 'my/smarter-move-beginning-of-line)
+#+END_SRC
+*** Emacs help
+Command group for looking up help in Emacs. Open it with =C-c h=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-help (:exit t :hint nil)
+  "
+  ^Describe^
+  ^^--------------
+  _c_: Character
+  _f_: Function
+  _k_: Key (brief)
+  _K_: Key
+  _m_: Modes
+  _v_: Variable
+  "
+  ("c" describe-char)
+  ("f" describe-function)
+  ("k" describe-key-briefly)
+  ("K" describe-key)
+  ("m" describe-mode)
+  ("v" describe-variable))
+  (global-set-key (kbd "C-c h") 'my/hydra-help/body)
+#+END_SRC
+
+*** Application launching
+Command group to launch various utilities and applications. Open it with =C-c e=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-exec (:exit t :hint nil)
+  "
+  ^Utilities^
+  ^^--------------
+  [_b_]rowse URL
+  [_c_]alendar
+  [_e_]lisp REPL
+  [_f_]ile manager
+  [_p_]ackages
+  "
+  ("b" browse-url-dwim-guess)
+  ("c" calendar)
+  ("e" ielm)
+  ("f" neotree-toggle)
+  ("p" paradox-list-packages))
+  (global-set-key (kbd "C-c e") 'my/hydra-exec/body)
+#+END_SRC
+
+*** Toggle settings
+Command group to toggle various settings.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-toggle (:exit t :hint nil)
+  "
+_l_: toggle line numbers
+_f_: toggle fill column indicator
+"
+  ("l" linum-mode)
+  ("f" fci-mode))
+(global-set-key (kbd "C-c z") 'my/hydra-toggle/body)
+(global-set-key (kbd "s-z") 'my/hydra-toggle/body)
+#+END_SRC
+
+*** Window management
+Command group for managing windows. Open it with =C-c w=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-windows (:hint nil)
+  "
+  ^Layout^                         ^Move Focus^               ^Workspaces^
+  ^^^^^^---------------------------------------------------------------------------
+  _<C-left>_ : Undo                _<up>_   : Up              _1_: Workspace 1
+  _<C-right>_: Redo                _<down>_ : Down            _2_: Workspace 2
+  _f_        : Flip vertically     _<left>_ : Left            _3_: Workspace 3
+  _F_        : Flip horizontally   _<right>_: Right           _4_: Workspace 4
+  _s_        : Split vertically    _w_      : Jump by number  _5_: Workspace 5
+  _S_        : Split horizontally  ^ ^                        _K_: Delete workspace
+  _d_        : Delete window
+  _D_        : Delete others
+
+  _q_uit
+  "
+  ("<C-left>" winner-undo)
+  ("<C-right>" winner-redo)
+  ("<up>" windmove-up)
+  ("<down>" windmove-down)
+  ("<left>" windmove-left)
+  ("<right>" windmove-right)
+  ("w" ace-window :exit t)
+  ("f" flip-frame)
+  ("F" flop-frame)
+  ("s" (progn (split-window-below) (windmove-down)))
+  ("S" (progn (split-window-right) (windmove-right)))
+  ("d" delete-window :exit t)
+  ("D" delete-other-windows :exit t)
+  ("1" eyebrowse-switch-to-window-config-1 :exit t)
+  ("2" eyebrowse-switch-to-window-config-2 :exit t)
+  ("3" eyebrowse-switch-to-window-config-3 :exit t)
+  ("4" eyebrowse-switch-to-window-config-4 :exit t)
+  ("5" eyebrowse-switch-to-window-config-5 :exit t)
+  ("K" eyebrowse-close-window-config :exit t)
+  ("q" nil))
+  (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
+#+END_SRC
+
+*** Text manipulation
+Command group for manipulating text. Open it with =C-c t=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-fold (:hint nil :pre (hs-minor-mode 1))
+  "
+  ^Folding^
+  ^^--------------
+  _f_: toggle fold
+  _h_: hide all
+  _s_: show all
+
+  _q_uit, _c_ancel
+  "
+  ("f" fold-dwim-toggle)
+  ("h" fold-dwim-hide-all)
+  ("s" fold-dwim-show-all)
+  ("q" nil)
+  ("c" my/hydra-text/body :exit t))
+
+  (defhydra my/hydra-text (:hint nil)
+    "
+  ^Text Manipulation^
+  ^^--------------------------------
+  _+_     : expand region
+  _-_     : contract region
+  _c_     : toggle line/region commented
+  _f_     : fold text
+  _jc_    : jump to character
+  _jw_    : jump to word
+  _jl_    : jump to line
+  _<up>_  : move line or region up
+  _<down>_: move line or region down
+  _s_     : enable spell-checking
+  _S_     : disable spell-checking
+  _z_     : undo last change
+  _Z_     : redo last change
+  _u_     : show undo tree
+
+  _q_uit
+  "
+    ("+" er/expand-region)
+    ("-" er/contract-region)
+    ("c" comment-dwim-2)
+    ("f" my/hydra-fold/body :exit t)
+    ("jc" avy-goto-char :exit t)
+    ("jw" avy-goto-word-1 :exit t)
+    ("jl" avy-goto-line :exit t)
+    ("<up>" move-text-up)
+    ("<down>" move-text-down)
+    ("s" (flyspell-mode 1) :exit t)
+    ("S" (flyspell-mode 0) :exit t)
+    ("z" undo-tree-undo)
+    ("Z" undo-tree-redo)
+    ("u" undo-tree-visualize :exit t)
+    ("q" nil))
+  (global-set-key (kbd "C-c t") 'my/hydra-text/body)
+#+END_SRC
+
+*** Searching
+Command group for searching for things. Open it with =C-c s=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-search (:exit t :hint nil)
+  "
+  ^Buffer^            ^Project^           ^Web^
+  ^^^^^^---------------------------------------------
+  _b_: this buffer    _p_: this project   _g_: google
+  _B_: all buffers
+
+  _q_uit
+  "
+  ("b" swiper-helm)
+  ("B" helm-ag-buffers)
+  ("g" helm-google-suggest)
+  ("p" helm-ag-project-root)
+  ("q" nil))
+  (global-set-key (kbd "C-c s") 'my/hydra-search/body)
+#+END_SRC
+
+*** Project management
+Command group for working with projects. Open it with =C-c p=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-projects (:exit t :hint nil)
+  "
+  ^Project Management^
+  ^^----------------------------
+  _f_: find file in project
+  _k_: kill all project buffers
+  _r_: find recent project files
+  _p_: switch project
+  _s_: save all project files
+
+  _q_uit
+  "
+  ("f" projectile-find-file)
+  ("k" projectile-kill-buffers)
+  ("r" projectile-recentf)
+  ("p" projectile-switch-project)
+  ("s" projectile-save-project-buffers)
+  ("q" nil))
+  (global-set-key (kbd "C-c p") 'my/hydra-projects/body)
+#+END_SRC
+
+*** Menu browsing
+Command group for browsing various menus. Open it with =C-c x=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-menu (:exit t :hint nil)
+  "
+  ^Menu^
+  ^^-----------------
+  _b_: buffers
+  _B_: bookmarks
+  _f_: files
+  _k_: kill ring
+  _K_: key bindings
+  _p_: browse project
+  _r_: recent files
+  "
+  ("b" helm-buffers-list)
+  ("B" helm-bookmarks)
+  ("f" helm-find-files)
+  ("k" helm-show-kill-ring)
+  ("K" helm-descbinds)
+  ("p" helm-browse-project)
+  ("r" helm-recentf))
+  (global-set-key (kbd "C-c x") 'my/hydra-menu/body)
+#+END_SRC
+
+*** Version control
+Command group for git functions. Open it with =C-c g=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-git (:exit t :hint nil)
+  "
+  ^Gists^                 ^Git^
+  ^^^^-------------------------
+  _l_: list gists         _s_: Git status
+  _g_: post gist
+  _G_: post private gist
+
+  _q_uit
+  "
+  ("l" gist-list)
+  ("g" gist-region-or-buffer)
+  ("G" gist-region-or-buffer-private)
+  ("s" magit-status)
+  ("q" nil))
+  (global-set-key (kbd "C-c g") 'my/hydra-git/body)
+#+END_SRC
+
+*** OrgMode commands
+Command group for OrgMode. Open it with =C-c o=.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-org (:exit t :hint nil)
+  "
+^OrgMode^
+^^-----------
+_a_: open agenda
+_A_: archive item
+_c_: capture
+_f_: refile item
+_F_: find org file
+_l_: copy link
+_L_: paste link
+_t_: add tags
+"
+  ("a" org-agenda)
+  ("A" archive)
+  ("c" helm-org-capture-templates)
+  ("f" org-refile)
+  ("F" my/helm-org-all-files-and-buffers)
+  ("l" org-store-link)
+  ("L" org-insert-link)
+  ("t" org-set-tags-command))
+(global-set-key (kbd "C-c o") 'my/hydra-org/body)
 #+END_SRC
