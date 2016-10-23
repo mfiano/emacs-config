@@ -47,7 +47,7 @@ Additionally you can expect the following from this configuration:
            packages having a single top-level form.
 - Languages :: Emphasis on support for Common Lisp and OrgMode.
 - Graphical :: Designed to look and function nice in a graphical frame.
-- Keys :: Each custom command is prefixed with either =Super= or =C-c= for maximum
+- Keys :: Each custom command is prefixed with either =C-c= for maximum
           portability.
 
 ** Installation
@@ -555,8 +555,7 @@ Enable the Hydra package.
 (use-package hydra)
 #+END_SRC
 
-Command group for looking up help in Emacs. Open it with either =C-c h= or =Super
-h=.
+Command group for looking up help in Emacs. Open it with =C-c h=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-help (:exit t :hint nil)
@@ -577,11 +576,9 @@ h=.
   ("m" describe-mode)
   ("v" describe-variable))
   (global-set-key (kbd "C-c h") 'my/hydra-help/body)
-  (global-set-key (kbd "s-h") 'my/hydra-help/body)
 #+END_SRC
 
-Command group to launch various utilities and applications. Open it with either
-=C-c e= or =Super e=,
+Command group to launch various utilities and applications. Open it with =C-c e=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-exec (:exit t :hint nil)
@@ -600,7 +597,6 @@ Command group to launch various utilities and applications. Open it with either
   ("f" neotree-toggle)
   ("p" paradox-list-packages))
   (global-set-key (kbd "C-c e") 'my/hydra-exec/body)
-  (global-set-key (kbd "s-e") 'my/hydra-exec/body)
 #+END_SRC
 
 Command group to toggle various settings.
@@ -617,7 +613,7 @@ _f_: toggle fill column indicator
 (global-set-key (kbd "s-z") 'my/hydra-toggle/body)
 #+END_SRC
 
-Command group for managing windows. Open it with either =C-c w= or =Super w=.
+Command group for managing windows. Open it with =C-c w=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-windows (:hint nil)
@@ -656,10 +652,9 @@ Command group for managing windows. Open it with either =C-c w= or =Super w=.
   ("K" eyebrowse-close-window-config :exit t)
   ("q" nil))
   (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
-  (global-set-key (kbd "s-w") 'my/hydra-windows/body)
 #+END_SRC
 
-Command group for manipulating text. Open it with either =C-c t= or =Super t=.
+Command group for manipulating text. Open it with =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-fold (:hint nil :pre (hs-minor-mode 1))
@@ -715,10 +710,9 @@ Command group for manipulating text. Open it with either =C-c t= or =Super t=.
     ("u" undo-tree-visualize :exit t)
     ("q" nil))
   (global-set-key (kbd "C-c t") 'my/hydra-text/body)
-  (global-set-key (kbd "s-t") 'my/hydra-text/body)
 #+END_SRC
 
-Command group for searching for things. Open it with either =C-c s= or =Super s=.
+Command group for searching for things. Open it with =C-c s=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-search (:exit t :hint nil)
@@ -736,10 +730,9 @@ Command group for searching for things. Open it with either =C-c s= or =Super s=
   ("p" helm-ag-project-root)
   ("q" nil))
   (global-set-key (kbd "C-c s") 'my/hydra-search/body)
-  (global-set-key (kbd "s-s") 'my/hydra-search/body)
 #+END_SRC
 
-Command group for working with projects. Open it with either =C-c p= or =Super p=.
+Command group for working with projects. Open it with =C-c p=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-projects (:exit t :hint nil)
@@ -761,10 +754,9 @@ Command group for working with projects. Open it with either =C-c p= or =Super p
   ("s" projectile-save-project-buffers)
   ("q" nil))
   (global-set-key (kbd "C-c p") 'my/hydra-projects/body)
-  (global-set-key (kbd "s-p") 'my/hydra-projects/body)
 #+END_SRC
 
-Command group for browsing various menus. Open it with either =C-c x= or =Super x=.
+Command group for browsing various menus. Open it with =C-c x=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-menu (:exit t :hint nil)
@@ -787,10 +779,9 @@ Command group for browsing various menus. Open it with either =C-c x= or =Super 
   ("p" helm-browse-project)
   ("r" helm-recentf))
   (global-set-key (kbd "C-c x") 'my/hydra-menu/body)
-  (global-set-key (kbd "s-x") 'my/hydra-menu/body)
 #+END_SRC
 
-Command group for git functions. Open it with either =C-c g= or =Super g=.
+Command group for git functions. Open it with =C-c g=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-git (:exit t :hint nil)
@@ -809,10 +800,9 @@ Command group for git functions. Open it with either =C-c g= or =Super g=.
   ("s" magit-status)
   ("q" nil))
   (global-set-key (kbd "C-c g") 'my/hydra-git/body)
-  (global-set-key (kbd "s-g") 'my/hydra-git/body)
 #+END_SRC
 
-Command group for OrgMode. Open it with either =C-c o= or =Super o=.
+Command group for OrgMode. Open it with =C-c o=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-org (:exit t :hint nil)
@@ -837,7 +827,6 @@ _t_: add tags
   ("L" org-insert-link)
   ("t" org-set-tags-command))
 (global-set-key (kbd "C-c o") 'my/hydra-org/body)
-(global-set-key (kbd "s-o") 'my/hydra-org/body)
 #+END_SRC
 
 *** Package management
