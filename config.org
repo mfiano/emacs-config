@@ -1310,16 +1310,13 @@ Email client.
 (use-package weechat
   :config
   (progn
-    (setq weechat-host-default "www.axity.net"
-          weechat-port-default 9001
-          weechat-mode-default 'ssl
-          weechat-buffer-kill-buffers-on-disconnect t
+    (setq weechat-buffer-kill-buffers-on-disconnect t
           wechat-completing-read-function 'helm-comp-read
-          weechat-auto-monitor-buffers my/irc-monitored-buffers
-          weechat-tracking-types '(:highlight :message))))
+          weechat-auto-monitor-buffers my/irc-monitored-buffers)))
 
 (use-package weechat-tracking
-  :ensure nil)
+  :ensure nil
+  :config (setq weechat-tracking-types '(:highlight :message)))
 #+END_SRC
 *** org
 Org mode is for taking notes, planning projects, and authoring documents.
