@@ -110,7 +110,7 @@ The user's home directory.
 The directory to store miscellaneous configuration files.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/dir-etc (concat user-emacs-directory (file-name-as-directory "etc")))
+(defvar my/dir-etc (expand-file-name (concat user-emacs-directory (file-name-as-directory "etc"))))
 #+END_SRC
 
 **** my/dir-backups
@@ -689,24 +689,11 @@ Emacs sessions.
   :diminish undo-tree-mode)
 #+END_SRC
 
-*** powerline
-Nicer mode line.
-
-#+BEGIN_SRC emacs-lisp
-(use-package powerline
-  :config
-  (progn
-    (setq powerline-default-separator 'arrow-fade
-          powerline-height 12)
-    (powerline-default-theme)))
-#+END_SRC
-
 *** moe-theme
 Define the color theme.
 
 #+BEGIN_SRC emacs-lisp
 (use-package moe-theme
-  :after powerline
   :config
   (progn
     (setq moe-theme-highlight-buffer-id nil
@@ -714,6 +701,21 @@ Define the color theme.
     (moe-dark)))
 #+END_SRC
 
+*** smart-mode-line
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+  :ensure t
+  :config
+  (progn
+    (setq sml/theme 'dark
+          sml/shorten-directory t
+          sml/shorten-modes t
+          sml/name-width 10
+          sml/mode-width 'full
+          sml/line-number-format "%4l"
+          sml/no-confirm-load-theme t)
+    (sml/setup)))
+#+END_SRC
 *** indent-guide
 Draw vertical lines in the buffer to guide indentation levels.
 
@@ -1253,11 +1255,9 @@ Email client.
   (progn
     (setq mail-user-agent 'message-user-agent
           mail-specify-envelope-from t
-          smtpmail-smtp-server "smtp.gmail.com"
           message-send-mail-function 'message-send-mail-with-sendmail
           message-kill-buffer-on-exit t
           message-kill-buffer-query nil
-          message-signature "Thank you,\nMichael Fiano\nAxTek Services\n518-444-2166\n"
           sendmail-program "/usr/bin/msmtp"
           notmuch-fcc-dirs nil
           notmuch-archive-tags '("-inbox" "-unread" "+archive")
@@ -1271,7 +1271,7 @@ Email client.
                                    (:name "work" :key "w" :query "tag:work")
                                    (:name "lists" :key "l" :query "tag:lists")))
     (defadvice notmuch-mua-reply (around notmuch-fix-sender)
-      (let ((sender "Michael Fiano <michael.fiano@gmail.com>"))
+      (let ((sender (concat user-full-name " <" user-mail-address ">")))
         ad-do-it))
     (ad-activate 'notmuch-mua-reply)
     (add-hook 'notmuch-hello-refresh-hook
@@ -1290,6 +1290,37 @@ Email client.
     (add-hook 'notmuch-show-hook 'my/notmuch-show-header-tabs-to-spaces)))
 #+END_SRC
 
+*** gnutls
+#+BEGIN_SRC emacs-lisp
+(use-package gnutls
+  :config (add-to-list 'gnutls-trustfiles (concat my/dir-etc "weechat.cert")))
+#+END_SRC
+*** weechat
+
+#+BEGIN_SRC emacs-lisp
+(defun my/irc-connect ()
+  (interactive)
+  (weechat-connect my/irc-host
+                   my/irc-port
+                   my/irc-password
+                   my/irc-mode))
+
+(use-package tracking)
+
+(use-package weechat
+  :config
+  (progn
+    (setq weechat-host-default "www.axity.net"
+          weechat-port-default 9001
+          weechat-mode-default 'ssl
+          weechat-buffer-kill-buffers-on-disconnect t
+          wechat-completing-read-function 'helm-comp-read
+          weechat-auto-monitor-buffers my/irc-monitored-buffers
+          weechat-tracking-types '(:highlight :message))))
+
+(use-package weechat-tracking
+  :ensure nil)
+#+END_SRC
 *** org
 Org mode is for taking notes, planning projects, and authoring documents.
 
@@ -1617,7 +1648,6 @@ Enable support for shell scripts.
 Disable some annoying key bindings.
 
 #+BEGIN_SRC emacs-lisp
-(global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "<S-down-mouse-1>"))
 (global-unset-key (kbd "<S-down-mouse-3>"))
 (global-unset-key (kbd "<C-down-mouse-1>"))
@@ -1677,12 +1707,14 @@ Command group to launch various utilities and applications. Open it with =C-c e=
   [_c_]alendar
   [_e_]lisp REPL
   [_f_]ile manager
+  [_i_]rc client
   [_p_]ackages
   "
   ("b" browse-url-dwim-guess)
   ("c" calendar)
   ("e" ielm)
   ("f" neotree-toggle)
+  ("i" my/irc-connect)
   ("p" paradox-list-packages))
   (global-set-key (kbd "C-c e") 'my/hydra-exec/body)
 #+END_SRC
