@@ -1214,88 +1214,30 @@ Allow creating GitHub gists from regions/buffers.
   :diminish gist-mode)
 #+END_SRC
 
-*** notmuch
-Email client.
-
+*** smtpmail
 #+BEGIN_SRC emacs-lisp
-(defun my/notmuch-select-address (prompt collection initial-input)
-  (completing-read
-   prompt
-   (cons initial-input collection)
-   nil
-   t
-   nil
-   'notmuch-address-history))
-
-(defun my/notmuch-show-mode-delete ()
-  (interactive)
-  (notmuch-show-tag (list "+deleted" "-inbox")))
-
-(defun my/notmuch-search-mode-delete ()
-  (interactive)
-  (notmuch-search-tag (list "+deleted" "-inbox"))
-  (next-line))
-
-(defun my/notmuch-show-subject-tabs-to-spaces ()
-  (goto-char (point-min))
-  (when (re-search-forward "^Subject:" nil t)
-    (while (re-search-forward "\t" (line-end-position) t)
-      (replace-match " " nil nil))))
-
-(defun my/notmuch-show-header-tabs-to-spaces ()
-  (setq header-line-format
-        (notmuch-show-strip-re
-         (replace-regexp-in-string "\t" " " (notmuch-show-get-subject)))))
-
-(use-package notmuch
-  :bind
-  (:map notmuch-show-mode-map
-   ("r" . notmuch-show-reply)
-   ("R" . notmuch-show-reply-sender)
-   ("D" . my/notmuch-show-mode-delete)
-   :map notmuch-search-mode-map
-   ("r" . notmuch-search-reply-to-thread)
-   ("R" . notmuch-search-reply-to-thread-sender)
-   ("D" . my/notmuch-search-mode-delete))
+(use-package smtpmail
+  :ensure nil
   :config
   (progn
-    (setq mail-user-agent 'message-user-agent
-          mail-specify-envelope-from t
-          message-send-mail-function 'message-send-mail-with-sendmail
-          message-kill-buffer-on-exit t
-          message-kill-buffer-query nil
-          sendmail-program "/usr/bin/msmtp"
-          notmuch-fcc-dirs nil
-          notmuch-archive-tags '("-inbox" "-unread" "+archive")
-          notmuch-search-oldest-first nil
-          notmuch-address-command "notmuch-addrlookup"
-          notmuch-address-selection-function 'my/notmuch-select-address
-          notmuch-saved-searches '((:name "all" :key "a" :query "*" :sort-order newest-first)
-                                   (:name "inbox" :key "h" :query "tag:inbox or tag:unread")
-                                   (:name "sent" :key "s" :query "tag:sent")
-                                   (:name "buy" :key "b" :query "tag:buy")
-                                   (:name "work" :key "w" :query "tag:work")
-                                   (:name "lists" :key "l" :query "tag:lists")))
-    (defadvice notmuch-mua-reply (around notmuch-fix-sender)
-      (let ((sender (concat user-full-name " <" user-mail-address ">")))
-        ad-do-it))
-    (ad-activate 'notmuch-mua-reply)
-    (add-hook 'notmuch-hello-refresh-hook
-              (lambda ()
-                (if (and (eq (point) (point-min))
-                         (search-forward "Saved searches:" nil t))
-                    (progn
-                      (forward-line)
-                      (widget-forward 1))
-                  (if (eq (widget-type (widget-at)) 'editable-field)
-                      (beginning-of-line)))))
-    (add-hook 'message-header-setup-hook (lambda () (insert (format "Bcc: %s <%s>\n"
-                                                                    (notmuch-user-name)
-                                                                    (notmuch-user-primary-email)))))
-    (add-hook 'notmuch-show-markup-headers-hook 'my/notmuch-show-subject-tabs-to-spaces)
-    (add-hook 'notmuch-show-hook 'my/notmuch-show-header-tabs-to-spaces)))
+    (setq message-send-mail-function 'smtpmail-send-it
+          starttls-use-gnutls t
+          smtpmail-starttls-credentials `((,smtpmail-smtp-server 587 nil nil))
+          smtpmail-auth-credentials (concat my/dir-home ".authinfo.gpg"))))
 #+END_SRC
-
+*** mu4e
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e
+  :ensure nil
+  :config
+  (progn
+    (setq mu4e-maildir (concat my/dir-home ".mail/gmail")
+          mu4e-sent-messages-behavior 'delete
+          mu4e-maildir-shortcuts '(("/INBOX"))
+          mu4e-update-interval 120
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-attachment-dir (concat my/dir-home "downloads"))))
+#+END_SRC
 *** gnutls
 #+BEGIN_SRC emacs-lisp
 (use-package gnutls
