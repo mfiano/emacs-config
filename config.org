@@ -147,7 +147,7 @@ that contain OrgMode documents you want tracked.
 A list of mode hooks for editing text.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my/hooks-text '(text-mode-hook org-mode-hook))
+(defvar my/hooks-text '(text-mode-hook org-mode-hook weechat-mode-hook))
 #+END_SRC
 
 **** my/hooks-lisp
@@ -239,15 +239,6 @@ Use a separate =custom.el= file for Emacs =customize= to write to.
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file 'noerror)
-#+END_SRC
-
-Some configuration options should be private, such as your email address,
-passwords, etc. We will load an external file, =private.el= if it exists.
-
-#+BEGIN_SRC emacs-lisp
-(let ((private-file (concat user-emacs-directory "private.el")))
-  (when (file-exists-p private-file)
-    (load-file private-file)))
 #+END_SRC
 
 ** Basics
@@ -464,6 +455,21 @@ To backup the packages, we can do so manually in the shell:
 
 #+BEGIN_SRC sh :tangle no
 mv ~/.emacs.d/src ~/.emacs.d/src.bak
+#+END_SRC
+
+*** epa-file
+Some configuration options should be private, such as your email address,
+passwords, etc. We will load an external encrypted file, =secrets.el.gpg= if it
+exists.
+
+#+BEGIN_SRC emacs-lisp
+(use-package epa-file
+  :ensure nil
+  :init
+  (let ((secrets-file (concat my/dir-etc "secrets.el.gpg")))
+    (epa-file-enable)
+    (when (file-exists-p secrets-file)
+      (load-library secrets-file))))
 #+END_SRC
 
 *** auto-compile
@@ -1293,7 +1299,10 @@ Email client.
 *** gnutls
 #+BEGIN_SRC emacs-lisp
 (use-package gnutls
-  :config (add-to-list 'gnutls-trustfiles (concat my/dir-etc "weechat.cert")))
+  :config
+  (progn
+    (setq nsm-settings-file (concat my/dir-etc "gnutls.dat"))
+    (add-to-list 'gnutls-trustfiles (concat my/dir-etc "weechat.cert"))))
 #+END_SRC
 *** weechat
 
@@ -1312,7 +1321,8 @@ Email client.
   (progn
     (setq weechat-buffer-kill-buffers-on-disconnect t
           wechat-completing-read-function 'helm-comp-read
-          weechat-auto-monitor-buffers my/irc-monitored-buffers)))
+          weechat-auto-monitor-buffers my/irc-monitored-buffers
+          weechat-fill-column 80)))
 
 (use-package weechat-tracking
   :ensure nil
@@ -1368,7 +1378,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-agenda-start-on-weekday 1
           org-cycle-separator-lines 0
           org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-          org-blank-before-new-entry '((heading . nil)
+          org-blank-before-new-entry '((heading . auto)
                                        (plain-list-item . auto))
           org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "|" "DONE(d)")
                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
