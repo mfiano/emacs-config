@@ -707,6 +707,12 @@ Define the color theme.
     (moe-dark)))
 #+END_SRC
 
+*** focus
+#+BEGIN_SRC emacs-lisp
+(use-package focus
+  :commands focus-mode
+  :init (add-hook 'prog-mode-hook 'focus-mode))
+#+END_SRC
 *** smart-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package smart-mode-line
