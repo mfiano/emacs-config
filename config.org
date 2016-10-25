@@ -1652,6 +1652,7 @@ Command group to launch various utilities and applications. Open it with =C-c e=
   [_b_]rowse URL
   [_c_]alendar
   [_e_]lisp REPL
+  [_E_]mail client
   [_f_]ile manager
   [_i_]rc client
   [_p_]ackages
@@ -1659,6 +1660,7 @@ Command group to launch various utilities and applications. Open it with =C-c e=
   ("b" browse-url-dwim-guess)
   ("c" calendar)
   ("e" ielm)
+  ("E" mu4e)
   ("f" neotree-toggle)
   ("i" my/irc-connect)
   ("p" paradox-list-packages))
