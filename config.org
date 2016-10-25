@@ -855,17 +855,14 @@ Re-arrange the window layout.
 (use-package transpose-frame)
 #+END_SRC
 
-*** eyebrowse
-Manage window layouts.
-
+*** workgroups
 #+BEGIN_SRC emacs-lisp
-(use-package eyebrowse
-  :init
-  (setq eyebrowse-wrap-around t
-        eyebrowse-switch-back-and-forth t
-        eyebrowse-new-workspace t
-        eyebrowse-keymap-prefix (kbd "C-c M-e"))
-  :config (eyebrowse-mode t))
+(use-package workgroups
+  :config
+  (progn
+    (setq wg-morph-on nil)
+    (wg-load (concat my/dir-etc "workgroups")))
+  :diminish workgroups-mode)
 #+END_SRC
 *** recentf
 Track recent files that have been opened.
@@ -1689,14 +1686,14 @@ Command group for managing windows. Open it with =C-c w=.
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-windows (:hint nil)
   "
-  ^Layout^                         ^Move Focus^               ^Workspaces^
-  ^^^^^^---------------------------------------------------------------------------
-  _<C-left>_ : Undo                _<up>_   : Up              _1_: Workspace 1
-  _<C-right>_: Redo                _<down>_ : Down            _2_: Workspace 2
-  _f_        : Flip vertically     _<left>_ : Left            _3_: Workspace 3
-  _F_        : Flip horizontally   _<right>_: Right           _4_: Workspace 4
-  _s_        : Split vertically    _w_      : Jump by number  _5_: Workspace 5
-  _S_        : Split horizontally  ^ ^                        _K_: Delete workspace
+  ^Layout^                         ^Move Focus^
+  ^^^^------------------------------------------------------
+  _<C-left>_ : Undo                _<up>_   : Up
+  _<C-right>_: Redo                _<down>_ : Down
+  _f_        : Flip vertically     _<left>_ : Left
+  _F_        : Flip horizontally   _<right>_: Right
+  _s_        : Split vertically    _w_      : Jump by number
+  _S_        : Split horizontally
   _d_        : Delete window
   _D_        : Delete others
 
@@ -1715,12 +1712,6 @@ Command group for managing windows. Open it with =C-c w=.
   ("S" (progn (split-window-right) (windmove-right)))
   ("d" delete-window :exit t)
   ("D" delete-other-windows :exit t)
-  ("1" eyebrowse-switch-to-window-config-1 :exit t)
-  ("2" eyebrowse-switch-to-window-config-2 :exit t)
-  ("3" eyebrowse-switch-to-window-config-3 :exit t)
-  ("4" eyebrowse-switch-to-window-config-4 :exit t)
-  ("5" eyebrowse-switch-to-window-config-5 :exit t)
-  ("K" eyebrowse-close-window-config :exit t)
   ("q" nil))
   (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
 #+END_SRC
