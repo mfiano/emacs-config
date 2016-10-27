@@ -59,7 +59,7 @@ To use this configuration, first make sure you meet the requirements:
 
 - Emacs *25.1* or above.
 - (recommended) Ability to start in a graphical frame.
-- (recommended) The [[http://dejavu-fonts.org][DejaVu]] fonts installed for your operating system.
+- (recommended) The [[https://github.com/google/fonts/blob/master/apache/cousine/Cousine-Regular.ttf][Google Cousine]] font installed for your operating system.
 
 Then, backup your existing configuration if one exists:
 
@@ -367,7 +367,7 @@ Define the look and feel. The color theme will be applied later.
 (setq display-time-format "%I:%M%P")
 (display-time-mode 1)
 (fringe-mode '(8 . 0))
-(my/set-default-font "DejaVu Sans Mono" 9)
+(my/set-default-font "Cousine" 9)
 (global-font-lock-mode t)
 #+END_SRC
 
@@ -1236,7 +1236,7 @@ Allow creating GitHub gists from regions/buffers.
   (progn
     (setq mu4e-maildir (concat my/dir-home ".mail/gmail")
           mu4e-sent-messages-behavior 'delete
-          mu4e-maildir-shortcuts '(("/INBOX"))
+          mu4e-completing-read-function 'helm-comp-read
           mu4e-update-interval 120
           mu4e-get-mail-command "mbsync -a"
           mu4e-attachment-dir (concat my/dir-home "downloads"))))
@@ -1826,7 +1826,7 @@ Command group for working with projects. Open it with =C-c p=.
   ("p" projectile-switch-project)
   ("s" projectile-save-project-buffers)
   ("q" nil))
-  (global-set-key (kbd "C-c p") 'my/hydra-projects/body)
+  (global-set-key (kbd "C-c P") 'my/hydra-projects/body)
 #+END_SRC
 
 *** Menu browsing
