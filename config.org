@@ -59,7 +59,7 @@ To use this configuration, first make sure you meet the requirements:
 
 - Emacs *25.1* or above.
 - (recommended) Ability to start in a graphical frame.
-- (recommended) The [[https://github.com/google/fonts/blob/master/apache/cousine/Cousine-Regular.ttf][Google Cousine]] font installed for your operating system.
+- (recommended) The DejaVu fonts installed for your operating system.
 
 Then, backup your existing configuration if one exists:
 
@@ -367,7 +367,7 @@ Define the look and feel. The color theme will be applied later.
 (setq display-time-format "%I:%M%P")
 (display-time-mode 1)
 (fringe-mode '(8 . 0))
-(my/set-default-font "Cousine" 9)
+(my/set-default-font "DejaVu Sans Mono" 9)
 (global-font-lock-mode t)
 #+END_SRC
 
@@ -1314,8 +1314,8 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-agenda-start-on-weekday 1
           org-cycle-separator-lines 0
           org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-          org-blank-before-new-entry '((heading . auto)
-                                       (plain-list-item . auto))
+          org-blank-before-new-entry '((heading . nil)
+                                       (plain-list-item . nil))
           org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "|" "DONE(d)")
                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
                               (sequence "REPORTED(r@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
@@ -1635,7 +1635,7 @@ Command group for looking up help in Emacs. Open it with =C-c h=.
   ("K" describe-key)
   ("m" describe-mode)
   ("v" describe-variable))
-  (global-set-key (kbd "C-c h") 'my/hydra-help/body)
+(global-set-key (kbd "C-c h") 'my/hydra-help/body)
 #+END_SRC
 
 *** Application launching
@@ -1661,7 +1661,7 @@ Command group to launch various utilities and applications. Open it with =C-c e=
   ("f" neotree-toggle)
   ("i" my/irc-connect)
   ("p" paradox-list-packages))
-  (global-set-key (kbd "C-c e") 'my/hydra-exec/body)
+(global-set-key (kbd "C-c e") 'my/hydra-exec/body)
 #+END_SRC
 
 *** Toggle settings
@@ -1676,7 +1676,6 @@ _f_: toggle fill column indicator
   ("l" linum-mode)
   ("f" fci-mode))
 (global-set-key (kbd "C-c z") 'my/hydra-toggle/body)
-(global-set-key (kbd "s-z") 'my/hydra-toggle/body)
 #+END_SRC
 
 *** Window management
@@ -1712,7 +1711,7 @@ Command group for managing windows. Open it with =C-c w=.
   ("d" delete-window :exit t)
   ("D" delete-other-windows :exit t)
   ("q" nil))
-  (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
+(global-set-key (kbd "C-c w") 'my/hydra-windows/body)
 #+END_SRC
 
 *** Text manipulation
@@ -1735,8 +1734,8 @@ Command group for manipulating text. Open it with =C-c t=.
   ("q" nil)
   ("c" my/hydra-text/body :exit t))
 
-  (defhydra my/hydra-text (:hint nil)
-    "
+(defhydra my/hydra-text (:hint nil)
+  "
   ^Text Manipulation^
   ^^--------------------------------
   _+_     : expand region
@@ -1756,22 +1755,22 @@ Command group for manipulating text. Open it with =C-c t=.
 
   _q_uit
   "
-    ("+" er/expand-region)
-    ("-" er/contract-region)
-    ("c" comment-dwim-2)
-    ("f" my/hydra-fold/body :exit t)
-    ("jc" avy-goto-char :exit t)
-    ("jw" avy-goto-word-1 :exit t)
-    ("jl" avy-goto-line :exit t)
-    ("<up>" move-text-up)
-    ("<down>" move-text-down)
-    ("s" (flyspell-mode 1) :exit t)
-    ("S" (flyspell-mode 0) :exit t)
-    ("z" undo-tree-undo)
-    ("Z" undo-tree-redo)
-    ("u" undo-tree-visualize :exit t)
-    ("q" nil))
-  (global-set-key (kbd "C-c t") 'my/hydra-text/body)
+  ("+" er/expand-region)
+  ("-" er/contract-region)
+  ("c" comment-dwim-2)
+  ("f" my/hydra-fold/body :exit t)
+  ("jc" avy-goto-char :exit t)
+  ("jw" avy-goto-word-1 :exit t)
+  ("jl" avy-goto-line :exit t)
+  ("<up>" move-text-up)
+  ("<down>" move-text-down)
+  ("s" (flyspell-mode 1) :exit t)
+  ("S" (flyspell-mode 0) :exit t)
+  ("z" undo-tree-undo)
+  ("Z" undo-tree-redo)
+  ("u" undo-tree-visualize :exit t)
+  ("q" nil))
+(global-set-key (kbd "C-c t") 'my/hydra-text/body)
 #+END_SRC
 
 *** Searching
@@ -1792,7 +1791,7 @@ Command group for searching for things. Open it with =C-c s=.
   ("g" helm-google-suggest)
   ("p" helm-ag-project-root)
   ("q" nil))
-  (global-set-key (kbd "C-c s") 'my/hydra-search/body)
+(global-set-key (kbd "C-c s") 'my/hydra-search/body)
 #+END_SRC
 
 *** Project management
@@ -1817,7 +1816,7 @@ Command group for working with projects. Open it with =C-c p=.
   ("p" projectile-switch-project)
   ("s" projectile-save-project-buffers)
   ("q" nil))
-  (global-set-key (kbd "C-c P") 'my/hydra-projects/body)
+(global-set-key (kbd "C-c P") 'my/hydra-projects/body)
 #+END_SRC
 
 *** Menu browsing
@@ -1843,7 +1842,7 @@ Command group for browsing various menus. Open it with =C-c x=.
   ("K" helm-descbinds)
   ("p" helm-browse-project)
   ("r" helm-recentf))
-  (global-set-key (kbd "C-c x") 'my/hydra-menu/body)
+(global-set-key (kbd "C-c x") 'my/hydra-menu/body)
 #+END_SRC
 
 *** Version control
@@ -1865,7 +1864,7 @@ Command group for git functions. Open it with =C-c g=.
   ("G" gist-region-or-buffer-private)
   ("s" magit-status)
   ("q" nil))
-  (global-set-key (kbd "C-c g") 'my/hydra-git/body)
+(global-set-key (kbd "C-c g") 'my/hydra-git/body)
 #+END_SRC
 
 *** OrgMode commands
