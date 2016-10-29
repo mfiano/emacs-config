@@ -1289,6 +1289,10 @@ Org mode is for taking notes, planning projects, and authoring documents.
       (add-to-list 'results item))
     (sort results 'string<)))
 
+(defun my/org-add-buffer-to-agenda ()
+  (when buffer-file-name
+    (add-to-list 'org-agenda-files buffer-file-name 'append)))
+
 (defun my/helm-org-all-files-and-buffers ()
   (interactive)
   (helm :sources '((name . "OrgMode Files and Buffers")
@@ -1363,8 +1367,8 @@ Org mode is for taking notes, planning projects, and authoring documents.
                                    "* %? :note:\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
                                   ("d" "Dev Note" entry (file org-default-notes-file)
                                    "* %? :note:dev:\n:PROPERTIES:\n:CREATED: %U\n:END:\n%a\n"))
-          org-refile-targets '((nil :maxlevel . 5)
-                               (my/org-all-files-and-buffers :maxlevel . 5))
+          org-refile-targets '((nil :maxlevel . 10)
+                               (org-agenda-files :maxlevel . 10))
           org-agenda-dim-blocked-tasks nil
           org-agenda-compact-blocks t
           org-agenda-custom-commands '(("N" "Notes" tags "NOTE"
@@ -1389,6 +1393,7 @@ Org mode is for taking notes, planning projects, and authoring documents.
           org-enforce-todo-dependencies t
           org-startup-folded t
           org-enforce-todo-checkbox-dependencies t)
+    (add-hook 'org-mode-hook 'my/org-add-buffer-to-agenda)
     (add-hook 'org-shiftup-final-hook 'windmove-up)
     (add-hook 'org-shiftdown-final-hook 'windmove-down)
     (add-hook 'org-shiftleft-final-hook 'windmove-left)
