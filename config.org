@@ -930,7 +930,7 @@ structure mirroring the filesystem.
   (progn
     (defun backup-each-save-filter (filename)
       (let ((ignored-filenames
-             `("^/tmp" "\\.emacs.d/src/" "\\.emacs.d/etc/" "custom.el"))
+             `("^/tmp" "\\.emacs\\.d/src/" "\\.emacs\\.d/etc/" "custom\\.el"))
             (matched-ignored-filename nil))
         (mapc
          (lambda (x)
@@ -1273,9 +1273,9 @@ Org mode is for taking notes, planning projects, and authoring documents.
    (lambda (dir)
      (remove-if
       (lambda (path)
-        (or (string-match-p "\\.emacs.d/src/" path)
+        (or (string-match-p "\\.emacs\\.d/src/" path)
             (file-symlink-p path)))
-      (directory-files-recursively dir "\.org$")))
+      (directory-files-recursively dir "\\.org$")))
    my/dir-list-org))
 
 (defun my/org-all-buffers ()
