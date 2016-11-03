@@ -1269,7 +1269,7 @@ Allow creating GitHub gists from regions/buffers.
     (setq weechat-buffer-kill-buffers-on-disconnect t
           wechat-completing-read-function 'helm-comp-read
           weechat-auto-monitor-buffers my/irc-monitored-buffers
-          weechat-fill-column 80)))
+          weechat-fill-column 'frame-width)))
 
 (use-package weechat-tracking
   :ensure nil
