@@ -861,6 +861,17 @@ Re-arrange the window layout.
 (use-package transpose-frame)
 #+END_SRC
 
+*** workgroups
+Save window layouts
+
+#+BEGIN_SRC emacs-lisp
+(use-package workgroups
+  :config
+  (progn
+    (setq wg-morph-on nil)
+    (wg-load (concat my/dir-etc "workgroups")))
+  :diminish workgroups-mode)
+#+END_SRC
 *** recentf
 Track recent files that have been opened.
 
