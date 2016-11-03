@@ -1630,45 +1630,72 @@ beginning of a line.
 #+BEGIN_SRC emacs-lisp
 (global-set-key [remap move-beginning-of-line] 'my/smarter-move-beginning-of-line)
 #+END_SRC
+*** Custom command menu
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-root (:exit t :hint nil)
+  "
+^Commands^
+^^--------------------
+_a_: Applications
+_g_: Git
+_h_: Help
+_m_: Menus
+_o_: OrgMode
+_p_: Projects
+_s_: Searching
+_t_: Text Manipulation
+_w_: Windows
+"
+  ("a" my/hydra-apps/body)
+  ("g" my/hydra-git/body)
+  ("h" my/hydra-help/body)
+  ("m" my/hydra-menu/body)
+  ("o" my/hydra-org/body)
+  ("p" my/hydra-projects/body)
+  ("s" my/hydra-search/body)
+  ("t" my/hydra-text/body)
+  ("w" my/hydra-windows/body)
+  ("q" nil))
+(global-set-key (kbd "<f20>") 'my/hydra-root/body)
+#+END_SRC
 *** Emacs help
 Command group for looking up help in Emacs. Open it with =C-c h=.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-help (:exit t :hint nil)
   "
-  ^Describe^
-  ^^--------------
-  _c_: Character
-  _f_: Function
-  _k_: Key (brief)
-  _K_: Key
-  _m_: Modes
-  _v_: Variable
+  ^Help^
+  ^^---------------------
+  _c_: Describe character
+  _f_: Describe function
+  _k_: Describe key
+  _m_: Describe modes
+  _v_: Describe variable
   "
   ("c" describe-char)
   ("f" describe-function)
-  ("k" describe-key-briefly)
-  ("K" describe-key)
+  ("k" describe-key)
   ("m" describe-mode)
-  ("v" describe-variable))
+  ("v" describe-variable)
+  ("q" nil))
 (global-set-key (kbd "C-c h") 'my/hydra-help/body)
 #+END_SRC
 
 *** Application launching
-Command group to launch various utilities and applications. Open it with =C-c e=.
+Command group to launch various utilities and applications. Open it with =C-c a=.
 
 #+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-exec (:exit t :hint nil)
+(defhydra my/hydra-apps (:exit t :hint nil)
   "
-  ^Utilities^
-  ^^--------------
-  [_b_]rowse URL
-  [_c_]alendar
-  [_e_]lisp REPL
-  [_E_]mail client
-  [_f_]ile manager
-  [_i_]rc client
-  [_p_]ackages
+  ^Applications^
+  ^^---------------
+  _b_: Browse URL
+  _c_: Calendar
+  _e_: Elisp REPL
+  _E_: Email client
+  _f_: File manager
+  _i_: IRC client
+  _p_: Packages
   "
   ("b" browse-url-dwim-guess)
   ("c" calendar)
@@ -1677,21 +1704,7 @@ Command group to launch various utilities and applications. Open it with =C-c e=
   ("f" neotree-toggle)
   ("i" my/irc-connect)
   ("p" paradox-list-packages))
-(global-set-key (kbd "C-c e") 'my/hydra-exec/body)
-#+END_SRC
-
-*** Toggle settings
-Command group to toggle various settings.
-
-#+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-toggle (:exit t :hint nil)
-  "
-_l_: toggle line numbers
-_f_: toggle fill column indicator
-"
-  ("l" linum-mode)
-  ("f" fci-mode))
-(global-set-key (kbd "C-c z") 'my/hydra-toggle/body)
+(global-set-key (kbd "C-c a") 'my/hydra-apps/body)
 #+END_SRC
 
 *** Window management
@@ -1704,17 +1717,20 @@ Command group for managing windows. Open it with =C-c w=.
   ^^^^------------------------------------------------------
   _<C-left>_ : Undo                _<up>_   : Up
   _<C-right>_: Redo                _<down>_ : Down
-  _f_        : Flip vertically     _<left>_ : Left
-  _F_        : Flip horizontally   _<right>_: Right
-  _s_        : Split vertically    _w_      : Jump by number
+  _<tab>_    : Next workgroup      _<left>_ : Left
+  _<S-tab>_  : Previous workgroup  _<right>_: Right
+  _f_        : Flip vertically     _w_      : Jump by number
+  _F_        : Flip horizontally
+  _t_        : Transpose
+  _s_        : Split vertically
   _S_        : Split horizontally
   _d_        : Delete window
   _D_        : Delete others
-
-  _q_uit
-  "
+"
   ("<C-left>" winner-undo)
   ("<C-right>" winner-redo)
+  ("<tab>" wg-switch-right)
+  ("<S-tab>" wg-switch-left)
   ("<up>" windmove-up)
   ("<down>" windmove-down)
   ("<left>" windmove-left)
@@ -1722,6 +1738,7 @@ Command group for managing windows. Open it with =C-c w=.
   ("w" ace-window :exit t)
   ("f" flip-frame)
   ("F" flop-frame)
+  ("t" transpose-frame)
   ("s" (progn (split-window-below) (windmove-down)))
   ("S" (progn (split-window-right) (windmove-right)))
   ("d" delete-window :exit t)
@@ -1738,11 +1755,11 @@ Command group for manipulating text. Open it with =C-c t=.
   "
   ^Folding^
   ^^--------------
-  _f_: toggle fold
-  _h_: hide all
-  _s_: show all
+  _f_: Toggle fold
+  _h_: Hide all
+  _s_: Show all
 
-  _q_uit, _c_ancel
+  _c_ancel
   "
   ("f" fold-dwim-toggle)
   ("h" fold-dwim-hide-all)
@@ -1754,22 +1771,21 @@ Command group for manipulating text. Open it with =C-c t=.
   "
   ^Text Manipulation^
   ^^--------------------------------
-  _+_     : expand region
-  _-_     : contract region
-  _c_     : toggle line/region commented
-  _f_     : fold text
-  _jc_    : jump to character
-  _jw_    : jump to word
-  _jl_    : jump to line
-  _<up>_  : move line or region up
-  _<down>_: move line or region down
-  _s_     : enable spell-checking
-  _S_     : disable spell-checking
-  _z_     : undo last change
-  _Z_     : redo last change
-  _u_     : show undo tree
-
-  _q_uit
+  _+_     : Expand region
+  _-_     : Contract region
+  _c_     : Toggle line/region commented
+  _f_     : Fold text
+  _jc_    : Jump to character
+  _jw_    : Jump to word
+  _jl_    : Jump to line
+  _l_     : Toggle line numbers
+  _<up>_  : Move line or region up
+  _<down>_: Move line or region down
+  _s_     : Enable spell-checking
+  _S_     : Disable spell-checking
+  _z_     : Undo last change
+  _Z_     : Redo last change
+  _u_     : Show undo tree
   "
   ("+" er/expand-region)
   ("-" er/contract-region)
@@ -1778,6 +1794,7 @@ Command group for manipulating text. Open it with =C-c t=.
   ("jc" avy-goto-char :exit t)
   ("jw" avy-goto-word-1 :exit t)
   ("jl" avy-goto-line :exit t)
+  ("l" linum-mode)
   ("<up>" move-text-up)
   ("<down>" move-text-down)
   ("s" (flyspell-mode 1) :exit t)
@@ -1795,12 +1812,10 @@ Command group for searching for things. Open it with =C-c s=.
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-search (:exit t :hint nil)
   "
-  ^Buffer^            ^Project^           ^Web^
-  ^^^^^^---------------------------------------------
-  _b_: this buffer    _p_: this project   _g_: google
-  _B_: all buffers
-
-  _q_uit
+  ^Buffer^                ^Project^                ^Web^
+  ^^^^^^-------------------------------------------------------------
+  _b_: Search buffer      _p_: Search this project _g_: Search google
+  _B_: Search all buffers
   "
   ("b" swiper-helm)
   ("B" helm-ag-buffers)
@@ -1818,13 +1833,11 @@ Command group for working with projects. Open it with =C-c p=.
   "
   ^Project Management^
   ^^----------------------------
-  _f_: find file in project
-  _k_: kill all project buffers
-  _r_: find recent project files
-  _p_: switch project
-  _s_: save all project files
-
-  _q_uit
+  _f_: Project files
+  _k_: Kill project's buffers
+  _r_: Find recent project files
+  _p_: Switch project
+  _s_: Save all project files
   "
   ("f" projectile-find-file)
   ("k" projectile-kill-buffers)
@@ -1843,13 +1856,13 @@ Command group for browsing various menus. Open it with =C-c x=.
   "
   ^Menu^
   ^^-----------------
-  _b_: buffers
-  _B_: bookmarks
-  _f_: files
-  _k_: kill ring
-  _K_: key bindings
-  _p_: browse project
-  _r_: recent files
+  _b_: Buffers
+  _B_: Bookmarks
+  _f_: Files
+  _k_: Kill ring
+  _K_: Key bindings
+  _p_: Browse project
+  _r_: Recent files
   "
   ("b" helm-buffers-list)
   ("B" helm-bookmarks)
@@ -1867,13 +1880,11 @@ Command group for git functions. Open it with =C-c g=.
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-git (:exit t :hint nil)
   "
-  ^Gists^                 ^Git^
-  ^^^^-------------------------
-  _l_: list gists         _s_: Git status
-  _g_: post gist
-  _G_: post private gist
-
-  _q_uit
+  ^Gists^                ^Git^
+  ^^^^----------------------------------
+  _l_: List gists        _s_: Git status
+  _g_: Post gist
+  _G_: Post private gist
   "
   ("l" gist-list)
   ("g" gist-region-or-buffer)
@@ -1890,15 +1901,15 @@ Command group for OrgMode. Open it with =C-c o=.
 (defhydra my/hydra-org (:exit t :hint nil)
   "
 ^OrgMode^
-^^-----------
-_a_: open agenda
-_A_: archive item
-_c_: capture
-_f_: refile item
-_F_: find org file
-_l_: copy link
-_L_: paste link
-_t_: add tags
+^^----------------
+_a_: Open agenda
+_A_: Archive item
+_c_: Capture
+_f_: Refile item
+_F_: Find Org file
+_l_: Copy link
+_L_: Paste link
+_t_: Add tags
 "
   ("a" org-agenda)
   ("A" archive)
