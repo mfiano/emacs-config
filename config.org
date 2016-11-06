@@ -861,16 +861,24 @@ Re-arrange the window layout.
 (use-package transpose-frame)
 #+END_SRC
 
-*** workgroups
-Save window layouts
-
+*** persp-mode
 #+BEGIN_SRC emacs-lisp
-(use-package workgroups
+(use-package persp-mode
+  :init (setq persp-keymap-prefix (kbd "C-x x"))
   :config
   (progn
-    (setq wg-morph-on nil)
-    (wg-load (concat my/dir-etc "workgroups")))
-  :diminish workgroups-mode)
+    (setq persp-autokill-buffer-on-remove 'kill-weak
+          persp-save-dir (file-name-as-directory (concat my/dir-etc "persp-confs"))
+          persp-auto-save-num-of-backups 0
+          persp-auto-resume-time 0.5
+          persp-set-last-persp-for-new-frames nil)
+    (def-persp-buffer-save/load :mode 'inferior-emacs-lisp-mode :tag-symbol 'def-ielm-buffer
+      :save-vars '(major-mode default-directory)
+      :after-load-function (lambda (b &rest _) (with-current-buffer b (ielm))))
+    (def-persp-buffer-save/load :mode 'sly-mrepl-mode :tag-symbol 'def-sly-buffer
+      :save-vars '(major-mode)
+      :after-load-function (lambda (b &rest _) (with-current-buffer b (sly))))
+    (add-hook 'after-init-hook (lambda () (persp-mode 1)))))
 #+END_SRC
 *** recentf
 Track recent files that have been opened.
@@ -1054,18 +1062,37 @@ Fold blocks of text.
 (use-package fold-dwim)
 #+END_SRC
 
+*** projectile
+Tracking of projects under version control.
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :init
+  (setq projectile-cache-file (concat my/dir-etc "project-cache")
+        projectile-known-projects-file (concat my/dir-etc "project-bookmarks"))
+  :config
+  (progn
+    (projectile-global-mode)
+    (add-to-list 'projectile-ignored-projects my/dir-home)
+    (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects)
+    (setq projectile-completion-system 'helm
+          projectile-find-dir-includes-top-level t))
+  :diminish projectile-mode)
+#+END_SRC
+
 *** helm
 Completion/navgiation system for many things.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
+  :after persp-mode
   :demand t
   :bind
   (("M-x" . helm-M-x)
    ("M-y" . helm-show-kill-ring)
    ("C-x C-f" . helm-find-files)
-   ("C-x C-b" . helm-buffers-list)
-   ("C-x b" . helm-buffers-list)
+   ("C-x C-b" . persp-switch-to-buffer)
+   ("C-x b" . persp-switch-to-buffer)
    ("C-x C-r" . helm-recentf)
    ("C-x r" . helm-recentf)
    :map helm-map
@@ -1120,25 +1147,6 @@ Text completion.
           ac-trigger-key "TAB"
           ac-auto-start nil))
   :diminish auto-complete-mode)
-#+END_SRC
-
-*** projectile
-Tracking of projects under version control.
-
-#+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :defer 3
-  :init
-  (setq projectile-cache-file (concat my/dir-etc "project-cache")
-        projectile-known-projects-file (concat my/dir-etc "project-bookmarks"))
-  :config
-  (progn
-    (projectile-global-mode)
-    (add-to-list 'projectile-ignored-projects my/dir-home)
-    (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects)
-    (setq projectile-completion-system 'helm
-          projectile-find-dir-includes-top-level t))
-  :diminish projectile-mode)
 #+END_SRC
 
 *** helm-projectile
@@ -1631,6 +1639,7 @@ beginning of a line.
 (global-set-key [remap move-beginning-of-line] 'my/smarter-move-beginning-of-line)
 #+END_SRC
 *** Custom command menu
+**** Root menu
 #+BEGIN_SRC emacs-lisp
 (defhydra my/hydra-root (:exit t :hint nil)
   "
@@ -1639,6 +1648,7 @@ beginning of a line.
 _a_: Applications
 _g_: Git
 _h_: Help
+_l_: Layouts
 _m_: Menus
 _o_: OrgMode
 _p_: Projects
@@ -1649,16 +1659,17 @@ _w_: Windows
   ("a" my/hydra-apps/body)
   ("g" my/hydra-git/body)
   ("h" my/hydra-help/body)
+  ("l" my/hydra-layout/body)
   ("m" my/hydra-menu/body)
   ("o" my/hydra-org/body)
-  ("p" my/hydra-projects/body)
+  ("p" my/hyqdra-projects/body)
   ("s" my/hydra-search/body)
   ("t" my/hydra-text/body)
   ("w" my/hydra-windows/body)
   ("q" nil))
 (global-set-key (kbd "<f20>") 'my/hydra-root/body)
 #+END_SRC
-*** Emacs help
+**** Emacs help
 Command group for looking up help in Emacs. Open it with =C-c h=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1681,7 +1692,7 @@ Command group for looking up help in Emacs. Open it with =C-c h=.
 (global-set-key (kbd "C-c h") 'my/hydra-help/body)
 #+END_SRC
 
-*** Application launching
+**** Application launching
 Command group to launch various utilities and applications. Open it with =C-c a=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1707,7 +1718,37 @@ Command group to launch various utilities and applications. Open it with =C-c a=
 (global-set-key (kbd "C-c a") 'my/hydra-apps/body)
 #+END_SRC
 
-*** Window management
+**** Layout and buffer management
+#+BEGIN_SRC emacs-lisp
+(defhydra my/hydra-layout (:hint nil :exit t)
+  "
+^Layout^
+--------------
+_<left>_ : Previous layout
+_<right>_: Next layout
+_ba_     : Add buffer to layout
+_bk_     : Remove buffer from layout
+_bK_     : Kill buffer
+_bl_     : Switch to buffer within layout
+_fl_     : Load layout configuration
+_fs_     : Save layout configuration
+_r_      : Rename layout
+_<SPC>_: Switch to layout
+"
+  ("<left>" persp-prev :exit nil)
+  ("<right>" persp-next :exit nil)
+  ("ba" persp-add-buffer)
+  ("bk" persp-remove-buffer)
+  ("bK" persp-kill-buffer)
+  ("bl" persp-switch-to-buffer)
+  ("fl" persp-load-state-from-file)
+  ("fs" persp-save-state-to-file)
+  ("r" persp-rename)
+  ("<SPC>" persp-frame-switch)
+  ("q" nil))
+(global-set-key (kbd "C-c l") 'my/hydra-layout/body)
+#+END_SRC
+**** Window management
 Command group for managing windows. Open it with =C-c w=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1747,7 +1788,7 @@ Command group for managing windows. Open it with =C-c w=.
 (global-set-key (kbd "C-c w") 'my/hydra-windows/body)
 #+END_SRC
 
-*** Text manipulation
+**** Text manipulation
 Command group for manipulating text. Open it with =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1806,7 +1847,7 @@ Command group for manipulating text. Open it with =C-c t=.
 (global-set-key (kbd "C-c t") 'my/hydra-text/body)
 #+END_SRC
 
-*** Searching
+**** Searching
 Command group for searching for things. Open it with =C-c s=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1825,7 +1866,7 @@ Command group for searching for things. Open it with =C-c s=.
 (global-set-key (kbd "C-c s") 'my/hydra-search/body)
 #+END_SRC
 
-*** Project management
+**** Project management
 Command group for working with projects. Open it with =C-c p=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1848,7 +1889,7 @@ Command group for working with projects. Open it with =C-c p=.
 (global-set-key (kbd "C-c P") 'my/hydra-projects/body)
 #+END_SRC
 
-*** Menu browsing
+**** Menu browsing
 Command group for browsing various menus. Open it with =C-c x=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1874,7 +1915,7 @@ Command group for browsing various menus. Open it with =C-c x=.
 (global-set-key (kbd "C-c x") 'my/hydra-menu/body)
 #+END_SRC
 
-*** Version control
+**** Version control
 Command group for git functions. Open it with =C-c g=.
 
 #+BEGIN_SRC emacs-lisp
@@ -1894,7 +1935,7 @@ Command group for git functions. Open it with =C-c g=.
 (global-set-key (kbd "C-c g") 'my/hydra-git/body)
 #+END_SRC
 
-*** OrgMode commands
+**** OrgMode commands
 Command group for OrgMode. Open it with =C-c o=.
 
 #+BEGIN_SRC emacs-lisp
