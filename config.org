@@ -1126,8 +1126,7 @@ Completion/navgiation system for many things.
 Completion of key bindings.
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-descbinds
-  :defer 10)
+(use-package helm-descbinds)
 #+END_SRC
 
 Text completion.
@@ -1183,7 +1182,6 @@ Highlight uncommited changes on the left side of a buffer's window.
 
 #+BEGIN_SRC emacs-lisp
 (use-package diff-hl
-  :defer 5
   :config
   (progn
     (global-diff-hl-mode 1)
