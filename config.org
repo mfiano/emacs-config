@@ -289,7 +289,7 @@ Create some required directories in our =.emacs.d= directory if they do not exis
               default-tab-width 2
               indicate-emtpty-lines t
               truncate-lines t
-              fill-column 100)
+              fill-column 120)
 (setq create-lockfiles nil
       scroll-step 1
       sentence-end-double-space nil
@@ -707,12 +707,6 @@ Define the color theme.
     (moe-dark)))
 #+END_SRC
 
-*** focus
-#+BEGIN_SRC emacs-lisp
-(use-package focus
-  :commands focus-mode
-  :init (add-hook 'prog-mode-hook 'focus-mode))
-#+END_SRC
 *** smart-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package smart-mode-line
@@ -745,7 +739,8 @@ Draw vertical lines in the buffer to indicate where the fill column is.
   :config
   (setq fci-rule-color "#444"
         fci-rule-use-dashes t
-        fci-dash-pattern 0.5))
+        fci-dash-pattern 0.5)
+  (add-hook 'prog-mode-hook 'fci-mode))
 #+END_SRC
 
 *** hl-line
@@ -883,9 +878,6 @@ Re-arrange the window layout.
     (def-persp-buffer-save/load :mode 'sly-mrepl-mode :tag-symbol 'def-sly-buffer
       :save-vars '(major-mode)
       :after-load-function (lambda (b &rest _) (with-current-buffer b (sly))))
-    (def-persp-buffer-save/load :mode 'inferior-ess-mode :tag-symbol 'def-julia-buffer
-      :save-vars '(major-mode)
-      :after-load-function (lambda (b &rest _) (with-current-buffer b (julia))))
     (add-hook 'after-init-hook (lambda () (persp-mode 1)))))
 #+END_SRC
 *** recentf
@@ -1244,19 +1236,6 @@ Allow creating GitHub gists from regions/buffers.
           smtpmail-starttls-credentials `((,smtpmail-smtp-server 587 nil nil))
           smtpmail-auth-credentials (concat my/dir-home ".authinfo.gpg"))))
 #+END_SRC
-*** mu4e
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e
-  :ensure nil
-  :config
-  (progn
-    (setq mu4e-maildir (concat my/dir-home ".mail/gmail")
-          mu4e-sent-messages-behavior 'delete
-          mu4e-completing-read-function 'helm-comp-read
-          mu4e-update-interval 120
-          mu4e-get-mail-command "mbsync -a"
-          mu4e-attachment-dir (concat my/dir-home "downloads"))))
-#+END_SRC
 *** tramp
 #+BEGIN_SRC emacs-lisp
 (use-package tramp
@@ -1347,28 +1326,75 @@ Allow creating GitHub gists from regions/buffers.
     (setq nsm-settings-file (concat my/dir-etc "gnutls.dat"))
     (add-to-list 'gnutls-trustfiles (concat my/dir-etc "weechat.cert"))))
 #+END_SRC
-*** weechat
+*** erc
 #+BEGIN_SRC emacs-lisp
-(defun my/irc-connect ()
-  (interactive)
-  (weechat-connect my/irc-host
-                   my/irc-port
-                   my/irc-password
-                   my/irc-mode))
-
-(use-package tracking)
-
-(use-package weechat
+(use-package erc
+  :demand t
+  :bind
+  (:map erc-mode-map
+        ("<up>" . erc-previous-command)
+        ("<down>" . erc-next-command))
   :config
   (progn
-    (setq weechat-buffer-kill-buffers-on-disconnect t
-          wechat-completing-read-function 'helm-comp-read
-          weechat-auto-monitor-buffers my/irc-monitored-buffers
-          weechat-fill-column 'frame-width)))
-
-(use-package weechat-tracking
-  :ensure nil
-  :config (setq weechat-tracking-types '(:highlight :message)))
+    (setq erc-user-full-name user-full-name
+          erc-email-userid my/irc-nick
+          erc-nick my/irc-nick
+          erc-auto-query 'bury
+          erc-track-position-in-mode-line 'before-modes
+          erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "324" "329" "332" "333" "353" "477")
+          erc-track-exclude-server-buffer t
+          erc-current-nick-highlight-type 'nick
+          erc-log-matches-flag t
+          erc-keywords my/irc-highlights
+          erc-log-matches-types-alist '((keyword . "ERC Notices")
+                                        (current-nick . "ERC Notices"))
+          erc-fill-column 120
+          erc-timestamp-format "[%H:%M] "
+          erc-insert-timestamp-function 'erc-insert-timestamp-left
+          erc-timestamp-only-if-changed-flag nil
+          erc-hide-timestamps nil
+          erc-fill-prefix "        "
+          erc-fill-function 'erc-fill-static
+          erc-fill-static-center 10
+          erc-prompt-for-nickserv-password nil
+          erc-join-buffer 'bury
+          erc-kill-buffer-on-part t
+          erc-server-auto-reconnect t
+          erc-kill-queries-on-quit t
+          erc-kill-server-buffer-on-quit t
+          erc-rename-buffers t
+          erc-button-buttonize-nicks nil
+          erc-autojoin-channels-alist `(("freenode.net" ,@my/irc-freenode-channels))
+          erc-modules '(autojoin button completion fill irccontrols list match move-to-prompt
+                                 netsplit networks ring services stamp track))
+    (erc-timestamp-mode t)
+    (erc-autojoin-mode 1)
+    (add-hook 'erc-after-connect
+              (lambda (server nick)
+                (add-hook 'erc-server-notice-hook 'erc-auto-query)))
+    (add-hook 'erc-after-connect 'my/erc-ghost-maybe)
+    (add-hook 'erc-server-NOTICE-functions 'my/erc-freenode-auto-join-after-cloak)
+    (add-hook 'erc-mode-hook (lambda () (auto-fill-mode 0)))
+    (defun my/erc-freenode-auto-join-after-cloak (proc parsed)
+      (with-current-buffer (process-buffer proc)
+        (when (and (string-equal "irc.freenode.net"
+                                 (erc-response.sender parsed))
+                   (string-match ".*NickServ set your hostname to.*"
+                                 (erc-response.contents parsed)))
+          (erc-autojoin-channels erc-session-server (erc-current-nick))
+          nil)))
+    (defun my/erc-ghost-maybe (server nick)
+      (when (string-match (format "\\(.*?\\)%s+$" erc-nick-uniquifier) nick)
+        (let ((nick-orig (match-string 1 nick))
+              (password erc-session-password))
+          (erc-message "PRIVMSG" (format "NickServ GHOST %s %s" nick-orig password))
+          (erc-cmd-NICK nick-orig)
+          (erc-message "PRIVMSG" (format "NickServ identify %s %s" nick-orig password)))))
+    (defun my/irc-connect ()
+      (interactive)
+      (erc :server my/irc-server
+           :nick my/irc-nick
+           :password my/irc-password))))
 #+END_SRC
 *** org
 Org mode is for taking notes, planning projects, and authoring documents.
@@ -1629,7 +1655,6 @@ Color parentheses based on their depth.
                         :foreground 'unspecified
                         :inherit 'show-paren-mismatch)))
 #+END_SRC
-
 *** sly
 A Common Lisp IDE.
 
@@ -1661,6 +1686,12 @@ A Common Lisp IDE.
     (sly-setup '(sly-fancy))))
 #+END_SRC
 
+*** sly-repl-ansi-color
+#+BEGIN_SRC emacs-lisp
+(use-package sly-repl-ansi-color
+  :demand t
+  :config (push 'sly-repl-ansi-color sly-contribs))
+#+END_SRC
 *** sly-macrostep
 Expand Common Lisp macros in the buffer.
 
@@ -1688,6 +1719,7 @@ Code completion for Common Lisp.
 *** ess
 #+BEGIN_SRC emacs-lisp
 (use-package ess
+  :disabled t
   :init (require 'ess-site)
   :bind
   (:map comint-mode-map
@@ -1696,6 +1728,7 @@ Code completion for Common Lisp.
   :config
   (progn
     (setq inferior-julia-program-name "/usr/sbin/julia"
+          inferior-julia-args "-O3"
           ess-ask-for-ess-directory nil
           ess-use-auto-complete t
           ess-tab-complete-in-script t)))
