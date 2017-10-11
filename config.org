@@ -86,7 +86,7 @@
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Iosevka Slab Medium 12"))
+(add-to-list 'default-frame-alist '(font . "Iosevka Slab Medium 10"))
 (setq jit-lock-defer-time nil)
 (dolist (hook lisp-hooks)
   (add-hook hook (lambda () (setf prettify-symbols-alist
@@ -245,11 +245,6 @@
   :config (global-undo-tree-mode)
   :diminish undo-tree-mode)
 #+END_SRC
-** expand-region
-#+BEGIN_SRC emacs-lisp
-(use-package expand-region
-  :commands (er/expand-region er/contract-region))
-#+END_SRC
 ** avy
 #+BEGIN_SRC emacs-lisp
 (use-package avy
@@ -320,7 +315,6 @@
     (elfeed-org)
     (setq rmh-elfeed-org-files (list (concat my/dir-etc "elfeed/feeds.org")))))
 #+END_SRC
-
 ** ielm
 #+BEGIN_SRC emacs-lisp
 (use-package ielm
@@ -434,6 +428,12 @@ Manage pop-up windows.
   (setq browse-url-browser-function 'browse-url-xdg-open
         browse-url-dwim-always-confirm-extraction nil))
 #+END_SRC
+** spacemacs-theme
+#+BEGIN_SRC emacs-lisp
+(use-package spacemacs-theme
+  :defer t
+  :init (load-theme 'spacemacs-dark t))
+#+END_SRC
 ** spaceline
 #+BEGIN_SRC emacs-lisp
 (use-package spaceline
@@ -443,13 +443,6 @@ Manage pop-up windows.
     (spaceline-spacemacs-theme)
     (spaceline-helm-mode)
     (setq powerline-default-separator 'arrow)))
-#+END_SRC
-** spacemacs-theme
-#+BEGIN_SRC emacs-lisp
-(use-package spacemacs-theme
-  :init
-  (progn
-    (load-theme 'spacemacs-dark t)))
 #+END_SRC
 ** indent-guide
 #+BEGIN_SRC emacs-lisp
@@ -831,6 +824,7 @@ Manage pop-up windows.
 #+BEGIN_SRC emacs-lisp
 (use-package sly
   :defer t
+  :commands sly
   :bind
   (:map sly-mrepl-mode-map
         ("<up>" . sly-mrepl-previous-input-or-button)
@@ -839,8 +833,7 @@ Manage pop-up windows.
         ("C-c q" . sly-restart-inferior-lisp))
   :config
   (progn
-    (setq sly-lisp-implementations `((sbcl ("sbcl" "--core" "/home/axion/.data/sbcl/basic.core")
-                                           :env ("SBCL_HOME=/usr/lib/sbcl")))
+    (setq sly-lisp-implementations `((sbcl ("sbcl") :env ("SBCL_HOME=/usr/lib/sbcl")))
           sly-mrepl-history-file-name (concat my/dir-etc "sly-repl-history")
           sly-autodoc-use-multiline t
           sly-complete-symbol*-fancy t
@@ -862,6 +855,8 @@ Manage pop-up windows.
   :defer t)
 
 (use-package sly-repl-ansi-color
+  :ensure nil
+  :load-path "src/sly-repl-ansi-color/"
   :demand t
   :config (push 'sly-repl-ansi-color sly-contribs))
 #+END_SRC
@@ -1036,12 +1031,14 @@ _<SPC>_: Layout
   _|_ : Split right
   _-_ : Split below
   _c_ : Switch window configuration
-  _m_ : Maximum
+  _d_ : Delete
+  _m_ : Maximize
   _w_ : Jump to window
   "
    ("|" split-window-right)
    ("-" split-window-below)
    ("c" eyebrowse-switch-to-window-config)
+   ("d" delete-window)
    ("m" delete-other-windows)
    ("w" ace-window)
    ("q" nil))
