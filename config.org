@@ -606,7 +606,7 @@ Manage pop-up windows.
     (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))
   :config
   (progn
-    (add-to-list 'projectile-ignored-projects "~")
+    (add-to-list 'projectile-ignored-projects "~/")
     (setq projectile-find-dir-includes-top-level t
           projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".fasl")))
   :diminish projectile-mode)
