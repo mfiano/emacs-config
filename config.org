@@ -86,14 +86,8 @@
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Iosevka Slab Medium 10"))
+(add-to-list 'default-frame-alist '(font . "Iosevka Slab Medium 9"))
 (setq jit-lock-defer-time nil)
-(dolist (hook lisp-hooks)
-  (add-hook hook (lambda () (setf prettify-symbols-alist
-                                  '(("lambda" . ?λ)
-                                    (">=" . ?≥)
-                                    ("<=" . ?≤))))))
-(global-prettify-symbols-mode 1)
 #+END_SRC
 ** Cursor
 #+BEGIN_SRC emacs-lisp
@@ -331,7 +325,7 @@
   :config
   (progn
     (which-key-mode 1)
-    (setq which-key-idle-delay 0.1
+    (setq which-key-idle-delay 0.5
           which-key-sort-order 'which-key-key-order-alpha
           which-key-key-replacement-alist '(("<\\([[:alnum:]-]+\\)>" . "\\1")
                                             ("left" . "◀")
@@ -442,7 +436,9 @@ Manage pop-up windows.
     (require 'spaceline-config)
     (spaceline-spacemacs-theme)
     (spaceline-helm-mode)
-    (setq powerline-default-separator 'arrow)))
+    (setq powerline-default-separator 'arrow
+          spaceline-workspace-numbers-unicode t
+          spaceline-window-numbers-unicode t)))
 #+END_SRC
 ** indent-guide
 #+BEGIN_SRC emacs-lisp
@@ -450,16 +446,6 @@ Manage pop-up windows.
   :commands indent-guide-mode
   :init (add-hook 'prog-mode-hook 'indent-guide-mode)
   :diminish indent-guide-mode)
-#+END_SRC
-** fill-column-indicator
-#+BEGIN_SRC emacs-lisp
-(use-package fill-column-indicator
-  :commands fci-mode
-  :init (add-hook 'prog-mode-hook 'fci-mode)
-  :config
-  (setq fci-rule-color "#444"
-        fci-rule-use-dashes t
-        fci-dash-pattern 0.5))
 #+END_SRC
 ** visual-fill-column
 #+BEGIN_SRC emacs-lisp
@@ -660,7 +646,8 @@ Manage pop-up windows.
 
 (use-package helm-ag
   :defer t
-  :config (setq helm-ag-fuzzy-match t))
+  :config (setq helm-ag-fuzzy-match t
+                helm-ag-base-command "rg --vimgrep --smart-case --no-heading"))
 #+END_SRC
 ** auto-complete
 #+BEGIN_SRC emacs-lisp
@@ -726,35 +713,56 @@ Manage pop-up windows.
 #+END_SRC
 ** org
 #+BEGIN_SRC emacs-lisp
+(defun calc-offset-on-org-level ()
+  "Calculate offset (in chars) on current level in org mode file."
+  (* (or (org-current-level) 0) org-indent-indentation-per-level))
+
+(defun my-org-fill-paragraph (&optional JUSTIFY)
+  "Calculate apt fill-column value and fill paragraph."
+  (let* ((fill-column (- fill-column (calc-offset-on-org-level))))
+    (org-fill-paragraph JUSTIFY)))
+
+(defun my-org-auto-fill-function ()
+  "Calculate apt fill-column value and do auto-fill"
+  (let* ((fill-column (- fill-column (calc-offset-on-org-level))))
+    (org-auto-fill-function)))
+
+(defun my-org-mode-hook ()
+  (setq fill-paragraph-function   'my-org-fill-paragraph
+        normal-auto-fill-function 'my-org-auto-fill-function))
+
 (use-package org
   :defer t
   :config
-  (setq org-directory "~/dev/org"
-        org-default-notes-file (concat org-directory "/notes.org")
-        org-catch-invisible-edits 'show-and-error
-        org-publish-timestamp-directory (concat my/dir-etc "org-timestamps/")
-        org-html-todo-kwd-class-prefix "keyword "
-        org-startup-indented t
-        org-ellipsis " […]"
-        org-return-follows-link t
-        org-src-fontify-natively t
-        org-hide-emphasis-markers t
-        org-src-preserve-indentation t
-        org-startup-folded t
-        org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "|" "DONE(d)")
-                            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-                            (sequence "REPORTED(r@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
-        org-todo-keyword-faces '(("TODO" :foreground "dodger blue" :weight bold)
-                                 ("INPROGRESS" :foreground "spring green" :weight bold)
-                                 ("WAITING" :foreground "yellow" :weight bold)
-                                 ("HOLD" :foreground "yellow" :weight bold)
-                                 ("DONE" :foreground "forest green" :weight bold)
-                                 ("CANCELLED" :foreground "forest green" :weight bold)
-                                 ("REPORTED" :foreground "red" :weight bold)
-                                 ("BUG" :foreground "red" :weight bold)
-                                 ("FIXED" :foreground "forest green" :weight bold))
-        org-capture-templates '(("t" "Task" entry (file org-default-notes-file)
-                                 "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n"))))
+  (progn
+    (add-hook 'org-load-hook 'my-org-mode-hook)
+    (add-hook 'org-mode-hook 'my-org-mode-hook)
+    (setq org-directory "~/dev/org"
+          org-default-notes-file (concat org-directory "/notes.org")
+          org-catch-invisible-edits 'show-and-error
+          org-publish-timestamp-directory (concat my/dir-etc "org-timestamps/")
+          org-html-todo-kwd-class-prefix "keyword "
+          org-startup-indented t
+          org-ellipsis " […]"
+          org-return-follows-link t
+          org-src-fontify-natively t
+          org-hide-emphasis-markers t
+          org-src-preserve-indentation t
+          org-startup-folded t
+          org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "|" "DONE(d)")
+                              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+                              (sequence "REPORTED(r@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
+          org-todo-keyword-faces '(("TODO" :foreground "dodger blue" :weight bold)
+                                   ("INPROGRESS" :foreground "spring green" :weight bold)
+                                   ("WAITING" :foreground "yellow" :weight bold)
+                                   ("HOLD" :foreground "yellow" :weight bold)
+                                   ("DONE" :foreground "forest green" :weight bold)
+                                   ("CANCELLED" :foreground "forest green" :weight bold)
+                                   ("REPORTED" :foreground "red" :weight bold)
+                                   ("BUG" :foreground "red" :weight bold)
+                                   ("FIXED" :foreground "forest green" :weight bold))
+          org-capture-templates '(("t" "Task" entry (file org-default-notes-file)
+                                   "* TODO %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n")))))
 
 (use-package org-indent
   :ensure nil
@@ -820,75 +828,6 @@ Manage pop-up windows.
                         :foreground 'unspecified
                         :inherit 'show-paren-mismatch)))
 #+END_SRC
-** sly
-#+BEGIN_SRC emacs-lisp
-(use-package sly
-  :defer t
-  :commands sly
-  :bind
-  (:map sly-mrepl-mode-map
-        ("<up>" . sly-mrepl-previous-input-or-button)
-        ("<down>" . sly-mrepl-next-input-or-button)
-        ("C-c M-o" . sly-mrepl-clear-repl)
-        ("C-c q" . sly-restart-inferior-lisp))
-  :config
-  (progn
-    (setq sly-lisp-implementations `((sbcl ("sbcl") :env ("SBCL_HOME=/usr/lib/sbcl")))
-          sly-mrepl-history-file-name (concat my/dir-etc "sly-repl-history")
-          sly-autodoc-use-multiline t
-          sly-complete-symbol*-fancy t
-          sly-kill-without-query-p t
-          sly-repl-history-remove-duplicates t
-          sly-repl-history-trim-whitespaces t
-          sly-net-coding-system 'utf-8-unix)
-    (sly-setup '(sly-fancy))))
-
-(use-package ac-sly
-  :after sly
-  :defer t
-  :config
-  (progn
-    (add-hook 'sly-mode-hook (lambda () (set-up-sly-ac t)))
-    (add-to-list 'ac-modes 'sly-mrepl-mode)))
-
-(use-package sly-macrostep
-  :defer t)
-
-(use-package sly-repl-ansi-color
-  :ensure nil
-  :load-path "src/sly-repl-ansi-color/"
-  :demand t
-  :config (push 'sly-repl-ansi-color sly-contribs))
-#+END_SRC
-** sh-script
-#+BEGIN_SRC emacs-lisp
-(use-package sh-script
-  :commands sh-mode
-  :mode (("\\.*bashrc$" . sh-mode)
-         ("\\.*bash_profile$" . sh-mode)
-         ("\\.sh\\'" . sh-mode)
-         ("\\.*zshrc$" . sh-mode)
-         ("\\.zsh\\'" . sh-mode))
-  :config
-  (setq-default sh-indentation 2
-                sh-basic-offset 2))
-#+END_SRC
-** racket-mode
-#+BEGIN_SRC emacs-lisp
-(use-package racket-mode
-  :commands racket-unicode-input-method-enable
-  :init
-  (progn
-    (setq tab-always-indent t)
-    (dolist (hook '(racket-mode-hook racket-repl-mode-hook))
-      (add-hook hook 'racket-unicode-input-method-enable))))
-#+END_SRC
-** netrc
-#+BEGIN_SRC emacs-lisp
-(use-package netrc
-  :defer t
-  :config (setq netrc-file "~/.authinfo.gpg"))
-#+END_SRC
 ** anzu
 #+BEGIN_SRC emacs-lisp
 (use-package anzu
@@ -913,6 +852,122 @@ Manage pop-up windows.
   (progn
     (eyebrowse-mode t)))
 #+END_SRC
+** neotree
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :bind (("<f12>" . neotree-toggle))
+  :config
+  (progn
+    (setq neo-smart-open t
+          neo-theme 'ascii)))
+#+END_SRC
+** flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck)
+#+END_SRC
+** company
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :init (global-company-mode)
+  :config
+  (progn
+    (company-tng-configure-default)
+    (setq company-tooltip-align-annotations t
+          company-selection-wrap-around t
+          company-idle-delay 0.1)))
+#+END_SRC
+** common lisp
+#+BEGIN_SRC emacs-lisp
+(use-package sly
+  :defer t
+  :commands sly
+  :bind
+  (:map sly-mrepl-mode-map
+        ("<up>" . sly-mrepl-previous-input-or-button)
+        ("<down>" . sly-mrepl-next-input-or-button))
+  :config
+  (progn
+    (setq sly-lisp-implementations `((sbcl ("sbcl") :env ("SBCL_HOME=/usr/lib/sbcl")))
+          sly-mrepl-history-file-name (concat my/dir-etc "sly-repl-history")
+          sly-autodoc-use-multiline t
+          sly-complete-symbol*-fancy t
+          sly-kill-without-query-p t
+          sly-repl-history-remove-duplicates t
+          sly-repl-history-trim-whitespaces t
+          sly-net-coding-system 'utf-8-unix)
+    (sly-setup '(sly-fancy))))
+
+(use-package sly-company
+  :config
+  (progn
+    (add-hook 'sly-mode-hook 'sly-company-mode)
+    (add-to-list 'company-backends 'sly-company)))
+
+(use-package sly-macrostep
+  :defer t)
+
+(use-package sly-repl-ansi-color
+  :quelpa ((sly-repl-ansi-color
+            :fetcher github
+            :repo "PuercoPop/sly-repl-ansi-color"))
+  :demand t
+  :config (push 'sly-repl-ansi-color sly-contribs))
+#+END_SRC
+** sh
+#+BEGIN_SRC emacs-lisp
+(use-package sh-script
+  :commands sh-mode
+  :mode (("\\.*bashrc$" . sh-mode)
+         ("\\.*bash_profile$" . sh-mode)
+         ("\\.sh\\'" . sh-mode)
+         ("\\.*zshrc$" . sh-mode)
+         ("\\.zsh\\'" . sh-mode))
+  :config
+  (setq-default sh-indentation 2
+                sh-basic-offset 2))
+#+END_SRC
+** racket
+#+BEGIN_SRC emacs-lisp
+(use-package racket-mode
+  :commands racket-unicode-input-method-enable
+  :init
+  (progn
+    (setq tab-always-indent t)
+    (dolist (hook '(racket-mode-hook racket-repl-mode-hook))
+      (add-hook hook 'racket-unicode-input-method-enable))))
+#+END_SRC
+** rust
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :mode (("\\.rs\\'" . rust-mode))
+  :config
+  (progn
+    (setq rust-format-on-save t)
+    (add-hook 'rust-mode-hook #'racer-mode)))
+
+(use-package racer
+  :after rust-mode
+  :defer t
+  :init
+  (progn
+    (setq racer-rust-src-path "/usr/src/rust/src"
+          racer-cmd "~/.cargo/bin/racer"))
+  :config
+  (progn
+    (add-hook 'racer-mode-hook #'eldoc-mode)))
+
+(use-package company-racer
+:bind (("TAB" . company-indent-or-complete-common))
+  :config
+  (progn
+    (add-hook 'racer-mode-hook #'company-mode)))
+
+(use-package flycheck-rust
+  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
+(use-package cargo
+  :config (add-hook 'rust-mode-hook #'cargo-minor-mode))
+#+END_SRC
 * Menus
 ** Root
 #+BEGIN_SRC emacs-lisp
@@ -933,7 +988,7 @@ _<SPC>_: Layout
 "
   ("a" my/hydra-apps/body)
   ("B" helm-bookmarks)
-  ("f" my/hydra-files/body)
+  ("f" my/hydra-find/body)
   ("g" my/hydra-git/body)
   ("h" my/hydra-help/body)
   ("o" my/hydra-org/body)
@@ -983,18 +1038,22 @@ _<SPC>_: Layout
    ("w" elfeed))
 (global-set-key (kbd "C-c a") 'my/hydra-apps/body)
 #+END_SRC
-** Files
+** Find
 #+BEGIN_SRC emacs-lisp
-(defhydra my/hydra-files (:exit t :hint nil)
+(defhydra my/hydra-find (:exit t :hint nil)
    "
-  ^Files^
-  ^^---------------
+  _b_: Search text in all buffers
   _f_: Find files
+  _p_: Project search
   _r_: Recent files
+  _s_: Search text in file
   "
+   ("b" helm-do-ag-buffers)
    ("f" helm-find-files)
-   ("r" helm-recentf))
-(global-set-key (kbd "C-c f") 'my/hydra-files/body)
+   ("p" helm-ag-project-root)
+   ("r" helm-recentf)
+   ("s" helm-do-ag-this-file))
+(global-set-key (kbd "C-c f") 'my/hydra-find/body)
 #+END_SRC
 ** Text
 #+BEGIN_SRC emacs-lisp
