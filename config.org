@@ -162,6 +162,7 @@
 (global-unset-key (kbd "<C-down-mouse-3>"))
 (global-unset-key (kbd "<insert>"))
 (global-unset-key (kbd "<C-insert>"))
+(global-unset-key (kbd "C-x C-z"))
 #+END_SRC
 ** Clipboard Support
 #+BEGIN_SRC emacs-lisp
@@ -901,6 +902,7 @@ Manage pop-up windows.
   :config
   (progn
     (add-hook 'sly-mode-hook 'sly-company-mode)
+    (add-hook 'sly-mrepl-hook 'sly-company-mode)
     (add-to-list 'company-backends 'sly-company)))
 
 (use-package sly-macrostep
@@ -942,18 +944,18 @@ Manage pop-up windows.
   :mode (("\\.rs\\'" . rust-mode))
   :config
   (progn
-    (setq rust-format-on-save t)
-    (add-hook 'rust-mode-hook #'racer-mode)))
+    (setq rust-format-on-save nil)))
 
 (use-package racer
   :after rust-mode
   :defer t
   :init
   (progn
-    (setq racer-rust-src-path "/usr/src/rust/src"
+    (setq racer-rust-src-path "~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
           racer-cmd "~/.cargo/bin/racer"))
   :config
   (progn
+    (add-hook 'rust-mode-hook #'racer-mode)
     (add-hook 'racer-mode-hook #'eldoc-mode)))
 
 (use-package company-racer
@@ -963,7 +965,10 @@ Manage pop-up windows.
     (add-hook 'racer-mode-hook #'company-mode)))
 
 (use-package flycheck-rust
-  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+  :config
+  (progn
+    (add-hook 'rust-mode-hook 'flycheck-mode)
+    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
 
 (use-package cargo
   :config (add-hook 'rust-mode-hook #'cargo-minor-mode))
