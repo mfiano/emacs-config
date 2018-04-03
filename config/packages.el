@@ -235,8 +235,7 @@
   :config
   (setq magit-log-arguments '("--graph" "--decorate" "--color")
         magit-save-repository-buffers 'dontask
-        magit-revert-buffers 'silent)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+        magit-revert-buffers 'silent))
 
 (use-package gist
   :defer t
