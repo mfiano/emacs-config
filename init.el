@@ -9,7 +9,6 @@
   (my/load-config-files
    "general.el"
    "functions.el"
-   "package-setup.el"
    "packages.el"
    "keybindings.el"
    "dev-lisp.el"
