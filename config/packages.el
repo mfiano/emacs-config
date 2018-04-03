@@ -305,11 +305,6 @@
   (add-hook 'company-completion-finished-hook 'my/company-maybe-turn-on-fci)
   (add-hook 'company-completion-cancelled-hook 'my/company-maybe-turn-on-fci))
 
-(use-package neotree
-  :config
-  (setq neo-smart-open t
-        neo-theme 'ascii))
-
 (use-package flycheck)
 
 (use-package company
@@ -326,6 +321,12 @@
 
 (use-package general
   :config (general-evil-setup))
+
+(use-package neotree
+  :config
+  (evil-set-initial-state 'neotree-mode 'emacs)
+  (setq neo-smart-open t
+        neo-window-width 40))
 
 (use-package sh-script
   :commands sh-mode
@@ -345,22 +346,6 @@
   :diminish aggressive-indent-mode)
 
 (use-package evil-nerd-commenter)
-
-(use-package popwin
-  :commands popwin-mode
-  :init (popwin-mode 1)
-  :config
-  (setq popwin:special-display-config nil)
-  (push '("*Help*" :width 0.5 :position right)
-        popwin:special-display-config)
-  (push '(" *undo-tree*" :width 0.5 :position right)
-        popwin:special-display-config)
-  (push '("*ag-search*" :width 0.5 :position right)
-        popwin:special-display-config)
-  (push '(magit-status-mode :width 0.5 :position right :stick t)
-        popwin:special-display-config)
-  (push '(magit-status-mode :width 0.5 :position right :stick t)
-        popwin:special-display-config))
 
 (use-package ace-window
   :config
@@ -403,3 +388,15 @@
   :config
   (setq dimmer-fraction 0.3)
   (dimmer-mode))
+
+(use-package popwin
+  :commands popwin-mode
+  :init (popwin-mode 1)
+  :config
+  (setq popwin:special-display-config nil)
+  (push '("*Help*" :width 0.5 :position right)
+        popwin:special-display-config)
+  (push '(magit-status-mode :width 0.5 :position right :stick t)
+        popwin:special-display-config)
+  (push '(neotree-mode :position left :stick t)
+        popwin:special-display-config))
