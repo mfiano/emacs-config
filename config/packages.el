@@ -113,7 +113,6 @@
   :init
   (add-hook 'prog-mode-hook 'turn-on-eldoc-mode)
   :config
-  (setq-default eldoc-documentation-function 'describe-char-eldoc)
   (setq eldoc-idle-delay 0.1)
   :diminish eldoc-mode)
 
