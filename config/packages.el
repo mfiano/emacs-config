@@ -381,7 +381,8 @@
 
 (use-package highlight-symbol)
 
-(use-package smex)
+(use-package smex
+  :config (setq smex-save-file (expand-file-name "smex-items" my/dir-etc)))
 
 (use-package dimmer
   :config
