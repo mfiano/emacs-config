@@ -170,7 +170,9 @@
 (general-nmap
   :prefix ","
   :keymaps 'emacs-lisp-mode-map
-  "'" 'ielm)
+  "'" 'ielm
+  "gb" 'pop-tag-mark
+  "gg" 'elisp-slime-nav-find-elisp-thing-at-point)
 
 (defhydra my/hydra-sly (:exit nil :hint nil :foreign-keys run)
   "
