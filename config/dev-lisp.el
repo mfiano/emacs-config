@@ -155,6 +155,8 @@
         ("<up>" . cider-repl-previous-input)
         ("<down>" . cider-repl-next-input))
   :config
+  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
+  (evil-set-initial-state 'cider-inspector-mode 'emacs)
   (setq nrepl-log-messages nil
         cider-font-lock-dynamically nil
         cider-repl-display-help-banner nil
@@ -240,8 +242,10 @@ Common Lisp Sly Navigation
 
 (general-nmap
   :prefix ","
-  :keymaps 'clojure-mode-map
+  :keymaps '(clojure-mode-map cider-repl-mode-map)
   "'" 'cider-jack-in
-  "gg" 'cider-find-var
   "gb" 'cider-pop-back
-  "gn" 'cider-find-ns)
+  "gg" 'cider-find-var
+  "gn" 'cider-find-ns
+  "ii" 'cider-inspect
+  "ir" 'cider-inspect-last-result)
