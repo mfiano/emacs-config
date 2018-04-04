@@ -18,10 +18,7 @@
     clojure-mode-map))
 
 (defvar my/lisp-implementations
-  '((sbcl-src/roswell ("ros" "-L" "sbcl" "run"))
-    (sbcl-bin/roswell ("ros" "-L" "sbcl-bin" "run"))
-    (sbcl-git/roswell ("ros" "-L" "sbcl/git" "run"))
-    (ccl-bin/roswell ("ros" "-L" "ccl-bin" "run"))))
+  '((sbcl ("sbcl"))))
 
 (defvar my/clhs-path (file-name-as-directory (expand-file-name "~/.data/common-lisp/clhs")))
 
