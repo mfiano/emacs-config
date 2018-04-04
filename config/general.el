@@ -59,6 +59,7 @@
 (blink-cursor-mode 0)
 (display-time-mode 1)
 (column-number-mode 0)
+(fringe-mode '(10 . 0))
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-selection-coding-system 'utf-8)
