@@ -91,11 +91,15 @@
                                           ("prior" . "PgUp")))
   :diminish which-key-mode)
 
+(use-package diff-hl
+  :commands (diff-hl-dired-mode diff-hl-flydiff-mode)
+  :init
+  (diff-hl-flydiff-mode)
+  (global-diff-hl-mode 1)
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
+
 (use-package nlinum
-  :config
-  (add-hook 'prog-mode-hook 'nlinum-mode)
-  (add-hook 'text-mode-hook 'nlinum-mode)
-  (setq nlinum-format "%4d "))
+  :config (setq nlinum-format "%4d "))
 
 (use-package hydra
   :defer t)
@@ -159,7 +163,6 @@
 
 (use-package indent-guide
   :commands indent-guide-mode
-  :init (add-hook 'prog-mode-hook 'indent-guide-mode)
   :config (set-face-foreground 'indent-guide-face "dimgray")
   :diminish indent-guide-mode)
 
@@ -313,7 +316,6 @@
   (setq fci-rule-color "#444"
         fci-rule-use-dashes t
         fci-dash-pattern 0.5)
-  (add-hook 'prog-mode-hook 'fci-mode)
   (add-hook 'company-completion-started-hook 'my/company-turn-off-fci)
   (add-hook 'company-completion-finished-hook 'my/company-maybe-turn-on-fci)
   (add-hook 'company-completion-cancelled-hook 'my/company-maybe-turn-on-fci))

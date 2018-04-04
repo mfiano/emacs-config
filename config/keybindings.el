@@ -23,6 +23,7 @@
   "<f13>p" "projects"
   "<f13>q" "quit"
   "<f13>s" "search"
+  "<f13>t" "toggles"
   "<f13>w" "windows")
 
 (general-define-key
@@ -43,8 +44,6 @@
  "ba" 'persp-add-buffer
  "bb" 'counsel-ibuffer
  "bd" 'kill-this-buffer
- "bf" 'focus-mode
- "bn" 'nlinum-mode
  "br" 'persp-remove-buffer
  "cl" 'evilnc-comment-or-uncomment-lines
  "cp" 'evilnc-comment-or-uncomment-paragraphs
@@ -96,6 +95,10 @@
  "sp" 'counsel-projectile-rg
  "ss" 'swiper
  "sS" 'highlight-symbol
+ "td" 'diff-hl-mode
+ "ti" 'indent-guide-mode
+ "tf" 'fci-mode
+ "tn" 'nlinum-mode
  "w|" 'split-window-right
  "w-" 'split-window-below
  "w=" 'balance-windows
