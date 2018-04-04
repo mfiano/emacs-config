@@ -153,7 +153,7 @@
   :bind
   (:map cider-repl-mode-map
         ("<up>" . cider-repl-previous-input)
-        ("down>" . cider-repl-next-input))
+        ("<down>" . cider-repl-next-input))
   :config
   (setq nrepl-log-messages nil
         cider-font-lock-dynamically nil

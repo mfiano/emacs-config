@@ -56,7 +56,7 @@
  "fs" 'save-buffer
  "fS" 'evil-write-all
  "ft" 'neotree-toggle
- "Fd" 'delete-this-frame
+ "Fd" 'delete-frame
  "Fn" 'make-frame
  "F+" 'frame-font-bigger
  "F-" 'frame-font-smaller
