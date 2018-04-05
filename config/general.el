@@ -6,7 +6,7 @@
    (expand-file-name "etc" user-emacs-directory)))
 (make-directory my/dir-etc t)
 
-(defvar my/dir-org (file-name-as-directory (expand-file-name "~/dev/org")))
+(defvar my/dir-org (file-name-as-directory (expand-file-name "~/Projects/Org")))
 
 (defvar my/font "Iosevka Slab Medium 11")
 
