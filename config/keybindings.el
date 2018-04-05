@@ -54,8 +54,7 @@
  "ft" 'neotree-toggle
  "Fd" 'delete-frame
  "Fn" 'make-frame
- "F+" 'my/frame-size-increase
- "F-" 'my/frame-size-decrease
+ "Fs" 'my/hydra-frame-size/body
  "gg" 'gist-region-or-buffer
  "gG" 'gist-region-or-buffer-private
  "gs" 'magit-status
@@ -123,3 +122,16 @@
   :keymaps 'help-mode-map
   "gb" 'help-go-back
   "gg" 'ace-link-help)
+
+(defhydra my/hydra-frame-size (:exit nil :hint nil)
+  "
+Frame Resize
+
+[_+_] Increase size
+[_-_] Decrease size
+
+[_q_] Exit
+"
+("+" my/frame-size-increase)
+("-" my/frame-size-decrease)
+("q" nil :exit t))
