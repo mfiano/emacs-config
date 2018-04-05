@@ -6,7 +6,7 @@
     lisp-mode-hook
     sly-mrepl-mode-hook
     clojure-mode-hook
-    cider-repl-mode
+    cider-repl-mode-hook
     scheme-mode-hook))
 
 (defvar my/lisp-modes
