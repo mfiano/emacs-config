@@ -236,7 +236,9 @@
   :diminish projectile-mode)
 
 (use-package counsel
-  :bind (("M-x" . counsel-M-x))
+  :bind
+  (("M-x" . counsel-M-x)
+   ("C-s" . swiper))
   :config
   (setq ivy-count-format "%d/%d ")
   (ivy-mode 1)
@@ -262,11 +264,7 @@
   (setq tramp-default-method "ssh"
         tramp-persistency-file-name (expand-file-name "tramp-history" my/dir-etc)))
 
-(use-package ace-link
-  :after org
-  :bind (:map org-mode-map
-              ("M-o" . ace-link-org))
-  :config (ace-link-setup-default))
+(use-package ace-link)
 
 (use-package org
   :defer t
@@ -370,12 +368,10 @@
   :config (winner-mode 1))
 
 (use-package persp-mode
-  :init (setq persp-keymap-prefix (kbd "C-x x"))
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-save-dir (file-name-as-directory (expand-file-name "persp-conf" my/dir-etc))
         persp-auto-save-num-of-backups 0
-        persp-auto-resume-time -1.0
         persp-auto-save-opt 0
         persp-set-last-persp-for-new-frames nil)
   (add-hook 'after-init-hook (lambda () (persp-mode 1))))
