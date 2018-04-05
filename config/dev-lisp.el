@@ -45,7 +45,7 @@
            for index from 1 to rainbow-delimiters-max-face-count
            do (set-face-foreground
                (intern (format "rainbow-delimiters-depth-%d-face" index))
-               (elt colors (if (cl-evenp index) 0 1))))
+               (elt colors (cl-rem index 2))))
   (set-face-attribute 'rainbow-delimiters-unmatched-face nil
                       :foreground 'unspecified
                       :inherit 'show-paren-mismatch))
