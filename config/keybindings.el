@@ -1,4 +1,3 @@
-(global-set-key (kbd "C-x C-k") 'kill-this-buffer)
 (global-unset-key (kbd "<S-down-mouse-1>"))
 (global-unset-key (kbd "<S-down-mouse-3>"))
 (global-unset-key (kbd "<C-down-mouse-1>"))
@@ -18,7 +17,6 @@
   "<f13>h" "help"
   "<f13>j" "jumps"
   "<f13>l" "layouts"
-  "<f13>lb" "buffers"
   "<f13>o" "org-mode"
   "<f13>p" "projects"
   "<f13>q" "quit"
@@ -40,9 +38,8 @@
  "7" 'winum-select-window-7
  "8" 'winum-select-window-8
  "9" 'winum-select-window-9
- "qq" 'kill-emacs
  "ba" 'persp-add-buffer
- "bb" 'counsel-ibuffer
+ "bb" 'my/switch-buffer
  "bd" 'kill-this-buffer
  "br" 'persp-remove-buffer
  "cl" 'evilnc-comment-or-uncomment-lines
@@ -71,19 +68,21 @@
  "jl" 'avy-goto-line
  "jw" 'avy-goto-word-1
  "k" 'lisp-state-toggle-lisp-state
- "lba" 'persp-add-buffer
- "lbb" 'persp-switch-to-buffer
- "lbd" 'persp-kill-buffer
- "lbr" 'persp-remove-buffer
+ "la" 'persp-add-buffer
+ "ld" 'persp-remove-buffer
+ "lD" 'persp-kill-buffer
  "ll" 'persp-load-state-from-file
+ "ln" 'persp-add-new
  "lr" 'persp-rename
- "ls" 'persp-save-state-to-file
+ "ls" 'persp-switch
+ "lS" 'persp-save-state-to-file
  "oa" 'org-agenda
  "oA" 'archive
  "oc" 'counsel-org-capture
  "of" 'org-refile
  "ot" 'org-babel-tangle
  "pb" 'counsel-projectile-switch-to-buffer
+ "pd" 'projectile-browse-dirty-projects
  "pf" 'counsel-projectile-find-file
  "pI" 'projectile-invalidate-cache
  "pk" 'projectile-kill-buffers
@@ -92,6 +91,7 @@
  "ps" 'counsel-projectile-rg
  "pS" 'projectile-save-project-buffers
  "P" 'paradox-list-packages
+ "qq" 'kill-emacs
  "sp" 'counsel-projectile-rg
  "ss" 'swiper
  "sS" 'highlight-symbol
@@ -117,3 +117,9 @@
  "wd" 'delete-window
  "wm" 'delete-other-windows
  "ww" 'ace-window)
+
+(general-mmap
+  :prefix ","
+  :keymaps 'help-mode-map
+  "gb" 'help-go-back
+  "gg" 'ace-link-help)
