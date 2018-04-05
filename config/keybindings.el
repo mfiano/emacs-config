@@ -71,10 +71,10 @@
  "la" 'persp-add-buffer
  "ld" 'persp-remove-buffer
  "lD" 'persp-kill-buffer
- "ll" 'persp-load-state-from-file
+ "ll" 'persp-switch
+ "lL" 'persp-load-state-from-file
  "ln" 'persp-add-new
  "lr" 'persp-rename
- "ls" 'persp-switch
  "lS" 'persp-save-state-to-file
  "oa" 'org-agenda
  "oA" 'archive
