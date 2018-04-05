@@ -99,7 +99,9 @@
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
 (use-package nlinum
-  :config (setq nlinum-format "%4d "))
+  :config
+  (global-nlinum-mode 1)
+  (setq nlinum-format "%4d "))
 
 (use-package hydra
   :defer t)
