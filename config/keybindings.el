@@ -54,8 +54,8 @@
  "ft" 'neotree-toggle
  "Fd" 'delete-frame
  "Fn" 'make-frame
- "F+" 'frame-font-bigger
- "F-" 'frame-font-smaller
+ "F+" 'my/frame-size-increase
+ "F-" 'my/frame-size-decrease
  "gg" 'gist-region-or-buffer
  "gG" 'gist-region-or-buffer-private
  "gs" 'magit-status
