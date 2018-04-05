@@ -226,15 +226,13 @@
   :defer t)
 
 (use-package projectile
-  :init
+  :config
   (setq projectile-cache-file (expand-file-name "project-cache" my/dir-etc)
-        projectile-known-projects-file (expand-file-name "project-bookmarks" my/dir-etc))
+        projectile-known-projects-file (expand-file-name "project-bookmarks" my/dir-etc)
+        projectile-find-dir-includes-top-level t
+        projectile-globally-ignored-file-suffixes my/ignored-files)
   (projectile-global-mode 1)
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects)
-  :config
-  (add-to-list 'projectile-ignored-projects "~/")
-  (setq projectile-find-dir-includes-top-level t
-        projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".fasl"))
   :diminish projectile-mode)
 
 (use-package counsel

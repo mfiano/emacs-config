@@ -10,6 +10,12 @@
 
 (defvar my/font "Iosevka Slab Medium 11")
 
+(defvar my/ignored-files
+  '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so" ; compiled code
+    ".7z" ".bz2" ".dmg" ".gz" ".iso" ".jar" ".rar" ".tar" ".tgz" ".xz" ".zip" ; archives
+    ".db" ".sql" ".sqlite" ; databases
+    ".DS_Store" "Thumbs.db")) ; operating system
+
 (setq display-time-format "%I:%M%P"
       image-animate-loop t
       split-width-threshold nil
