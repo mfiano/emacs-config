@@ -411,4 +411,6 @@
   (push '(magit-status-mode :width 0.5 :position right :stick t)
         popwin:special-display-config)
   (push '(neotree-mode :position left :stick t)
+        popwin:special-display-config)
+  (push '(apropos-mode :width 0.5 :position right)
         popwin:special-display-config))

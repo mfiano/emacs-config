@@ -157,6 +157,8 @@
   :config
   (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
   (evil-set-initial-state 'cider-inspector-mode 'emacs)
+  (push '(cider-docview-mode :width 0.5 :position right)
+        popwin:special-display-config)
   (setq nrepl-log-messages nil
         cider-font-lock-dynamically nil
         cider-repl-display-help-banner nil
@@ -195,22 +197,21 @@ Common Lisp Sly Navigation
   ("S" sly-stickers-prev-sticker)
   ("q" nil :exit t))
 
+(which-key-add-major-mode-key-based-replacements 'lisp-mode
+  ",c" "compile"
+  ",e" "evaluate"
+  ",g" "go"
+  ",h" "help"
+  ",i" "inspect"
+  ",m" "macros"
+  ",r" "repl"
+  ",s" "stickers"
+  ",t" "tracing")
+
 (general-nmap
   :prefix ","
   :keymaps 'sly-mode-map
   "'" 'sly
-  "ha" 'sly-apropos
-  "hb" 'sly-who-binds
-  "hd" 'sly-disassemble-symbol
-  "hh" 'sly-describe-symbol
-  "hH" 'sly-hyperspec-lookup
-  "hm" 'sly-who-macroexpands
-  "hp" 'sly-apropos-package
-  "hr" 'sly-who-references
-  "hs" 'sly-who-specializes
-  "hS" 'sly-who-sets
-  "h<" 'sly-who-calls
-  "h>" 'sly-calls-who
   "cc" 'sly-compile-file
   "cC" 'sly-compile-and-load-file
   "cf" 'sly-compile-defun
@@ -224,30 +225,65 @@ Common Lisp Sly Navigation
   "eF" 'slime-undefine-function
   "er" 'sly-eval-region
   "g" 'my/hydra-sly/body
+  "ha" 'sly-apropos
+  "hb" 'sly-who-binds
+  "hd" 'sly-disassemble-symbol
+  "hh" 'sly-describe-symbol
+  "hH" 'sly-hyperspec-lookup
+  "hm" 'sly-who-macroexpands
+  "hp" 'sly-apropos-package
+  "hr" 'sly-who-references
+  "hs" 'sly-who-specializes
+  "hS" 'sly-who-sets
+  "h<" 'sly-who-calls
+  "h>" 'sly-calls-who
   "me" 'sly-macroexpand-1
   "mE" 'sly-macroexpand-all
-  "sc" 'sly-mrepl-clear-repl
-  "si" 'sly
-  "sq" 'sly-quit-lisp
-  "sn" 'sly-mrepl-new
-  "sr" 'sly-restart-inferior-lisp
-  "ss" 'sly-mrepl-sync
-  "Sb" 'sly-stickers-toggle-break-on-stickers
-  "Sc" 'sly-stickers-clear-defun-stickers
-  "SC" 'sly-stickers-clear-buffer-stickers
-  "Sf" 'sly-stickers-fetch
-  "Sr" 'sly-stickers-replay
-  "Ss" 'sly-stickers-dwim
+  "rc" 'sly-mrepl-clear-repl
+  "rq" 'sly-quit-lisp
+  "rn" 'sly-mrepl-new
+  "rr" 'sly-restart-inferior-lisp
+  "rs" 'sly-mrepl-sync
+  "sb" 'sly-stickers-toggle-break-on-stickers
+  "sc" 'sly-stickers-clear-defun-stickers
+  "sC" 'sly-stickers-clear-buffer-stickers
+  "sf" 'sly-stickers-fetch
+  "sr" 'sly-stickers-replay
+  "ss" 'sly-stickers-dwim
   "tt" 'sly-toggle-trace-fdefinition
   "tT" 'sly-toggle-fancy-trace
   "tu" 'sly-untrace-all)
+
+(which-key-add-major-mode-key-based-replacements 'clojure-mode
+  ",e" "evaluate"
+  ",g" "go"
+  ",h" "help"
+  ",i" "inspect"
+  ",m" "macros"
+  ",r" "repl")
 
 (general-nmap
   :prefix ","
   :keymaps '(clojure-mode-map cider-repl-mode-map)
   "'" 'cider-jack-in
+  "ed" 'cider-eval-defun-at-point
+  "eD" 'cider-insert-defun-in-repl
+  "ee" 'cider-eval-last-sexp
+  "eE" 'cider-insert-last-sexp-in-repl
+  "er" 'cider-eval-region
+  "eR" 'cider-insert-region-in-repl
+  "eu" 'cider-undef
   "gb" 'cider-pop-back
   "gg" 'cider-find-var
   "gn" 'cider-find-ns
+  "ha" 'cider-apropos
+  "hd" 'cider-doc
+  "hg" 'cider-grimoire-web
+  "hj" 'cider-javadoc
   "ii" 'cider-inspect
-  "ir" 'cider-inspect-last-result)
+  "ir" 'cider-inspect-last-result
+  "me" 'cider-macroexpand-1
+  "mE" 'cider-macroexpand-all
+  "rn" 'cider-repl-set-ns
+  "rq" 'cider-quit
+  "rr" 'cider-restart)
