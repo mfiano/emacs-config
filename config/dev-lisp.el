@@ -160,14 +160,20 @@
   (push '(cider-docview-mode :width 0.5 :position right)
         popwin:special-display-config)
   (setq nrepl-log-messages nil
-        cider-font-lock-dynamically nil
+        nrepl-hide-special-buffers t
+        cider-font-lock-dynamically '(macro core function var)
+        cider-overlays-use-font-lock t
+        cider-prompt-for-symbol nil
         cider-repl-display-help-banner nil
         cider-repl-pop-to-buffer-on-connect 'display-only
         cider-repl-use-pretty-printing t
         cider-repl-wrap-history nil
+        cider-repl-print-length 20
         cider-repl-history-display-duplicates nil
-        cider-repl-history-size 5000
-        cider-repl-history-file (expand-file-name "cider-repl-history" my/dir-etc)))
+        cider-repl-history-size 1000
+        cider-repl-history-file (expand-file-name "cider-repl-history" my/dir-etc))
+  (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+  (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion))
 
 (general-nmap
   :prefix ","
@@ -260,6 +266,7 @@ Common Lisp Sly Navigation
   ",h" "help"
   ",i" "inspect"
   ",m" "macros"
+  ",n" "namespaces"
   ",r" "repl")
 
 (general-nmap
@@ -284,6 +291,9 @@ Common Lisp Sly Navigation
   "ir" 'cider-inspect-last-result
   "me" 'cider-macroexpand-1
   "mE" 'cider-macroexpand-all
+  "nn" 'cider-browse-ns
+  "nN" 'cider-browse-ns-all
   "rn" 'cider-repl-set-ns
   "rq" 'cider-quit
-  "rr" 'cider-restart)
+  "rr" 'cider-refresh
+  "rR" 'cider-restart)
