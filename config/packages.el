@@ -313,10 +313,7 @@
   :config
   (setq fci-rule-color "#444"
         fci-rule-use-dashes t
-        fci-dash-pattern 0.5)
-  (add-hook 'company-completion-started-hook 'my/company-turn-off-fci)
-  (add-hook 'company-completion-finished-hook 'my/company-maybe-turn-on-fci)
-  (add-hook 'company-completion-cancelled-hook 'my/company-maybe-turn-on-fci))
+        fci-dash-pattern 0.5))
 
 (use-package flycheck)
 

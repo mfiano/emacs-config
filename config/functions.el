@@ -75,14 +75,6 @@
   (interactive)
   (call-interactively 'write-file))
 
-(defun my/company-turn-off-fci (&rest ignore)
-  (when (boundp 'fci-mode)
-    (setq company-fci-mode-on-p fci-mode)
-    (when fci-mode (fci-mode -1))))
-
-(defun my/company-maybe-turn-on-fci (&rest ignore)
-  (when company-fci-mode-on-p (fci-mode 1)))
-
 (defun my/switch-buffer (arg)
   (interactive "P")
   (with-persp-buffer-list () (counsel-ibuffer arg)))
