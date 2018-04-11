@@ -8,7 +8,7 @@
 
 (defvar my/dir-org (file-name-as-directory (expand-file-name "~/Projects/Org")))
 
-(defvar my/font "Iosevka Slab Medium 11")
+(defvar my/font "Iosevka Slab Medium 10")
 
 (defvar my/ignored-files
   '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so" ; compiled code
