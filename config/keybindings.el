@@ -13,6 +13,7 @@
   "<f13>c" "comments"
   "<f13>f" "files"
   "<f13>F" "frames"
+  "<f13>Fs" "frame size"
   "<f13>g" "git"
   "<f13>h" "help"
   "<f13>j" "jumps"
