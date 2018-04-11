@@ -175,6 +175,10 @@
   (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
   (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion))
 
+(general-define-key
+ :keymaps '(emacs-lisp-mode-map lisp-mode-map sly-mode-map clojure-mode-map cider-repl-mode-map)
+ "<tab>" 'company-indent-or-complete-common)
+
 (general-nmap
   :prefix ","
   :keymaps 'emacs-lisp-mode-map

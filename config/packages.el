@@ -318,12 +318,17 @@
 (use-package flycheck)
 
 (use-package company
-  :init (global-company-mode)
+  :bind
+  (:map prog-mode-map
+        ("<tab>" . company-indent-or-complete-common))
+  :init
+  (add-hook 'prog-mode-hook 'company-mode)
   :config
   (company-tng-configure-default)
   (setq company-tooltip-align-annotations t
         company-selection-wrap-around t
-        company-idle-delay 0.1)
+        company-idle-delay nil
+        completion-at-point-functions '(company-complete-common))
   :diminish company-mode)
 
 (use-package evil
@@ -370,6 +375,7 @@
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-save-dir (file-name-as-directory (expand-file-name "persp-conf" my/dir-etc))
+        persp-auto-resume-time 0
         persp-auto-save-num-of-backups 0
         persp-auto-save-opt 0
         persp-set-last-persp-for-new-frames nil)
