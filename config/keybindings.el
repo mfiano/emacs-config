@@ -16,6 +16,7 @@
   "<f13>Fs" "frame size"
   "<f13>g" "git"
   "<f13>h" "help"
+  "<f13>i" "insert"
   "<f13>j" "jumps"
   "<f13>l" "layouts"
   "<f13>o" "org-mode"
@@ -27,7 +28,7 @@
 
 (general-define-key
  :prefix "<f13>"
- "<f13>" 'counsel-M-x
+ "<f13>" 'helm-M-x
  "<tab>" 'next-buffer
  "<backtab>" 'previous-buffer
  "1" 'winum-select-window-1
@@ -40,15 +41,15 @@
  "8" 'winum-select-window-8
  "9" 'winum-select-window-9
  "ba" 'persp-add-buffer
- "bb" 'my/switch-buffer
+ "bb" 'persp-switch-to-buffer
  "bd" 'kill-this-buffer
  "br" 'persp-remove-buffer
  "cl" 'evilnc-comment-or-uncomment-lines
  "cp" 'evilnc-comment-or-uncomment-paragraphs
  "fC" 'my/copy-file
  "fD" 'my/delete-file
- "ff" 'counsel-find-file
- "fr" 'counsel-recentf
+ "ff" 'helm-find-files
+ "fr" 'helm-recentf
  "fR" 'my/rename-file
  "fs" 'save-buffer
  "fS" 'evil-write-all
@@ -64,6 +65,7 @@
  "hk" 'describe-key
  "hm" 'describe-mode
  "hv" 'describe-variable
+ "il" 'my/insert-lambda-character
  "jc" 'avy-goto-char
  "jl" 'avy-goto-line
  "jw" 'avy-goto-word-1
@@ -78,21 +80,20 @@
  "lS" 'persp-save-state-to-file
  "oa" 'org-agenda
  "oA" 'archive
- "oc" 'counsel-org-capture
+ "oc" 'helm-org-capture-templates
  "of" 'org-refile
  "ot" 'org-babel-tangle
- "pb" 'counsel-projectile-switch-to-buffer
+ "pb" 'helm-projectile-switch-to-buffer
  "pd" 'projectile-browse-dirty-projects
- "pf" 'counsel-projectile-find-file
+ "pf" 'helm-projectile-find-file
  "pI" 'projectile-invalidate-cache
  "pk" 'projectile-kill-buffers
- "pp" 'counsel-projectile-switch-project
- "pr" 'counsel-projectile-recentf
- "ps" 'counsel-projectile-rg
+ "pp" 'helm-projectile-switch-project
+ "pr" 'helm-projectile-recentf
  "pS" 'projectile-save-project-buffers
  "P" 'paradox-list-packages
  "qq" 'kill-emacs
- "sp" 'counsel-projectile-rg
+ "sp" 'helm-ag-project-root
  "ss" 'swiper
  "sS" 'highlight-symbol
  "td" 'diff-hl-mode

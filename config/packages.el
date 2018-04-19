@@ -5,7 +5,7 @@
       package--init-file-ensured t
       use-package-always-ensure t)
 (unless (assoc-default "melpa" package-archives)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 (package-initialize)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -237,17 +237,47 @@
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects)
   :diminish projectile-mode)
 
-(use-package counsel
-  :bind
-  (("M-x" . counsel-M-x)
-   ("C-s" . swiper))
+(use-package helm
+  :demand t
+  :bind (:map helm-map
+              ("<tab>" . helm-execute-persistent-action))
   :config
-  (setq ivy-count-format "%d/%d ")
-  (ivy-mode 1)
-  :diminish ivy-mode)
+  (helm-mode 1)
+  (helm-autoresize-mode 1)
+  (setq helm-display-header-line nil
+        helm-idle-delay 0.0
+        helm-input-idle-delay 0.01
+        helm-quick-update t
+        helm-split-window-in-side-p t
+        helm-M-x-fuzzy-match t
+        helm-M-x-requires-pattern nil
+        helm-buffers-fuzzy-matching t
+        helm-bookmark-show-location t
+        helm-recentf-fuzzy-match t
+        helm-move-to-line-cycle-in-source nil
+        helm-ff-skip-boring-files t
+        helm-ff-file-name-history-use-recentf nil
+        helm-ff-file-compressed-list '("gz" "bz2" "zip" "tgz" "7z" "xz")
+        helm-candidate-number-limit 1000)
+  :diminish helm-mode)
 
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
+(use-package swiper-helm
+  :bind (("C-s" . swiper-helm)))
+
+(use-package helm-projectile
+  :after projectile
+  :config
+  (helm-projectile-on)
+  (setq projectile-switch-project-action 'helm-projectile))
+
+(use-package helm-ls-git
+  :defer t)
+
+(use-package helm-ag
+  :defer t
+  :config
+  (setq helm-ag-fuzzy-match t
+        helm-ag-base-command "rg --vimgrep --smart-case --no-heading"))
 
 (use-package magit
   :defer t
@@ -332,7 +362,9 @@
   :diminish company-mode)
 
 (use-package evil
-  :config (evil-mode 1))
+  :config
+  (setq evil-move-beyond-eol t)
+  (evil-mode 1))
 
 (use-package general
   :config (general-evil-setup))

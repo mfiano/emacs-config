@@ -75,10 +75,6 @@
   (interactive)
   (call-interactively 'write-file))
 
-(defun my/switch-buffer (arg)
-  (interactive "P")
-  (with-persp-buffer-list () (counsel-ibuffer arg)))
-
 (defun my/frame-size-increase (arg)
   (interactive "P")
   (frame-font-bigger)
@@ -94,3 +90,7 @@
   (telephone-line-separator-clear-cache telephone-line-cubed-hollow-right)
   (telephone-line-separator-clear-cache telephone-line-cubed-left)
   (telephone-line-separator-clear-cache telephone-line-cubed-right))
+
+(defun my/insert-lambda-character ()
+  (interactive)
+  (insert (make-char 'greek-iso8859-7 107)))
