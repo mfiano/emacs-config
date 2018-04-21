@@ -207,6 +207,25 @@ Common Lisp Sly Navigation
   ("S" sly-stickers-prev-sticker)
   ("q" nil :exit t))
 
+(defhydra my/hydra-macrostep (:exit nil :hint nil :foreign-keys run)
+  "
+Macro Expansion
+
+^^Definitions                           ^^Compiler Notes             ^^Stickers
+^^^^^^─────────────────────────────────────────────────────────────────────────────────────
+[_e_] Expand
+[_c_] Collapse
+[_n_] Next level
+[_N_] Previous level
+
+[_q_] Exit
+"
+  ("e" macrostep-expand)
+  ("c" macrostep-collapse)
+  ("n" macrostep-next-macro)
+  ("N" macrostep-prev-macro)
+  ("q" macrostep-collapse-all :exit t))
+
 (which-key-add-major-mode-key-based-replacements 'lisp-mode
   ",c" "compile"
   ",e" "evaluate"
@@ -249,6 +268,7 @@ Common Lisp Sly Navigation
   "h>" 'sly-calls-who
   "me" 'sly-macroexpand-1
   "mE" 'sly-macroexpand-all
+  "ms" 'my/hydra-macrostep/body
   "rc" 'sly-mrepl-clear-repl
   "rq" 'sly-quit-lisp
   "rn" 'sly-mrepl-new
