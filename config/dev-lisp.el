@@ -18,7 +18,7 @@
     clojure-mode-map))
 
 (defvar my/lisp-implementations
-  '((sbcl ("sbcl"))))
+  '((sbcl ("ros" "-L" "sbcl-bin" "run"))))
 
 (defvar my/clhs-path (file-name-as-directory (expand-file-name "~/.data/common-lisp/clhs")))
 
