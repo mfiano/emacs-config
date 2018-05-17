@@ -124,7 +124,8 @@
   (push '("*sly-description*" :width 0.5 :position right)
         popwin:special-display-config)
   (push '("*sly-macroexpansion*" :width 0.5 :position right)
-        popwin:special-display-config))
+        popwin:special-display-config)
+  :diminish sly)
 
 (use-package sly-company
   :config
@@ -134,10 +135,10 @@
   (add-to-list 'company-backends 'sly-company))
 
 (use-package sly-macrostep
-  :defer t)
+  :after sly)
 
 (use-package sly-repl-ansi-color
-  :demand t
+  :after sly
   :config (push 'sly-repl-ansi-color sly-contribs))
 
 (use-package racket-mode
