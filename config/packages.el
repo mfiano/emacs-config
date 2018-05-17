@@ -147,7 +147,15 @@
   (doom-themes-org-config)
   (doom-themes-neotree-config))
 
+(use-package spaceline
   :config
+  (progn
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme)
+    (spaceline-helm-mode)
+    (setq powerline-default-separator 'arrow
+          spaceline-workspace-numbers-unicode t
+          spaceline-window-numbers-unicode t)))
 
 (use-package indent-guide
   :commands indent-guide-mode
