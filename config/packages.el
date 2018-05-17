@@ -296,8 +296,6 @@
 (use-package org
   :defer t
   :config
-  (add-hook 'org-load-hook 'my-org-mode-hook)
-  (add-hook 'org-mode-hook 'my-org-mode-hook)
   (setq org-directory my/dir-org
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-catch-invisible-edits 'show-and-error
@@ -402,11 +400,12 @@
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-save-dir (file-name-as-directory (expand-file-name "persp-conf" my/dir-etc))
-        persp-auto-resume-time 0
+        persp-auto-resume-time 1
         persp-auto-save-num-of-backups 0
         persp-auto-save-opt 0
         persp-set-last-persp-for-new-frames nil)
-  (add-hook 'after-init-hook (lambda () (persp-mode 1))))
+  (add-hook 'after-init-hook (lambda () (persp-mode 1)))
+  :diminish persp-mode)
 
 (use-package winum
   :init (setq winum-auto-setup-mode-line nil)
