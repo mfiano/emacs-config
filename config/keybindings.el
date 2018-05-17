@@ -134,6 +134,6 @@ Frame Resize
 
 [_q_] Exit
 "
-("+" my/frame-size-increase)
-("-" my/frame-size-decrease)
+("+" frame-font-bigger)
+("-" frame-font-smaller)
 ("q" nil :exit t))
