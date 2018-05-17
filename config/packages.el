@@ -147,21 +147,7 @@
   (doom-themes-org-config)
   (doom-themes-neotree-config))
 
-(use-package solaire-mode
   :config
-  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
-  (add-hook 'after-revert-hook #'turn-on-solaire-mode)
-  (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
-  (advice-add #'persp-load-state-from-file :after #'solaire-mode-restore-persp-mode-buffers)
-  (solaire-mode-swap-bg))
-
-(use-package telephone-line
-  :config
-  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-        telephone-line-primary-right-separator 'telephone-line-cubed-right
-        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
-  (telephone-line-mode 1))
 
 (use-package indent-guide
   :commands indent-guide-mode
