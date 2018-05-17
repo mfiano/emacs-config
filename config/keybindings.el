@@ -28,7 +28,7 @@
 
 (general-define-key
  :prefix "<f13>"
- "<f13>" 'helm-M-x
+ "<f13>" 'counsel-M-x
  "<tab>" 'next-buffer
  "<backtab>" 'previous-buffer
  "1" 'winum-select-window-1
@@ -48,8 +48,8 @@
  "cp" 'evilnc-comment-or-uncomment-paragraphs
  "fC" 'my/copy-file
  "fD" 'my/delete-file
- "ff" 'helm-find-files
- "fr" 'helm-recentf
+ "ff" 'counsel-find-file
+ "fr" 'counsel-recentf
  "fR" 'my/rename-file
  "fs" 'save-buffer
  "fS" 'evil-write-all
@@ -80,16 +80,16 @@
  "lS" 'persp-save-state-to-file
  "oa" 'org-agenda
  "oA" 'archive
- "oc" 'helm-org-capture-templates
+ "oc" 'counsel-org-capture
  "of" 'org-refile
  "ot" 'org-babel-tangle
- "pb" 'helm-projectile-switch-to-buffer
+ "pb" 'counsel-projectile-switch-to-buffer
  "pd" 'projectile-browse-dirty-projects
- "pf" 'helm-projectile-find-file
+ "pf" 'counsel-projectile-find-file
  "pI" 'projectile-invalidate-cache
  "pk" 'projectile-kill-buffers
- "pp" 'helm-projectile-switch-project
- "pr" 'helm-projectile-recentf
+ "pp" 'counsel-projectile-switch-project
+ "pr" 'counsel-projectile-recentf
  "pS" 'projectile-save-project-buffers
  "P" 'paradox-list-packages
  "qq" 'kill-emacs

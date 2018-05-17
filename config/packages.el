@@ -7,6 +7,7 @@
 (unless (assoc-default "melpa" package-archives)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 (package-initialize)
+(package-refresh-contents)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -152,7 +153,6 @@
   (progn
     (require 'spaceline-config)
     (spaceline-spacemacs-theme)
-    (spaceline-helm-mode)
     (setq powerline-default-separator 'arrow
           spaceline-workspace-numbers-unicode t
           spaceline-window-numbers-unicode t)))
@@ -232,47 +232,15 @@
         projectile-globally-ignored-file-suffixes my/ignored-files)
   :diminish projectile-mode)
 
-(use-package helm
-  :demand t
-  :bind (:map helm-map
-              ("<tab>" . helm-execute-persistent-action))
+(use-package counsel
+  :bind (("M-x" . counsel-M-x))
   :config
-  (helm-mode 1)
-  (helm-autoresize-mode 1)
-  (setq helm-display-header-line nil
-        helm-idle-delay 0.0
-        helm-input-idle-delay 0.01
-        helm-quick-update t
-        helm-split-window-in-side-p t
-        helm-M-x-fuzzy-match t
-        helm-M-x-requires-pattern nil
-        helm-buffers-fuzzy-matching t
-        helm-bookmark-show-location t
-        helm-recentf-fuzzy-match t
-        helm-move-to-line-cycle-in-source nil
-        helm-ff-skip-boring-files t
-        helm-ff-file-name-history-use-recentf nil
-        helm-ff-file-compressed-list '("gz" "bz2" "zip" "tgz" "7z" "xz")
-        helm-candidate-number-limit 1000)
-  :diminish helm-mode)
+  (setq ivy-count-format "%d/%d ")
+  (ivy-mode 1)
+  :diminish ivy-mode)
 
-(use-package swiper-helm
-  :bind (("C-s" . swiper-helm)))
-
-(use-package helm-projectile
-  :after projectile
-  :config
-  (helm-projectile-on)
-  (setq projectile-switch-project-action 'helm-projectile))
-
-(use-package helm-ls-git
-  :defer t)
-
-(use-package helm-ag
-  :defer t
-  :config
-  (setq helm-ag-fuzzy-match t
-        helm-ag-base-command "rg --vimgrep --smart-case --no-heading"))
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
 
 (use-package magit
   :defer t
