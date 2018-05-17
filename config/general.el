@@ -37,6 +37,7 @@
       use-dialog-box nil
       display-time-default-load-average nil
       x-select-enable-clipboard t
+      x-select-enable-clipboard-manager nil
       echo-keystrokes 0.1
       vc-follow-symlinks t)
 
