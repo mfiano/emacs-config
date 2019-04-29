@@ -11,6 +11,7 @@
   :non-normal-prefix "M-SPC")
 
 (general-create-definer define-local-keys
+  :major-modes t
   :states '(n v i e)
   :prefix ","
   :non-normal-prefix "M-,")
@@ -59,7 +60,7 @@
 (define-leader-keys
   :infix "f"
   "" '(:ignore t :wk "file")
-  "c" '(mfiano/copy-file :wk "copy")
+  "c" `(,(fn! (call-interactively 'write-file)) :wk "copy")
   "d" '(dired-jump :wk "directory")
   "D" '(mfiano/delete-file :wk "delete")
   "f" '(counsel-find-file :wk "find")

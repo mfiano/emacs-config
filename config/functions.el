@@ -29,21 +29,6 @@
       (push-mark (point))
       (insert-for-yank primary))))
 
-(defun mfiano/calc-offset-on-org-level ()
-  (* (or (org-current-level) 0) org-indent-indentation-per-level))
-
-(defun mfiano/org-fill-paragraph (&optional JUSTIFY)
-  (let* ((fill-column (- fill-column (mfiano/calc-offset-on-org-level))))
-    (org-fill-paragraph JUSTIFY)))
-
-(defun mfiano/org-auto-fill-function ()
-  (let* ((fill-column (- fill-column (mfiano/calc-offset-on-org-level))))
-    (org-auto-fill-function)))
-
-(defun mfiano/org-mode-hook ()
-  (setq fill-paragraph-function   'mfiano/org-fill-paragraph
-        normal-auto-fill-function 'mfiano/org-auto-fill-function))
-
 (defun mfiano/delete-file (filename)
   (interactive "f")
   (when (and filename (file-exists-p filename))
@@ -77,6 +62,30 @@
                (message "File '%s' successfully renamed to '%s'" name
                         (file-name-nondirectory new-name))))))))
 
-(defun mfiano/copy-file ()
-  (interactive)
-  (call-interactively 'write-file))
+(evil-define-command mfiano/window-split (&optional count file)
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-split-window-below 'above 'below))
+  (call-interactively
+   (if evil-split-window-below
+       #'evil-window-up
+     #'evil-window-down))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))
+
+(evil-define-command mfiano/window-vsplit (&optional count file)
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-vsplit-window-right 'left 'right))
+  (call-interactively
+   (if evil-vsplit-window-right
+       #'evil-window-left
+     #'evil-window-right))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))

@@ -43,9 +43,29 @@
 
 (define-local-keys lisp-mode-map
   "'" '(sly :wk "start")
-  ";" (fn! (let ((current-prefix-arg '-)) (sly nil nil t))))
+  ";" `(,(fn! (let ((current-prefix-arg '-)) (sly nil nil t)))
+        :wk "start (ask)"))
 
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
+  :infix "c"
+  "" '(:ignore t :wk "compile")
+  "c" '(sly-compile-file :wk "compile file")
+  "C" '(sly-compile-and-load-file :wk "compile/load file")
+  "f" '(sly-compile-defun :wk "compile top-level form")
+  "l" '(sly-load-file :wk "load file")
+  "n" '(sly-remove-notes :wk "remove notes")
+  "r" '(sly-compile-region :wk "compile region"))
+
+(define-local-keys lisp-mode-map
+  :infix "e"
+  "" '(:ignore t :wk "evaluate")
+  "b" '(sly-eval-buffer :wk "buffer")
+  "e" '(sly-eval-last-expression :wk "last expression")
+  "f" '(sly-eval-defun :wk "function")
+  "F" '(sly-undefine-function :wk "undefine function")
+  "r" '(sly-eval-region :wk "region"))
+
+(define-local-keys lisp-mode-map
   :infix "g"
   "" '(:ignore t :wk "go")
   "b" '(sly-pop-find-definition-stack :wk "back")
@@ -56,7 +76,7 @@
   "s" '(sly-stickers-next-sticker :wk "next sticker")
   "S" '(sly-stickers-prev-sticker :wk "previous sticker"))
 
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
   :infix "h"
   "" '(:ignore t :wk "help")
   "<" '(sly-who-calls :wk "who calls")
@@ -74,29 +94,10 @@
   "s" '(sly-who-specializes :wk "who specializes")
   "S" '(sly-who-sets :wk "who sets"))
 
-(define-local-keys sly-mode-map
-  :infix "c"
-  "" '(:ignore t :wk "compile")
-  "c" '(sly-compile-file :wk "compile file")
-  "C" '(sly-compile-and-load-file :wk "compile/load file")
-  "f" '(sly-compile-defun :wk "compile top-level form")
-  "l" '(sly-load-file :wk "load file")
-  "n" '(sly-remove-notes :wk "remove notes")
-  "r" '(sly-compile-region :wk "compile region"))
-
-(define-local-keys sly-mode-map
-  :infix "e"
-  "" '(:ignore t :wk "evaluate")
-  "b" '(sly-eval-buffer :wk "buffer")
-  "e" '(sly-eval-last-expression :wk "last expression")
-  "f" '(sly-eval-defun :wk "function")
-  "F" '(sly-undefine-function :wk "undefine function")
-  "r" '(sly-eval-region :wk "region"))
-
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
   "m" '(macrostep-expand :wk "macro expand"))
 
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
   :infix "r"
   "" '(:ignore t :wk "repl")
   "c" '(sly-mrepl-clear-repl :wk "clear")
@@ -104,7 +105,7 @@
   "r" '(sly-restart-inferior-lisp :wk "restart")
   "s" '(sly-mrepl-sync :wk "sync"))
 
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
   :infix "s"
   "" '(:ignore t :wk "stickers")
   "b" '(sly-stickers-toggle-break-on-stickers :wk "toggle break")
@@ -114,7 +115,7 @@
   "r" '(sly-stickers-replay :wk "replay")
   "s" '(sly-stickers-dwim :wk "add/remove"))
 
-(define-local-keys sly-mode-map
+(define-local-keys lisp-mode-map
   :infix "t"
   "" '(:ignore t :wk "trace")
   "t" '(sly-toggle-trace-fdefinition :wk "toggle")
@@ -126,16 +127,16 @@
 (evil-set-initial-state 'sly-popup-buffer-mode 'normal)
 (evil-set-initial-state 'sly-xref-mode 'normal)
 
-(define-keys 'i 'sly-mrepl-mode-map
+(define-keys i sly-mrepl-mode-map
   [S-return] #'newline-and-indent
   [backspace] #'sp-backward-delete-char
   [up] (fn! (evil-goto-line) (comint-previous-input 1))
   [down] (fn! (evil-goto-line) (comint-next-input 1)))
 
-(define-keys 'n 'sly-popup-buffer-mode-map
+(define-keys n sly-popup-buffer-mode-map
   "q" #'quit-window)
 
-(define-keys 'n 'sly-db-mode-map
+(define-keys n sly-db-mode-map
   [follow-link] #'mouse-face
   [remap quit-window] #'sly-db-quit
   "C-i" #'sly-db-cycle
@@ -172,7 +173,7 @@
   "S" #'sly-db-show-frame-source
   "t" #'sly-db-toggle-details)
 
-(define-keys 'n 'sly-inspector-mode-map
+(define-keys n sly-inspector-mode-map
   [backtab] #'backward-button
   [return] #'push-button
   [(shift tab)] #'backward-button
@@ -187,7 +188,7 @@
   "p" #'sly-button-pretty-print
   "q" #'sly-inspector-quit)
 
-(define-keys 'n 'sly-xref-mode-map
+(define-keys n sly-xref-mode-map
   [return] #'sly-goto-xref
   [S-return] #'sly-show-xref
   "q" #'quit-window)

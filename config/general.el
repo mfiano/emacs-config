@@ -67,8 +67,9 @@
 (tooltip-mode 0)
 (blink-cursor-mode 0)
 (display-time-mode 1)
+(global-display-line-numbers-mode 1)
 (column-number-mode 1)
-(fringe-mode '(10 . 0))
+(fringe-mode 6)
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-selection-coding-system 'utf-8)
@@ -79,9 +80,16 @@
 (load custom-file 'noerror)
 
 (add-hook 'minibuffer-setup-hook
-          (fn (setq gc-cons-threshold most-positive-fixnum)))
+          (lambda () (setq gc-cons-threshold most-positive-fixnum)))
 
 (dolist (hook '(after-init-hook minibuffer-exit-hook))
-  (add-hook hook (fn (setq gc-cons-threshold (* 1000 1000 10)))))
+  (add-hook hook (lambda () (setq gc-cons-threshold (* 1000 1000 10)))))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(use-package evil
+  :config
+  (evil-mode 1)
+  (setq evil-move-beyond-eol t)
+  (advice-add #'evil-window-split :override #'mfiano/window-split)
+  (advice-add #'evil-window-vsplit :override #'mfiano/window-vsplit))

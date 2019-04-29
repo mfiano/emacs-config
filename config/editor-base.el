@@ -18,7 +18,9 @@
         history-delete-duplicates t
         savehist-save-minibuffer-history t
         savehist-autosave-interval 120
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+        savehist-additional-variables '(kill-ring
+                                        search-ring
+                                        regexp-search-ring))
   (savehist-mode 1))
 
 (use-package subword
@@ -65,11 +67,6 @@
   (setq save-place-file (expand-file-name "places" mfiano/dir-etc)
         save-place-forget-unreadable-files nil))
 
-(use-package evil
-  :config
-  (setq evil-move-beyond-eol t)
-  (evil-mode 1))
-
 (use-package ag
   :defer t
   :config
@@ -96,7 +93,8 @@
 (use-package imenu-anywhere
   :after ivy
   :config
-  (setq imenu-anywhere-buffer-filter-functions '(imenu-anywhere-same-project-p)))
+  (setq imenu-anywhere-buffer-filter-functions
+        '(imenu-anywhere-same-project-p)))
 
 (use-package fill
   :straight nil
@@ -150,16 +148,16 @@
         tramp-persistency-file-name (expand-file-name
                                      "tramp-history" mfiano/dir-etc)))
 
+(use-package help-mode
+  :straight nil
+  :config (setq help-window-select t))
+
 (use-package helpful)
 
 (define-keys '(help-mode helpful-mode-map)
   :states 'n
   "q" #'quit-window)
 
-(use-package prescient)
-
-(use-package ivy-prescient
-  :config (setq ivy-prescient-mode 1))
-
-(use-package company-prescient
-  :config (setq company-prescient-mode 1))
+(use-package smex
+  :config
+  (setq smex-save-file (expand-file-name "smex-items" mfiano/dir-etc)))

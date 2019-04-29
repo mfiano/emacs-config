@@ -1,16 +1,3 @@
-(use-package nlinum
-  :config
-  (global-nlinum-mode 1)
-  (setq nlinum-format "%4d "))
-
-(use-package nlinum-hl
-  :config
-  (add-hook 'post-gc-hook #'nlinum-hl-flush-all-windows)
-  (add-hook 'focus-in-hook  #'nlinum-hl-flush-all-windows)
-  (add-hook 'focus-out-hook #'nlinum-hl-flush-all-windows)
-  (advice-add #'select-window :before #'nlinum-hl-do-select-window-flush)
-  (advice-add #'select-window :after  #'nlinum-hl-do-select-window-flush))
-
 (use-package doom-themes
   :init
   (setq doom-themes-enable-bold t
@@ -61,7 +48,10 @@
   :init
   (diff-hl-flydiff-mode)
   (global-diff-hl-mode 1)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (set-face-background 'diff-hl-change (doom-color 'orange))
+  (set-face-background 'diff-hl-delete (doom-color 'red))
+  (set-face-background 'diff-hl-insert (doom-color 'green)))
 
 (use-package indent-guide
   :commands indent-guide-mode
