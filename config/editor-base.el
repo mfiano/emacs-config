@@ -52,7 +52,10 @@
                           ".gz$")
         recentf-auto-cleanup 300
         recentf-filename-handlers '(abbreviate-file-name))
-  (recentf-mode 1))
+  (recentf-mode 1)
+  :config
+  (add-hook 'kill-emacs-hook #'recentf-cleanup)
+  (add-hook 'kill-emacs-hook #'recentf-save-list))
 
 (use-package autorevert
   :config

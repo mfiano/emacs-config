@@ -100,7 +100,11 @@
   "m" '(describe-minor-mode :wk "minor mode")
   "M" '(describe-mode :wk "major mode")
   "v" '(helpful-variable :wk "variable"))
-;;
+
+(define-leader-keys
+  :infix "l"
+  "" '(lisp-state-toggle-lisp-state :wk "lisp state"))
+
 (define-leader-keys
   :infix "p"
   "" '(:ignore t :wk "project")

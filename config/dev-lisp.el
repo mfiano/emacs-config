@@ -50,22 +50,43 @@
   "e" #'macrostep-expand
   "q" #'macrostep-collapse-all)
 
-(use-package lispy
+(use-package evil-smartparens
   :config
-  (setq lispy-use-sly t
-        lispy-colon-p nil)
-  (dolist (hook mfiano/lisp-hooks)
-    (add-hook hook (fn (lispy-mode 1)))))
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
+  :diminish evil-smartparens-mode)
 
-(use-package lispyville
-  :after lispy
+(use-package smartparens
   :config
-  (lispyville-set-key-theme
-   '(operators
-     escape
-     (additional-movement normal visual motion)
-     text-objects
-     atom-movement
-     commentary
-     slurp/barf-cp))
-  (add-hook 'lispy-mode-hook #'lispyville-mode))
+  (setq sp-show-pair-from-inside t
+        sp-cancel-autoskip-on-backward-movement nil
+        sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil)
+  (sp-pair "'" nil :actions :rem)
+  (sp-pair "`" nil :actions :rem)
+  (dolist (hook mfiano/lisp-hooks)
+    (add-hook hook 'smartparens-strict-mode))
+  :diminish smartparens-mode)
+
+(use-package evil-cleverparens
+  :init
+  (setq evil-move-beyond-eol t
+        evil-cleverparens-use-additional-movement-keys nil
+        evil-cleverparens-use-additional-bindings nil)
+  (dolist (hook mfiano/lisp-hooks)
+    (add-hook hook 'evil-cleverparens-mode))
+  :diminish evil-cleverparens-mode)
+
+(use-package evil-lisp-state
+  :init (setq evil-lisp-state-global t))
+
+(use-package macrostep
+  :config
+  (add-hook 'macrostep-mode-hook #'evil-normalize-keymaps))
+
+(define-keys 'n 'macrostep-keymap
+  [tab] #'macrostep-next-macro
+  [backtab] #'macrostep-prev-macro
+  "c" #'macrostep-collapse
+  "e" #'macrostep-expand
+  "q" #'macrostep-collapse-all)
