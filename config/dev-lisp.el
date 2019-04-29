@@ -52,7 +52,8 @@
 
 (use-package lispy
   :config
-  (setq lispy-use-sly t)
+  (setq lispy-use-sly t
+        lispy-colon-p nil)
   (dolist (hook mfiano/lisp-hooks)
     (add-hook hook (fn (lispy-mode 1)))))
 

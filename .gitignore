@@ -1,2 +1,9 @@
-*
-!/config
+.cache
+bookmarks
+etc
+semanticdb
+src
+straight
+transient
+var
+!config

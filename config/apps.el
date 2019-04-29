@@ -11,7 +11,10 @@
   (setq elfeed-search-title-max-width 150
         elfeed-search-date-format '("%Y-%m-%d %I:%M%P" 20 :left)))
 
-(use-package notmuch)
+(use-package notmuch
+  :config (evil-collection-init 'notmuch))
+
+(use-package counsel-notmuch)
 
 (define-local-keys elfeed-search-mode-map
   :infix "s"

@@ -88,8 +88,11 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package evil
+  :init (setq evil-want-keybinding nil)
   :config
   (evil-mode 1)
   (setq evil-move-beyond-eol t)
   (advice-add #'evil-window-split :override #'mfiano/window-split)
   (advice-add #'evil-window-vsplit :override #'mfiano/window-vsplit))
+
+(use-package evil-collection)

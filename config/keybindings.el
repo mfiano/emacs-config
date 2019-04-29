@@ -48,6 +48,7 @@
 (define-leader-keys
   :infix "a"
   "" '(:ignore t :wk "app")
+  "e" '(notmuch :wk "email")
   "f" '(elfeed :wk "feed reader")
   "T" `(,(fn! (term (getenv "SHELL"))) :wk "terminal"))
 
@@ -141,7 +142,7 @@
   "" '(:ignore t :wk "window")
   "-" '(evil-window-split :wk "split horizontal")
   "|" '(evil-window-vsplit :wk "split vertical")
-  "=" '(balance-windows "balance")
+  "=" '(balance-windows :wk "balance")
   "1" '(winum-select-window-by-number :wk "select window")
   "d" '(evil-window-delete :wk "delete")
   "D" '(delete-other-windows :wk "delete other")

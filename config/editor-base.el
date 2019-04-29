@@ -120,6 +120,7 @@
 (use-package ivy
   :config
   (setq ivy-re-builders-alist '((t . ivy--regex-plus))
+        ivy-initial-inputs-alist nil
         ivy-wrap t
         ivy-height 20))
 
@@ -136,7 +137,7 @@
 
 (define-keys
   :states 'i
-  [tab] #'company-indent-or-complete-common)
+  [tab] #'company-complete-common-or-cycle)
 
 (define-keys 'company-active-map
   [tab] #'company-select-next
