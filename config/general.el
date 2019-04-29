@@ -1,27 +1,29 @@
 (setq user-full-name "Michael Fiano"
       user-mail-address "mail@michaelfiano.com")
 
-(defvar my/dir-etc
+(defvar mfiano/dir-etc
   (file-name-as-directory
    (expand-file-name "etc" user-emacs-directory)))
-(make-directory my/dir-etc t)
+(make-directory mfiano/dir-etc t)
 
-(defvar my/dir-org (file-name-as-directory (expand-file-name "~/Projects/Org")))
+(defvar mfiano/dir-org
+  (file-name-as-directory (expand-file-name "~/Projects/Org")))
 
-(defvar my/font "Iosevka Slab Medium 10")
+(defvar mfiano/font "Iosevka Slab 20")
 
-(defvar my/ignored-files
-  '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so" ; compiled code
-    ".7z" ".bz2" ".dmg" ".gz" ".iso" ".jar" ".rar" ".tar" ".tgz" ".xz" ".zip" ; archives
-    ".db" ".sql" ".sqlite" ; databases
-    ".DS_Store" "Thumbs.db")) ; operating system
+(defvar mfiano/ignored-files
+  '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so"
+    ".7z" ".bz2" ".dmg" ".gz" ".iso" ".jar" ".rar" ".tar" ".tgz" ".xz" ".zip"
+    ".db" ".sql" ".sqlite"
+    ".DS_Store" "Thumbs.db"))
 
 (setq display-time-format "%I:%M%P"
       image-animate-loop t
+      default-input-method "TeX"
       split-width-threshold nil
       jit-lock-defer-time nil
-      custom-file (expand-file-name "custom.el" my/dir-etc)
-      scroll-step 1
+      custom-file (expand-file-name "custom.el" mfiano/dir-etc)
+      scroll-step 1                     ;
       mouse-wheel-scroll-amount '(3)
       mouse-wheel-follow-mouse t
       mouse-wheel-progressive-speed nil
@@ -46,7 +48,7 @@
               buffer-file-coding-system 'utf-8
               indicate-empty-lines t
               truncate-lines t
-              fill-column 100
+              fill-column 80
               switch-to-visible-buffer nil
               require-final-newline t
               sentence-end-double-space nil
@@ -65,20 +67,21 @@
 (tooltip-mode 0)
 (blink-cursor-mode 0)
 (display-time-mode 1)
-(column-number-mode 0)
+(column-number-mode 1)
 (fringe-mode '(10 . 0))
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-selection-coding-system 'utf-8)
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist `(font . ,my/font))
+(add-to-list 'default-frame-alist `(font . ,mfiano/font))
 
 (load custom-file 'noerror)
 
-(add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
+(add-hook 'minibuffer-setup-hook
+          (fn (setq gc-cons-threshold most-positive-fixnum)))
 
 (dolist (hook '(after-init-hook minibuffer-exit-hook))
-  (add-hook hook (lambda () (setq gc-cons-threshold (* 1000 1000 10)))))
+  (add-hook hook (fn (setq gc-cons-threshold (* 1000 1000 10)))))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)

@@ -1,10 +1,16 @@
+(defmacro fn (&rest body)
+  `(lambda () ,@body))
+
+(defmacro fn! (&rest body)
+  `(lambda () (interactive) ,@body))
+
 (defadvice kill-region (before slick-cut activate compile)
   (interactive
    (if mark-active (list (region-beginning) (region-end))
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
-(defun my/smarter-move-beginning-of-line (arg)
+(defun mfiano/smarter-move-beginning-of-line (arg)
   (interactive "^p")
   (setq arg (or arg 1))
   (when (/= arg 1)
@@ -15,7 +21,7 @@
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-(defun my/yank-primary-selection ()
+(defun mfiano/yank-primary-selection ()
   (interactive)
   (let ((primary (or (x-get-selection-value)
                      (x-get-selection))))
@@ -23,22 +29,22 @@
       (push-mark (point))
       (insert-for-yank primary))))
 
-(defun my/calc-offset-on-org-level ()
+(defun mfiano/calc-offset-on-org-level ()
   (* (or (org-current-level) 0) org-indent-indentation-per-level))
 
-(defun my/org-fill-paragraph (&optional JUSTIFY)
-  (let* ((fill-column (- fill-column (my/calc-offset-on-org-level))))
+(defun mfiano/org-fill-paragraph (&optional JUSTIFY)
+  (let* ((fill-column (- fill-column (mfiano/calc-offset-on-org-level))))
     (org-fill-paragraph JUSTIFY)))
 
-(defun my/org-auto-fill-function ()
-  (let* ((fill-column (- fill-column (my/calc-offset-on-org-level))))
+(defun mfiano/org-auto-fill-function ()
+  (let* ((fill-column (- fill-column (mfiano/calc-offset-on-org-level))))
     (org-auto-fill-function)))
 
-(defun my/org-mode-hook ()
-  (setq fill-paragraph-function   'my/org-fill-paragraph
-        normal-auto-fill-function 'my/org-auto-fill-function))
+(defun mfiano/org-mode-hook ()
+  (setq fill-paragraph-function   'mfiano/org-fill-paragraph
+        normal-auto-fill-function 'mfiano/org-auto-fill-function))
 
-(defun my/delete-file (filename)
+(defun mfiano/delete-file (filename)
   (interactive "f")
   (when (and filename (file-exists-p filename))
     (let ((buffer (find-buffer-visiting filename)))
@@ -46,7 +52,7 @@
         (kill-buffer buffer)))
     (delete-file filename)))
 
-(defun my/rename-file ()
+(defun mfiano/rename-file ()
   (interactive)
   (let* ((name (buffer-name))
          (filename (buffer-file-name)))
@@ -71,10 +77,6 @@
                (message "File '%s' successfully renamed to '%s'" name
                         (file-name-nondirectory new-name))))))))
 
-(defun my/copy-file ()
+(defun mfiano/copy-file ()
   (interactive)
   (call-interactively 'write-file))
-
-(defun my/insert-lambda-character ()
-  (interactive)
-  (insert (make-char 'greek-iso8859-7 107)))
