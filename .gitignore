@@ -1,9 +1,3 @@
-/etc
-/src
-/var
-/straight
-/elpa
-/transient
-/semanticdb
-/.cache
-/bookmarks
+/**
+!/config
+!/straight/versions/*
