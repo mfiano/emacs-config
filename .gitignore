@@ -1,3 +1,9 @@
-etc/
-src/
-var/
+/etc
+/src
+/var
+/straight
+/elpa
+/transient
+/semanticdb
+/.cache
+/bookmarks

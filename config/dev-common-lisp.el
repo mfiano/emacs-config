@@ -32,6 +32,8 @@
   (sly-setup '(sly-fancy))
   (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
   (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
+  (add-to-list 'shackle-rules '("\\`\\*sly-db.*?\\*\\'" :regexp t :align right))
+  (add-to-list 'shackle-rules '(sly-inspector-mode :select t :align right))
   :diminish sly)
 
 (use-package sly-macrostep
@@ -129,7 +131,6 @@
 
 (define-keys i sly-mrepl-mode-map
   [S-return] #'newline-and-indent
-  [backspace] #'sp-backward-delete-char
   [up] (fn! (evil-goto-line) (comint-previous-input 1))
   [down] (fn! (evil-goto-line) (comint-next-input 1)))
 

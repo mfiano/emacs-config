@@ -11,17 +11,6 @@
         aw-scope 'frame
         aw-background t))
 
-(use-package persp-mode
-  :config
-  (setq persp-autokill-buffer-on-remove 'kill-weak
-        persp-save-dir (file-name-as-directory (expand-file-name "persp-conf" mfiano/dir-etc))
-        persp-auto-resume-time 1
-        persp-auto-save-num-of-backups 0
-        persp-auto-save-opt 0
-        persp-set-last-persp-for-new-frames nil)
-  (add-hook 'after-init-hook (fn (persp-mode 1)))
-  :diminish persp-mode)
-
 (use-package eyebrowse
   :config
   (eyebrowse-mode t)
@@ -32,3 +21,8 @@
 
 (use-package ivy-purpose
   :config (ivy-purpose-setup))
+
+(use-package shackle
+  :config
+  (setq shackle-default-size 0.5)
+  (shackle-mode 1))

@@ -22,7 +22,9 @@
         magit-save-repository-buffers 'dontask
         magit-revert-buffers 'silent
         magit-delete-by-moving-to-trash nil
-        git-commit-summary-max-length 120))
+        magit-display-buffer-function #'display-buffer
+        git-commit-summary-max-length 120)
+  (add-to-list 'shackle-rules '(magit-status-mode :select t :align right)))
 
 (use-package evil-magit
   :after magit)
