@@ -3,7 +3,8 @@
 (use-package general
   :config (general-evil-setup))
 
-(general-create-definer define-keys)
+(general-create-definer define-keys
+  :states '(n v i e))
 
 (general-create-definer define-leader-keys
   :states '(n v i e)
@@ -55,8 +56,11 @@
 (define-leader-keys
   :infix "b"
   "" '(:ignore t :wk "buffer")
-  "b" '(switch-to-buffer :wk "switch")
-  "d" '(kill-this-buffer :wk "delete"))
+  "a" '(persp-add-buffer :wk "add")
+  "b" '(persp-switch-to-buffer :wk "switch (same workspace)")
+  "B" '(switch-to-buffer :wk "switch")
+  "d" '(persp-kill-buffer :wk "delete")
+  "r" '(persp-remove-buffer :wk "remove"))
 
 (define-leader-keys
   :infix "f"
@@ -103,7 +107,13 @@
 
 (define-leader-keys
   :infix "l"
-  "" '(lisp-state-toggle-lisp-state :wk "lisp state"))
+  "" '(:ignore t :wk "layout")
+  "d" '(persp-kill :wk "delete")
+  "f" '(persp-load-state-from-file :wk "open file")
+  "F" '(persp-save-state-to-file :wk "save file")
+  "l" '(persp-switch :wk "switch")
+  "n" '(persp-add-new :wk "new")
+  "r" '(persp-rename :wk "rename"))
 
 (define-leader-keys
   :infix "p"

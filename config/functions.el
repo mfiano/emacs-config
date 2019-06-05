@@ -10,6 +10,23 @@
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
+(defmacro quiet! (&rest forms)
+  `(cond (noninteractive
+          (let ((old-fn (symbol-function 'write-region)))
+            (cl-letf ((standard-output (lambda (&rest _)))
+                      ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                      ((symbol-function 'message) (lambda (&rest _)))
+                      ((symbol-function 'write-region)
+                       (lambda (start end filename &optional append visit lockname mustbenew)
+                         (unless visit (setq visit 'no-message))
+                         (funcall old-fn start end filename append visit lockname mustbenew))))
+              ,@forms)))
+         ((or debug-on-error debug-on-quit)
+          ,@forms)
+         ((let ((inhibit-message t)
+                (save-silently t))
+            (prog1 ,@forms (message ""))))))
+
 (defun mfiano/smarter-move-beginning-of-line (arg)
   (interactive "^p")
   (setq arg (or arg 1))

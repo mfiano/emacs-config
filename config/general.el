@@ -9,7 +9,7 @@
 (defvar mfiano/dir-org
   (file-name-as-directory (expand-file-name "~/Projects/Org")))
 
-(defvar mfiano/font "Iosevka Slab 20")
+(defvar mfiano/font "Iosevka Slab 10")
 
 (defvar mfiano/ignored-files
   '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so"

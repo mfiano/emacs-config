@@ -4,20 +4,7 @@
   '("general.el"
     "functions.el"
     "keybindings.el"
-    "editor-base.el"
-    "editor-ui.el"
-    "editor-window.el"
-    "editor-project.el"
-    "apps.el"
-    "dev-base.el"
-    "dev-writing.el"
-    "dev-shell.el"
-    "dev-web.el"
-    "dev-lisp.el"
-    "dev-emacs-lisp.el"
-    "dev-common-lisp.el"
-    "dev-clojure.el"
-    "dev-racket.el"))
+    "packages.el"))
 
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
