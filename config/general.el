@@ -96,3 +96,27 @@
   (advice-add #'evil-window-vsplit :override #'mfiano/window-vsplit))
 
 (use-package evil-collection)
+
+(defvar mfiano/window-big-p nil)
+
+(defun mfiano/window-toggle-size ()
+  (interactive)
+  (setq mfiano/window-big-p
+        (if (and mfiano/window-big-p
+                 (assq ?_ register-alist))
+            (ignore (ignore-errors (jump-to-register ?_)))
+          (window-configuration-to-register ?_)
+          (if (window-dedicated-p)
+              (cl-letf* ((old-window-resize (symbol-function #'window-resize))
+                         (old-window-max-delta (symbol-function #'window-max-delta))
+                         ((symbol-function #'window-resize)
+                          (lambda (window delta &optional horizontal _ignore pixelwise)
+                            (funcall old-window-resize window delta horizontal
+                                     t pixelwise)))
+                         ((symbol-function #'window-max-delta)
+                          (lambda (&optional window horizontal _ignore trail noup nodown pixelwise)
+                            (funcall old-window-max-delta window horizontal t
+                                     trail noup nodown pixelwise))))
+                (maximize-window))
+            (maximize-window))
+          t)))

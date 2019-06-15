@@ -29,6 +29,8 @@
   [S-insert] #'mfiano/yank-primary-selection
   [remap move-beginning-of-line] #'mfiano/smarter-move-beginning-of-line
   [remap newline] #'newline-and-indent
+  "M--" #'text-scale-decrease
+  "M-+" #'text-scale-increase
   "M-=" (fn! (text-scale-set 0))
   "M-1" #'eyebrowse-switch-to-window-config-1
   "M-2" #'eyebrowse-switch-to-window-config-2
@@ -42,6 +44,7 @@
 
 (define-leader-keys
   "SPC" '(counsel-M-x :wk t)
+  "TAB" '(persp-switch :wk t)
   "'" '(ivy-resume :wk t)
   ";" '(eval-expression :wk t)
   "u" '(universal-argument :wk t))
@@ -57,9 +60,10 @@
   :infix "b"
   "" '(:ignore t :wk "buffer")
   "a" '(persp-add-buffer :wk "add")
-  "b" '(persp-switch-to-buffer :wk "switch (same workspace)")
-  "B" '(switch-to-buffer :wk "switch")
-  "d" '(persp-kill-buffer :wk "delete")
+  "b" '(purpose-x-persp-switch-buffer :wk "switch (same workspace)")
+  "B" '(purpose-friendly-switch-buffer :wk "switch")
+  "d" '(kill-buffer :wk "delete")
+  "D" '(persp-kill :wk "delete")
   "r" '(persp-remove-buffer :wk "remove"))
 
 (define-leader-keys
@@ -68,7 +72,7 @@
   "c" `(,(fn! (call-interactively 'write-file)) :wk "copy")
   "d" '(dired-jump :wk "directory")
   "D" '(mfiano/delete-file :wk "delete")
-  "f" '(counsel-find-file :wk "find")
+  "f" '(purpose-friendly-find-file :wk "find")
   "r" '(counsel-recentf :wk "recent")
   "R" '(mfiano/rename-file :wk "rename")
   "s" '(save-buffer :wk "save")
@@ -108,20 +112,25 @@
 (define-leader-keys
   :infix "l"
   "" '(:ignore t :wk "layout")
-  "d" '(persp-kill :wk "delete")
-  "f" '(persp-load-state-from-file :wk "open file")
-  "F" '(persp-save-state-to-file :wk "save file")
-  "l" '(persp-switch :wk "switch")
-  "n" '(persp-add-new :wk "new")
-  "r" '(persp-rename :wk "rename"))
+  "l" '(purpose-load-window-layout :wk "load")
+  "r" '(purpose-reset-window-layout :wk "reset")
+  "s" '(purpose-save-window-layout :wk "save"))
+
+(define-leader-keys
+  :infix "o"
+  "" '(:ignore t :wk "org")
+  "a" '(archive :wk "archive")
+  "A" '(org-agenda :wk "agenda")
+  "c" '(counsel-org-capture :wk "capture")
+  "f" '(org-refile :wk "refile")
+  "t" '(org-babel-tangle :wk "tangle"))
 
 (define-leader-keys
   :infix "p"
   "" '(:ignore t :wk "project")
-  "b" '(counsel-projectile-switch-to-buffer :wk "find buffer")
-  "c" '(projectile-kill-buffers :wk "close")
   "C" '(projectile-invalidate-cache :wk "clear cache")
   "f" '(counsel-projectile-find-file :wk "find file")
+  "k" '(projectile-kill-buffers :wk "kill")
   "r" '(projectile-recentf :wk "recent project files")
   "p" '(counsel-projectile-switch-project :wk "switch project")
   "R" '(projectile-replace :wk "replace text")
@@ -157,40 +166,18 @@
   "-" '(evil-window-split :wk "split horizontal")
   "|" '(evil-window-vsplit :wk "split vertical")
   "=" '(balance-windows :wk "balance")
-  "1" '(winum-select-window-by-number :wk "select window")
   "d" '(evil-window-delete :wk "delete")
   "D" '(delete-other-windows :wk "delete other")
   "f" '(make-frame :wk "new frame")
   "F" '(delete-frame :wk "delete-frame")
-  "g" '(ace-window :wk "go to")
-  "l" '(:ignore t :wk "layouts")
-  "l1" '(eyebrowse-switch-to-window-config-1 :wk "layout 1")
-  "l2" '(eyebrowse-switch-to-window-config-2 :wk "layout 2")
-  "l3" '(eyebrowse-switch-to-window-config-3 :wk "layout 3")
-  "l4" '(eyebrowse-switch-to-window-config-4 :wk "layout 4")
-  "l5" '(eyebrowse-switch-to-window-config-5 :wk "layout 5")
-  "l6" '(eyebrowse-switch-to-window-config-6 :wk "layout 6")
-  "l7" '(eyebrowse-switch-to-window-config-7 :wk "layout 7")
-  "l8" '(eyebrowse-switch-to-window-config-8 :wk "layout 8")
-  "l9" '(eyebrowse-switch-to-window-config-9 :wk "layout 9")
+  "g" '(mfiano/window-toggle-size :wk "toggle size")
+  "l" '(purpose-toggle-window-purpose-dedicated :wk "lock purpose")
+  "L" '(purpose-toggle-window-buffer-dedicated :wk "lock buffer")
+  "p" '(purpose-set-window-purpose :wk "set purpose")
   "r" '(winner-redo :wk "redo")
-  "s" '(eyebrowse-switch-to-window-config :wk "switch layout")
-  "S" '(ace-swap-window :wk "swap")
-  "u" '(winner-undo :wk "undo"))
+  "s" '(ace-swap-window :wk "swap")
+  "u" '(winner-undo :wk "undo")
+  "w" '(ace-window :wk "go to"))
 
 (define-keys 'special-mode-map
   "q" #'quit-window)
-
-;; (general-define-key
-;;  :states '(normal visual)
-;;  :prefix "<SPC>"
-;;  "ft" 'neotree-toggle
-;;  "jc" 'avy-goto-char
-;;  "jl" 'avy-goto-line
-;;  "jw" 'avy-goto-word-1
-;;  "k" 'lisp-state-toggle-lisp-state
-;;  "oa" 'org-agenda
-;;  "oA" 'archive
-;;  "oc" 'counsel-org-capture
-;;  "of" 'org-refile
-;;  "ot" 'org-babel-tangle

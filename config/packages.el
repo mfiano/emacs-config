@@ -180,8 +180,7 @@
         doom-themes-enable-italic t)
   (load-theme 'doom-one t)
   :config
-  (doom-themes-org-config)
-  (doom-themes-neotree-config))
+  (doom-themes-org-config))
 
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode))
@@ -240,10 +239,6 @@
 (use-package winner
   :config (winner-mode 1))
 
-(use-package winum
-  :init (setq winum-auto-setup-mode-line nil)
-  :config (winum-mode))
-
 (use-package ace-window
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
@@ -254,18 +249,6 @@
   :config
   (eyebrowse-mode t)
   (setq eyebrowse-new-workspace t))
-
-(use-package persp-mode
-  :config
-  (setq persp-autokill-buffer-on-remove 'kill-weak
-        persp-save-dir (file-name-as-directory
-                        (expand-file-name "persp-conf" mfiano/dir-etc))
-        persp-auto-resume-time 1
-        persp-auto-save-num-of-backups 0
-        persp-auto-save-opt 0
-        persp-set-last-persp-for-new-frames nil)
-  (add-hook 'after-init-hook (lambda () (persp-mode 1)))
-  :diminish persp-mode)
 
 (use-package projectile
   :init
@@ -372,6 +355,43 @@
         avy-keys (nconc (number-sequence ?a ?z)
                         (number-sequence ?A ?Z)
                         (number-sequence ?1 ?9))))
+
+(use-package windmove
+  :config
+  (windmove-default-keybindings))
+
+(use-package perspective
+  :config
+  (persp-mode))
+
+(use-package window-purpose
+  :config
+  (purpose-mode)
+  (purpose-x-magit-single-on)
+  (purpose-x-persp-setup)
+  (purpose-x-popwin-setup)
+  (purpose-x-kill-setup)
+  (setq purpose-x-popwin-position 'right
+        purpose-x-popwin-width 0.4
+        purpose-user-mode-purposes '((lisp-mode . lisp)
+                                     (sly-mrepl-mode . repl)
+                                     (sly-inspector-mode . popup)
+                                     (sly-xref-mode . popup)
+                                     (sly-popup-buffer-mode . popup))
+        purpose-user-regexp-purposes '(("\\*sly-db.\**" . popup2))
+        purpose-user-name-purposes '(("*sly-macroexpansion*" . popup)
+                                     ("*sly-description*" . popup)))
+  (purpose-compile-user-configuration))
+
+(defun my/sly-load-layout ()
+  (let ((layout (purpose-find-window-layout "common-lisp")))
+    (when layout
+      (purpose-load-window-layout-file layout))))
+(add-hook 'sly-connected-hook 'my/sly-load-layout)
+
+(defun my/sly-reset-layout (_)
+  (purpose-load-recent-window-layout 1))
+(add-hook 'sly-net-process-close-hooks 'my/sly-reset-layout)
 
 (use-package gist
   :defer t
@@ -855,3 +875,7 @@
   (setq tab-always-indent t)
   (dolist (hook '(racket-mode-hook racket-repl-mode-hook))
     (add-hook hook 'racket-unicode-input-method-enable)))
+
+(use-package lua-mode
+  :config
+  (setq lua-indent-level 2))
