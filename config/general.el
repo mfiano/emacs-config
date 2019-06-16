@@ -120,3 +120,22 @@
                 (maximize-window))
             (maximize-window))
           t)))
+
+(defvar mfiano/cycle-sly-repls-buffers nil)
+(defun mfiano/cycle-sly-repls ()
+  (interactive)
+  (let ((buffers (remove-if-not
+                  (lambda (x)
+                    (string-match-p "\\*sly-mrepl.\**" (buffer-name x)))
+                  (buffer-list))))
+    (when (set-difference buffers mfiano/cycle-sly-repls-buffers)
+      (setq mfiano/cycle-sly-repls-buffers buffers))
+    (setq mfiano/cycle-sly-repls-buffers
+          (remove nil (append (cdr mfiano/cycle-sly-repls-buffers)
+                              (cons (car mfiano/cycle-sly-repls-buffers) nil))))
+    (when-let* ((next-buffer (first mfiano/cycle-sly-repls-buffers))
+                (window (get-buffer-window next-buffer t)))
+      (select-frame-set-input-focus (window-frame window))
+      (select-window window)
+      (set-window-point window (point-max))
+      (evil-insert-state))))

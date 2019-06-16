@@ -617,10 +617,11 @@
   :after sly
   :config (push 'sly-repl-ansi-color sly-contribs))
 
-(define-local-keys lisp-mode-map
+(define-local-keys (lisp-mode-map sly-mrepl-mode-map)
   "'" '(sly :wk "start")
   ";" `(,(fn! (let ((current-prefix-arg '-)) (sly nil nil t)))
-        :wk "start (ask)"))
+        :wk "start (ask)")
+  "," '(mfiano/cycle-sly-repls :wk "focus repl"))
 
 (define-local-keys lisp-mode-map
   :infix "c"
