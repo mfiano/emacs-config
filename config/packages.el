@@ -367,31 +367,20 @@
 (use-package window-purpose
   :config
   (purpose-mode)
-  (purpose-x-magit-single-on)
-  (purpose-x-persp-setup)
-  (purpose-x-popwin-setup)
-  (purpose-x-kill-setup)
   (setq purpose-x-popwin-position 'right
         purpose-x-popwin-width 0.4
         purpose-user-mode-purposes '((lisp-mode . lisp)
-                                     (sly-mrepl-mode . repl)
-                                     (sly-inspector-mode . popup)
-                                     (sly-xref-mode . popup)
-                                     (sly-popup-buffer-mode . popup))
-        purpose-user-regexp-purposes '(("\\*sly-db.\**" . popup2))
-        purpose-user-name-purposes '(("*sly-macroexpansion*" . popup)
-                                     ("*sly-description*" . popup)))
-  (purpose-compile-user-configuration))
-
-(defun my/sly-load-layout ()
-  (let ((layout (purpose-find-window-layout "common-lisp")))
-    (when layout
-      (purpose-load-window-layout-file layout))))
-(add-hook 'sly-connected-hook 'my/sly-load-layout)
-
-(defun my/sly-reset-layout (_)
-  (purpose-load-recent-window-layout 1))
-(add-hook 'sly-net-process-close-hooks 'my/sly-reset-layout)
+                                     (sly-inspector-mode . debug)
+                                     (sly-xref-mode . debug)
+                                     (sly-popup-buffer-mode . debug))
+        purpose-user-regexp-purposes '(("\\*sly-db.\**" . debug)
+                                       ("\\*sly-mrepl.\**" . repl))
+        purpose-user-name-purposes '(("*sly-macroexpansion*" . debug)
+                                     ("*sly-description*" . debug)))
+  (purpose-compile-user-configuration)
+  (purpose-x-magit-single-on)
+  (purpose-x-persp-setup)
+  (purpose-x-popwin-setup))
 
 (use-package gist
   :defer t
