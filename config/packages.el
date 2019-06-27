@@ -178,7 +178,7 @@
   :init
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-one t)
+  (load-theme 'doom-vibrant t)
   :config
   (doom-themes-org-config))
 
@@ -245,11 +245,6 @@
         aw-scope 'frame
         aw-background t))
 
-(use-package eyebrowse
-  :config
-  (eyebrowse-mode t)
-  (setq eyebrowse-new-workspace t))
-
 (use-package projectile
   :init
   (setq projectile-cache-file (expand-file-name "project-cache" mfiano/dir-etc)
@@ -276,6 +271,11 @@
         magit-delete-by-moving-to-trash nil
         magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
         git-commit-summary-max-length 120))
+
+(use-package magit-todos
+  :after magit
+  :config
+  (magit-todos-mode))
 
 (use-package evil-magit
   :after magit)
@@ -367,21 +367,18 @@
 (use-package window-purpose
   :config
   (purpose-mode)
-  (setq purpose-x-popwin-position 'right
-        purpose-x-popwin-width 0.4
-        purpose-user-mode-purposes '((lisp-mode . lisp)
-                                     (sly-inspector-mode . debug)
-                                     (sly-xref-mode . debug)
-                                     (sly-popup-buffer-mode . debug))
-        purpose-user-regexp-purposes '(("\\*sly-db.\**" . debug)
-                                       ("\\*sly-mrepl.\**" . repl))
-        purpose-user-name-purposes '(("*sly-compilation*" . debug)
-                                     ("*sly-macroexpansion*" . debug)
-                                     ("*sly-description*" . debug)))
-  (purpose-compile-user-configuration)
-  (purpose-x-magit-single-on)
   (purpose-x-persp-setup)
-  (purpose-x-popwin-setup))
+  (setq purpose-user-mode-purposes '((lisp-mode . edit)
+                                     (sly-inspector-mode . lisp-inspect)
+                                     (sly-xref-mode . lisp-debug)
+                                     (sly-popup-buffer-mode . lisp-debug)
+                                     (magit-mode . edit))
+        purpose-user-regexp-purposes '(("\\*sly-db.\**" . lisp-debug)
+                                       ("\\*sly-mrepl.\**" . lisp-repl))
+        purpose-user-name-purposes '(("*sly-compilation*" . lisp-debug)
+                                     ("*sly-macroexpansion*" . lisp-debug)
+                                     ("*sly-description*" . lisp-debug)))
+  (purpose-compile-user-configuration))
 
 (use-package gist
   :defer t
@@ -530,6 +527,12 @@
   (dolist (hook mfiano/lisp-hooks)
     (add-hook hook 'evil-cleverparens-mode))
   :diminish evil-cleverparens-mode)
+
+(use-package evil-goggles
+  :config
+  (setq evil-goggles-pulse nil
+        evil-goggles-duration 1.0)
+  (evil-goggles-mode 1))
 
 (use-package macrostep
   :after evil-cleverparens

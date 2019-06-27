@@ -9,7 +9,7 @@
 (defvar mfiano/dir-org
   (file-name-as-directory (expand-file-name "~/Projects/Org")))
 
-(defvar mfiano/font "Iosevka Slab 10")
+(defvar mfiano/font "Iosevka Slab 20")
 
 (defvar mfiano/ignored-files
   '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so"
@@ -79,12 +79,9 @@
 
 (load custom-file 'noerror)
 
-(add-hook 'minibuffer-setup-hook
-          (lambda () (setq gc-cons-threshold most-positive-fixnum)))
-
-(dolist (hook '(after-init-hook minibuffer-exit-hook))
-  (add-hook hook (lambda () (setq gc-cons-threshold (* 1000 1000 10)))))
-
+(add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
+(add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
+(add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package evil
