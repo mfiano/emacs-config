@@ -178,7 +178,7 @@
   :init
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-vibrant t)
+  (load-theme 'doom-one t)
   :config
   (doom-themes-org-config))
 
@@ -298,7 +298,8 @@
 
 (use-package aggressive-indent
   :config
-  (add-hook 'prog-mode-hook (fn (aggressive-indent-mode 1)))
+  (dolist (hook '(prog-mode-hook sly-mrepl-mode-hook))
+    (add-hook hook (fn (aggressive-indent-mode 1))))
   (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
   :diminish aggressive-indent-mode)
 
