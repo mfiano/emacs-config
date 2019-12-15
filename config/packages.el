@@ -129,6 +129,13 @@
         ivy-wrap t
         ivy-height 20))
 
+(use-package wgrep)
+
+(use-package rg
+  :config
+  (setq rg-group-result t
+        rg-ignoe-case 'smart))
+
 (use-package company
   :init
   (global-company-mode)
@@ -236,6 +243,11 @@
 (use-package visual-fill-column
   :config (setq visual-fill-column-width nil))
 
+(use-package hl-fill-column
+  :config
+  (dolist (hook '(text-mode-hook prog-mode-hook conf-mode-hook))
+    (add-hook hook #'hl-fill-column-mode))
+  (set-face-background 'hl-fill-column-face "tomato"))
 (use-package winner
   :config (winner-mode 1))
 
@@ -248,7 +260,8 @@
 (use-package projectile
   :init
   (setq projectile-cache-file (expand-file-name "project-cache" mfiano/dir-etc)
-        projectile-known-projects-file (expand-file-name "project-bookmarks" mfiano/dir-etc)
+        projectile-known-projects-file (expand-file-name
+                                        "project-bookmarks" mfiano/dir-etc)
         projectile-kill-buffers-filter 'kill-only-files
         projectile-completion-system 'ivy)
   (projectile-global-mode 1)
@@ -319,7 +332,8 @@
 (use-package undo-tree
   :commands (undo-tree-save-history-hook undo-tree-load-history-hook)
   :init
-  (let ((undo-dir (file-name-as-directory (expand-file-name "undo" mfiano/dir-etc))))
+  (let ((undo-dir (file-name-as-directory (expand-file-name
+                                           "undo" mfiano/dir-etc))))
     (make-directory undo-dir t)
     (add-hook 'write-file-functions 'undo-tree-save-history-hook)
     (add-hook 'find-file-hook 'undo-tree-load-history-hook)
@@ -369,7 +383,8 @@
   :config
   (purpose-mode)
   (purpose-x-persp-setup)
-  (setq purpose-user-mode-purposes '((lisp-mode . edit)
+  (setq purpose-use-built-in-layouts nil
+        purpose-user-mode-purposes '((lisp-mode . edit)
                                      (sly-inspector-mode . lisp-inspect)
                                      (sly-xref-mode . lisp-debug)
                                      (sly-popup-buffer-mode . lisp-debug)
@@ -392,7 +407,8 @@
   (setq org-directory mfiano/dir-org
         org-default-notes-file (expand-file-name "notes.org" org-directory)
         org-catch-invisible-edits 'show-and-error
-        org-publish-timestamp-directory (expand-file-name "org-timestamps" mfiano/dir-etc)
+        org-publish-timestamp-directory (expand-file-name
+                                         "org-timestamps" mfiano/dir-etc)
         org-html-todo-kwd-class-prefix "keyword "
         org-refile-targets '((nil :maxlevel . 5)
                              (org-agenda-files :maxlevel . 5))
@@ -406,23 +422,33 @@
         org-src-preserve-indentation t
         org-startup-folded t
         org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "|" "DONE(d)")
-                            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-                            (sequence "REPORTED(r@/!)" "BUG(b@/!)" "|" "FIXED(f@/!)"))
+                            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|"
+                                      "CANCELLED(c@/!)")
+                            (sequence "REPORTED(r@/!)" "BUG(b@/!)" "|"
+                                      "FIXED(f@/!)"))
         org-todo-keyword-faces '(("TODO" :foreground "dodger blue" :weight bold)
-                                 ("INPROGRESS" :foreground "spring green" :weight bold)
+                                 ("INPROGRESS" :foreground "spring green"
+                                  :weight bold)
                                  ("WAITING" :foreground "yellow" :weight bold)
                                  ("HOLD" :foreground "yellow" :weight bold)
-                                 ("DONE" :foreground "forest green" :weight bold)
-                                 ("CANCELLED" :foreground "forest green" :weight bold)
+                                 ("DONE" :foreground "forest green"
+                                  :weight bold)
+                                 ("CANCELLED" :foreground "forest green"
+                                  :weight bold)
                                  ("REPORTED" :foreground "red" :weight bold)
                                  ("BUG" :foreground "red" :weight bold)
-                                 ("FIXED" :foreground "forest green" :weight bold))
-        org-capture-templates '(("c" "Code Task" entry (file+headline org-default-notes-file
-                                                                      "Coding Tasks")
+                                 ("FIXED" :foreground "forest green"
+                                  :weight bold))
+        org-capture-templates '(("c" "Code Task" entry (file+headline
+                                                        org-default-notes-file
+                                                        "Coding Tasks")
                                  "* TODO %?\n  Entered on: %U - %a\n")
-                                ("t" "Task" entry (file+headline org-default-notes-file "Tasks")
+                                ("t" "Task" entry (file+headline
+                                                   org-default-notes-file
+                                                   "Tasks")
                                  "* TODO %?\n  Entered on: %U")
-                                ("n" "Note" entry (file+olp+datetree org-default-notes-file)
+                                ("n" "Note" entry (file+olp+datetree
+                                                   org-default-notes-file)
                                  "* %?\n\n"))))
 
 (use-package org-indent
@@ -449,7 +475,8 @@
 
 (use-package executable
   :commands executable-make-buffer-file-executable-if-script-p
-  :init (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p))
+  :init (add-hook 'after-save-hook
+                  'executable-make-buffer-file-executable-if-script-p))
 
 (use-package rainbow-mode
   :commands 'rainbow-mode
@@ -569,10 +596,7 @@
   "d" '(elisp-slime-nav-find-elisp-thing-at-point :wk "find definition"))
 
 (defvar mfiano/lisp-implementations
-  '((sbcl ("ros" "-L" "sbcl" "run"))
-    (qlot ("qlot" "exec" "ros" "-L" "sbcl" "run"))
-    (sbcl-nvidia ("primusrun" "ros" "-L" "sbcl-bin" "run"))
-    (sbcl-git ("ros" "-L" "sbcl/git" "run"))
+  '((sbcl ("ros" "dynamic-space-size=4000" "-L" "sbcl" "run"))
     (ccl ("ros" "-L" "ccl-bin" "run"))))
 
 (defvar mfiano/clhs-path (file-name-as-directory
@@ -587,14 +611,15 @@
         ("<down>" . sly-mrepl-next-input-or-button))
   :init
   (evil-set-initial-state 'sly-mrepl-mode 'insert)
-  (evil-set-initial-state 'sly-inspector-mode 'emacs)
-  (evil-set-initial-state 'sly-db-mode 'emacs)
-  (evil-set-initial-state 'sly-xref-mode 'emacs)
-  (evil-set-initial-state 'sly-stickers--replay-mode 'emacs)
+  (evil-set-initial-state 'sly-inspector-mode 'motion)
+  (evil-set-initial-state 'sly-db-mode 'motion)
+  (evil-set-initial-state 'sly-xref-mode 'motion)
+  (evil-set-initial-state 'sly-popup-buffer-mode 'motion)
+  (evil-set-initial-state 'sly-stickers--replay-mode 'motion)
   :config
   (setq sly-lisp-implementations mfiano/lisp-implementations
-        sly-mrepl-history-file-name (expand-file-name "sly-repl-history"
-                                                      mfiano/dir-etc)
+        sly-mrepl-history-file-name (expand-file-name
+                                     "sly-repl-history" mfiano/dir-etc)
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
         sly-complete-symbol*-fancy t
@@ -710,20 +735,15 @@
   "T" '(sly-toggle-fancy-trace :wk "toggle (fancy)")
   "u" '(sly-untrace-all :wk "untrace all"))
 
-(evil-set-initial-state 'sly-db-mode 'normal)
-(evil-set-initial-state 'sly-inspector-mode 'normal)
-(evil-set-initial-state 'sly-popup-buffer-mode 'normal)
-(evil-set-initial-state 'sly-xref-mode 'normal)
-
-(define-keys i sly-mrepl-mode-map
+(define-keys (i n) sly-mrepl-mode-map
   [S-return] #'newline-and-indent
   [up] (fn! (evil-goto-line) (comint-previous-input 1))
   [down] (fn! (evil-goto-line) (comint-next-input 1)))
 
-(define-keys n sly-popup-buffer-mode-map
+(define-keys m sly-popup-buffer-mode-map
   "q" #'quit-window)
 
-(define-keys n sly-db-mode-map
+(define-keys m sly-db-mode-map
   [follow-link] #'mouse-face
   [remap quit-window] #'sly-db-quit
   "C-i" #'sly-db-cycle
@@ -760,7 +780,7 @@
   "S" #'sly-db-show-frame-source
   "t" #'sly-db-toggle-details)
 
-(define-keys n sly-inspector-mode-map
+(define-keys m sly-inspector-mode-map
   [backtab] #'backward-button
   [return] #'push-button
   [(shift tab)] #'backward-button
@@ -775,7 +795,7 @@
   "p" #'sly-button-pretty-print
   "q" #'sly-inspector-quit)
 
-(define-keys n sly-xref-mode-map
+(define-keys m sly-xref-mode-map
   [return] #'sly-goto-xref
   [S-return] #'sly-show-xref
   "q" #'quit-window)

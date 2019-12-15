@@ -4,7 +4,7 @@
   :config (general-evil-setup))
 
 (general-create-definer define-keys
-  :states '(n v i e))
+  :states '(n m v i e))
 
 (general-create-definer define-leader-keys
   :states '(n v i e)
@@ -43,8 +43,6 @@
 (define-leader-keys
   :infix "a"
   "" '(:ignore t :wk "app")
-  "e" '(notmuch :wk "email")
-  "f" '(elfeed :wk "feed reader")
   "T" `(,(fn! (term (getenv "SHELL"))) :wk "terminal"))
 
 (define-leader-keys

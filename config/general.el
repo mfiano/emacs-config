@@ -8,8 +8,7 @@
 
 (defvar mfiano/dir-org
   (file-name-as-directory (expand-file-name "~/Projects/Org")))
-
-(defvar mfiano/font "Iosevka Slab 20")
+(defvar mfiano/font "Iosevka Slab 8")
 
 (defvar mfiano/ignored-files
   '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so"
@@ -23,7 +22,7 @@
       split-width-threshold nil
       jit-lock-defer-time nil
       custom-file (expand-file-name "custom.el" mfiano/dir-etc)
-      scroll-step 1                     ;
+      scroll-step 1
       mouse-wheel-scroll-amount '(3)
       mouse-wheel-follow-mouse t
       mouse-wheel-progressive-speed nil
@@ -80,7 +79,8 @@
 (load custom-file 'noerror)
 
 (add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 800000)))
-(add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
+(add-hook 'minibuffer-setup-hook
+          (lambda () (setq gc-cons-threshold most-positive-fixnum)))
 (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 800000)))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -105,13 +105,16 @@
           (window-configuration-to-register ?_)
           (if (window-dedicated-p)
               (cl-letf* ((old-window-resize (symbol-function #'window-resize))
-                         (old-window-max-delta (symbol-function #'window-max-delta))
+                         (old-window-max-delta (symbol-function
+                                                #'window-max-delta))
                          ((symbol-function #'window-resize)
-                          (lambda (window delta &optional horizontal _ignore pixelwise)
+                          (lambda (window delta &optional horizontal _ignore
+                                          pixelwise)
                             (funcall old-window-resize window delta horizontal
                                      t pixelwise)))
                          ((symbol-function #'window-max-delta)
-                          (lambda (&optional window horizontal _ignore trail noup nodown pixelwise)
+                          (lambda (&optional window horizontal _ignore trail
+                                             noup nodown pixelwise)
                             (funcall old-window-max-delta window horizontal t
                                      trail noup nodown pixelwise))))
                 (maximize-window))
