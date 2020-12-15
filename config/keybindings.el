@@ -23,6 +23,9 @@
   [C-down-mouse-1]
   [C-down-mouse-2]
   [C-down-mouse-3]
+  [S-down-mouse-1]
+  [S-down-mouse-2]
+  [S-down-mouse-3]
   "C-x C-z")
 
 (define-keys
@@ -53,7 +56,8 @@
   "B" '(purpose-friendly-switch-buffer :wk "switch")
   "d" '(kill-buffer :wk "delete")
   "D" '(persp-kill :wk "delete")
-  "r" '(persp-remove-buffer :wk "remove"))
+  "r" '(revert-buffer :wk "revert")
+  "R" '(persp-remove-buffer :wk "remove"))
 
 (define-leader-keys
   :infix "f"
@@ -117,11 +121,15 @@
 (define-leader-keys
   :infix "p"
   "" '(:ignore t :wk "project")
-  "C" '(projectile-invalidate-cache :wk "clear cache")
+  "a" '(projectile-add-known-project :wk "add project")
+  "b" '(projectile-switch-to-buffer :wk "switch buffer")
+  "c" '(projectile-invalidate-cache :wk "clear cache")
+  "d" '(projectile-remove-known-project :wk "delete project")
   "f" '(counsel-projectile-find-file :wk "find file")
-  "k" '(projectile-kill-buffers :wk "kill")
+  "k" '(projectile-kill-buffers :wk "kill buffers")
   "r" '(projectile-recentf :wk "recent project files")
   "p" '(counsel-projectile-switch-project :wk "switch project")
+  "r" '(projectile-recentf :wk "recent files")
   "R" '(projectile-replace :wk "replace text")
   "s" '(projectile-save-project-buffers :wk "save"))
 
@@ -135,7 +143,8 @@
 (define-leader-keys
   :infix "s"
   "" '(:ignore t :wk "search")
-  "b" '(swiper :wk "buffer")
+  "b" '(swiper-isearch :wk "buffer")
+  "B" '(swiper-isearch-thing-at-point :wk "buffer at point")
   "d" `(,(fn! (counsel-rg nil default-directory)) :wk "directory")
   "m" '(evil-multiedit-match-all :wk "multi-edit")
   "p" '(counsel-projectile-rg :wk "project"))
@@ -150,13 +159,6 @@
   "s" '(flyspell-mode :wk "spell checker"))
 
 (define-leader-keys
-  :infix "v"
-  "" '(:ignore t :wk "views")
-  "a" '(ivy-push-view :wk "add")
-  "r" '(ivy-pop-view :wk "remove")
-  "v" '(ivy-switch-view :wk "switch"))
-
-(define-leader-keys
   :infix "w"
   "" '(:ignore t :wk "window")
   "-" '(evil-window-split :wk "split horizontal")
@@ -164,7 +166,7 @@
   "=" '(balance-windows :wk "balance")
   "d" '(evil-window-delete :wk "delete")
   "D" '(delete-other-windows :wk "delete other")
-  "f" '(make-frame :wk "new frame")
+  "f" '(new-frame :wk "new frame")
   "F" '(delete-frame :wk "delete-frame")
   "g" '(mfiano/window-toggle-size :wk "toggle size")
   "l" '(purpose-toggle-window-purpose-dedicated :wk "lock purpose")

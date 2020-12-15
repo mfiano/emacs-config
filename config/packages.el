@@ -35,6 +35,17 @@
   (setq eldoc-idle-delay 0.1)
   :diminish eldoc-mode)
 
+(use-package undo-fu
+  :config
+  (define-key evil-normal-state-map "u" 'undo-fu-only-undo)
+  (define-key evil-normal-state-map "\C-r" 'undo-fu-only-redo))
+
+(use-package undo-fu-session
+  :config
+  (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'"
+                                             "/git-rebase-todo\\'"))
+  (global-undo-fu-session-mode))
+
 (use-package uniquify
   :straight nil
   :config (setq uniquify-buffer-bane-style 'forward))
@@ -190,10 +201,14 @@
   (doom-themes-org-config))
 
 (use-package doom-modeline
-  :hook (after-init . doom-modeline-mode))
+  :ensure t
+  :hook (window-setup . doom-modeline-mode))
 
 (use-package hl-line
   :config (global-hl-line-mode 1))
+
+(use-package hl-todo
+  :config (global-hl-todo-mode))
 
 (use-package dimmer
   :config
@@ -212,7 +227,8 @@
 (use-package which-key
   :config
   (which-key-mode 1)
-  (setq which-key-idle-delay 0.5
+  (setq which-key-idle-delay 0.25
+        which-key-idle-secondary-delay 0.25
         which-key-sort-order 'which-key-key-order-alpha
         which-key-key-replacement-alist '(("<\\([[:alnum:]-]+\\)>" . "\\1")
                                           ("left" . "◀")
@@ -253,7 +269,7 @@
 
 (use-package ace-window
   :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+  (setq aw-keys '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)
         aw-scope 'frame
         aw-background t))
 
@@ -286,7 +302,6 @@
         git-commit-summary-max-length 120))
 
 (use-package magit-todos
-  :after magit
   :config
   (magit-todos-mode))
 
@@ -329,23 +344,9 @@
   (add-hook 'smartparens-enabled-hook (fn (hungry-delete-mode 1)))
   :diminish hungry-delete-mode)
 
-(use-package undo-tree
-  :commands (undo-tree-save-history-hook undo-tree-load-history-hook)
-  :init
-  (let ((undo-dir (file-name-as-directory (expand-file-name
-                                           "undo" mfiano/dir-etc))))
-    (make-directory undo-dir t)
-    (add-hook 'write-file-functions 'undo-tree-save-history-hook)
-    (add-hook 'find-file-hook 'undo-tree-load-history-hook)
-    (setq undo-tree-auto-save-history t
-          undo-tree-history-directory-alist `(("." . ,undo-dir))
-          undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-diff t))
-  :config (global-undo-tree-mode)
-  :diminish undo-tree-mode)
-
 (use-package whitespace-cleanup-mode
   :init (global-whitespace-cleanup-mode 1)
+  :config (add-hook 'before-save #'delete-trailing-whitespace)
   :diminish whitespace-cleanup-mode)
 
 (use-package expand-region
@@ -550,6 +551,7 @@
 (use-package evil-cleverparens
   :init
   (setq evil-move-beyond-eol t
+        evil-cleverparens-use-additional-bindings nil
         evil-cleverparens-swap-move-by-word-and-symbol t
         evil-cleverparens-use-regular-insert t)
   (dolist (hook mfiano/lisp-hooks)
@@ -611,20 +613,20 @@
         ("<down>" . sly-mrepl-next-input-or-button))
   :init
   (evil-set-initial-state 'sly-mrepl-mode 'insert)
-  (evil-set-initial-state 'sly-inspector-mode 'motion)
-  (evil-set-initial-state 'sly-db-mode 'motion)
+  (evil-set-initial-state 'sly-inspector-mode 'emacs)
+  (evil-set-initial-state 'sly-db-mode 'emacs)
   (evil-set-initial-state 'sly-xref-mode 'motion)
   (evil-set-initial-state 'sly-popup-buffer-mode 'motion)
   (evil-set-initial-state 'sly-stickers--replay-mode 'motion)
   :config
+  (sly-setup '(sly-fancy))
   (setq sly-lisp-implementations mfiano/lisp-implementations
         sly-mrepl-history-file-name (expand-file-name
                                      "sly-repl-history" mfiano/dir-etc)
         sly-kill-without-query-p t
         sly-net-coding-system 'utf-8-unix
-        sly-complete-symbol*-fancy t
+        sly-complete-symbol-function 'sly-flex-completions
         common-lisp-hyperspec-root mfiano/clhs-path)
-  (sly-setup '(sly-fancy))
   (add-hook 'sly-mode-hook #'evil-normalize-keymaps)
   (add-hook 'sly-popup-buffer-mode-hook #'evil-normalize-keymaps)
   :diminish sly)
@@ -697,8 +699,8 @@
   "b" '(sp-forward-barf-sexp :wk "barf forward")
   "B" '(sp-backward-barf-sexp :wk "barf backward")
   "c" '(sp-convolute-sexp :wk "convolute")
-  "e" '(sp-splice-sexp-killing-forward :wk "splice killing forward")
-  "E" '(sp-splice-sexp-killing-backward :wk "splice killing backward")
+  "e" '(sp-splice-sexp-killing-backward :wk "splice killing backward")
+  "E" '(sp-splice-sexp-killing-forward :wk "splice killing forward")
   "j" '(sp-join-sexp :wk "join")
   "r" '(sp-raise-sexp :wk "raise")
   "s" '(sp-forward-slurp-sexp :wk "slurp forward")
@@ -736,9 +738,7 @@
   "u" '(sly-untrace-all :wk "untrace all"))
 
 (define-keys (i n) sly-mrepl-mode-map
-  [S-return] #'newline-and-indent
-  [up] (fn! (evil-goto-line) (comint-previous-input 1))
-  [down] (fn! (evil-goto-line) (comint-next-input 1)))
+  [S-return] #'newline-and-indent)
 
 (define-keys m sly-popup-buffer-mode-map
   "q" #'quit-window)

@@ -1,6 +1,3 @@
-(setq user-full-name "Michael Fiano"
-      user-mail-address "mail@michaelfiano.com")
-
 (defvar mfiano/dir-etc
   (file-name-as-directory
    (expand-file-name "etc" user-emacs-directory)))
@@ -8,7 +5,7 @@
 
 (defvar mfiano/dir-org
   (file-name-as-directory (expand-file-name "~/Projects/Org")))
-(defvar mfiano/font "Iosevka Slab 8")
+(defvar mfiano/font "Iosevka Slab 10")
 
 (defvar mfiano/ignored-files
   '(".elc" ".pyc" ".exe" ".dll" ".fasl" ".o" ".so"
@@ -16,49 +13,52 @@
     ".db" ".sql" ".sqlite"
     ".DS_Store" "Thumbs.db"))
 
-(setq display-time-format "%I:%M%P"
-      image-animate-loop t
+(setq custom-file (expand-file-name "custom.el" mfiano/dir-etc)
       default-input-method "TeX"
-      split-width-threshold nil
+      delete-trailing-lines t
+      display-line-numbers t
+      display-time-default-load-average nil
+      display-time-format "%I:%M%P"
+      echo-keystrokes 0.1
+      focus-follows-mouse t
+      initial-scratch-message nil
+      inhibit-startup-echo-area-message t
+      inhibit-startup-screen t
       jit-lock-defer-time nil
-      custom-file (expand-file-name "custom.el" mfiano/dir-etc)
-      scroll-step 1
-      mouse-wheel-scroll-amount '(3)
+      locale-coding-system 'utf-8
+      make-pointer-invisible t
+      mouse-autoselect-window t
       mouse-wheel-follow-mouse t
       mouse-wheel-progressive-speed nil
-      mouse-sel-mode t
+      mouse-wheel-scroll-amount '(3)
       mouse-yank-at-point t
-      make-pointer-invisible t
-      default-buffer-file-coding-system 'utf-8
-      locale-coding-system 'utf-8
       ring-bell-function 'ignore
-      inhibit-startup-screen t
-      inhibit-startup-echo-area-message t
-      initial-scratch-message nil
+      scroll-step 1
+      select-enable-primary t
+      split-width-threshold nil
       use-dialog-box nil
-      display-time-default-load-average nil
+      user-full-name "Michael Fiano"
+      user-mail-address "mail@mfiano.net"
+      vc-follow-symlinks t
       x-select-enable-clipboard t
-      x-select-enable-clipboard-manager nil
-      echo-keystrokes 0.1
-      vc-follow-symlinks t)
+      x-select-enable-clipboard-manager nil)
 
-(setq-default cursor-type 'hbar
-              cursor-in-non-selected-windows nil
-              buffer-file-coding-system 'utf-8
-              indicate-empty-lines t
-              truncate-lines t
-              fill-column 80
-              switch-to-visible-buffer nil
-              require-final-newline t
-              sentence-end-double-space nil
-              create-lockfiles nil
-              read-file-name-completion-ignore-case t
-              backup-inhibited t
-              auto-save-default nil
+(setq-default auto-save-default nil
               auto-save-list-file-prefix nil
+              backup-inhibited t
+              buffer-file-coding-system 'utf-8
+              create-lockfiles nil
+              cursor-in-non-selected-windows nil
+              cursor-type 'hbar
+              default-tab-width 2
+              fill-column 80
               find-file-visit-truename t
               indent-tabs-mode nil
-              default-tab-width 2)
+              indicate-empty-lines t
+              read-file-name-completion-ignore-case t
+              require-final-newline t
+              sentence-end-double-space nil
+              truncate-lines t)
 
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -85,7 +85,8 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (use-package evil
-  :init (setq evil-want-keybinding nil)
+  :init (setq evil-want-keybinding nil
+              evil-undo-system 'undo-fu)
   :config
   (evil-mode 1)
   (setq evil-move-beyond-eol t)
